@@ -192,6 +192,36 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
 .unit-btn{flex:1;padding:3px 5px;font-size:9px;font-weight:700;border-radius:3px;border:1px solid var(--border);background:var(--surface3);color:var(--text-muted);cursor:pointer;letter-spacing:.5px;transition:background .15s,color .15s}
 .unit-btn.active{background:var(--purple);border-color:var(--purple);color:#fff}
 .un-hint{font-size:9px;color:var(--text-dim);margin-top:3px;text-align:center;display:none}
+/* TREINO — DAY SELECTOR & EXERCISE CARDS */
+.tr-day-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:12px}
+.tr-day-btn{padding:10px 4px;border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:center;transition:.2s;line-height:1.2}
+.tr-day-btn .day-lbl{font-size:17px;font-weight:900;display:block;color:var(--text)}
+.tr-day-btn .day-sub{font-size:9px;display:block;margin-top:2px}
+.tr-day-btn.active{border-color:var(--purple);background:rgba(124,58,237,.18);color:var(--purple)}
+.tr-day-btn.active .day-lbl{color:var(--purple)}
+.tr-ex-card{background:var(--surface2);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;border:1px solid var(--border)}
+.tr-ex-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.tr-ex-name{font-size:13px;font-weight:700;color:var(--text)}
+.tr-ex-meta{font-size:10px;color:var(--text-muted);margin-top:2px}
+.tr-ex-obs{font-size:9px;color:var(--purple);margin-top:2px;font-style:italic}
+.tr-ex-prev{font-size:10px;color:#10b981;font-weight:600;white-space:nowrap;margin-left:8px;text-align:right}
+.tr-set-hdr{display:grid;grid-template-columns:24px 1fr 1fr 26px;gap:4px;margin-bottom:3px}
+.tr-set-hdr span{font-size:9px;color:var(--text-dim);text-align:center;font-weight:700;letter-spacing:.4px}
+.tr-set-row{display:grid;grid-template-columns:24px 1fr 1fr 26px;gap:4px;align-items:center;margin-bottom:3px}
+.tr-sn{font-size:10px;font-weight:700;color:var(--text-dim);text-align:center}
+.tr-set-inp{padding:5px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface3);color:var(--text);font-size:12px;text-align:center;width:100%;box-sizing:border-box}
+.tr-set-inp:focus{border-color:var(--purple);outline:none}
+.tr-set-del{background:transparent;border:none;color:var(--danger);cursor:pointer;font-size:13px;padding:2px;line-height:1}
+/* EVOLUÇÃO TREINO DASHBOARD */
+.evol-list{display:flex;flex-direction:column;gap:6px}
+.evol-item{background:var(--surface2);border-radius:var(--radius-sm);padding:8px 12px;display:flex;align-items:center;gap:10px;border-left:3px solid var(--border)}
+.evol-item.up{border-left-color:#10b981}.evol-item.down{border-left-color:var(--danger)}.evol-item.same{border-left-color:var(--text-dim)}
+.evol-name{font-size:12px;font-weight:700;flex:1}
+.evol-vals{font-size:11px;color:var(--text-muted);margin-top:1px}
+.evol-badge{font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.evol-badge.up{background:rgba(16,185,129,.15);color:#10b981}
+.evol-badge.down{background:rgba(239,68,68,.15);color:var(--danger)}
+.evol-badge.same{background:var(--surface3);color:var(--text-dim)}
 /* ALIMENTOS SECTION */
 .food-db-item{background:var(--surface2);border-radius:var(--radius-sm);padding:10px 12px;display:flex;align-items:center;gap:10px;margin-bottom:6px}
 .food-db-item .fdb-name{flex:1;font-size:13px;font-weight:700}
@@ -322,6 +352,14 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
   <div class="card">
     <div class="card-title">📋 Atividade de Hoje</div>
     <div id="dash-activity"></div>
+  </div>
+
+  <!-- Evolução do Treino -->
+  <div class="card">
+    <div class="card-title">📈 Evolução do Treino</div>
+    <div class="evol-list" id="dash-evolution">
+      <div class="fs12 txt-muted" style="text-align:center;padding:8px">Registre um treino para ver a evolução.</div>
+    </div>
   </div>
 </section>
 
@@ -692,32 +730,29 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
 
 <!-- MODAL TREINO -->
 <div class="modal-overlay" id="modalTreino">
-  <div class="modal">
+  <div class="modal" style="max-height:90vh;overflow-y:auto;padding-bottom:20px">
     <div class="modal-hd"><span class="modal-ttl">🏋️ Registrar Treino</span><button class="modal-cls" onclick="closeModal('modalTreino')">×</button></div>
-    <div class="fg"><label>Nome / Descrição</label><input type="text" id="tr-nome" placeholder="Ex: Peito e Tríceps"></div>
+    <!-- Day Selector -->
+    <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Treino do Dia</label>
+    <div class="tr-day-grid mt4 mb4">
+      <button class="tr-day-btn" data-day="A" onclick="selectTrainingDay('A')"><span class="day-lbl">A</span><span class="day-sub">Pull</span></button>
+      <button class="tr-day-btn" data-day="B" onclick="selectTrainingDay('B')"><span class="day-lbl">B</span><span class="day-sub">Push</span></button>
+      <button class="tr-day-btn" data-day="C" onclick="selectTrainingDay('C')"><span class="day-lbl">C</span><span class="day-sub">Leg</span></button>
+      <button class="tr-day-btn" data-day="A2" onclick="selectTrainingDay('A2')"><span class="day-lbl">A2</span><span class="day-sub">Upper</span></button>
+      <button class="tr-day-btn" data-day="E" onclick="selectTrainingDay('E')"><span class="day-lbl">E</span><span class="day-sub">Full</span></button>
+    </div>
+    <!-- Exercise List (populated by JS) -->
+    <div id="tr-ex-list"></div>
+    <div class="divider"></div>
+    <!-- Footer fields -->
     <div class="g2">
-      <div class="fg"><label>Tipo</label>
-        <select id="tr-tipo">
-          <option value="musculacao">🏋️ Musculação</option>
-          <option value="cardio_moderado">🚴 Cardio Moderado</option>
-          <option value="cardio_intenso">🏃 Cardio Intenso</option>
-          <option value="hiit">⚡ HIIT</option>
-          <option value="funcional">🤸 Funcional</option>
-          <option value="yoga">🧘 Yoga/Pilates</option>
-          <option value="caminhada">🚶 Caminhada</option>
-          <option value="corrida">🏃 Corrida</option>
-          <option value="ciclismo">🚴 Ciclismo</option>
-          <option value="natacao">🏊 Natação</option>
-          <option value="outros">🎯 Outros</option>
-        </select>
-      </div>
       <div class="fg"><label>Duração (min)</label><input type="number" id="tr-duracao" placeholder="60"></div>
+      <div class="fg"><label>Data</label><input type="date" id="tr-data"></div>
     </div>
-    <div class="fg"><label>Exercícios / Observações</label><textarea id="tr-obs" placeholder="Ex: Supino 4x10, Desenvolvimento 3x12..."></textarea></div>
-    <div class="fg"><label>Calorias Queimadas (auto ou manual)</label>
-      <div class="row"><input type="number" id="tr-kcal" placeholder="Calculado automaticamente"><button class="btn btn-out btn-sm" onclick="autoCalcWorkoutKcal()" style="white-space:nowrap">⚡ Auto</button></div>
+    <div class="fg mt4"><label>Calorias Queimadas</label>
+      <div class="row"><input type="number" id="tr-kcal" placeholder="Auto"><button class="btn btn-out btn-sm" onclick="autoCalcWorkoutKcal()" style="white-space:nowrap">⚡ Auto</button></div>
     </div>
-    <div class="fg"><label>Data</label><input type="date" id="tr-data"></div>
+    <div class="fg mt4"><label>Obs. Geral</label><textarea id="tr-obs" rows="2" placeholder="Observações do treino..."></textarea></div>
     <button class="btn btn-pri btn-block mt8" onclick="saveTreino()">✓ Salvar Treino</button>
   </div>
 </div>
@@ -1109,6 +1144,37 @@ function renderDashboard(){
   if(supls.length)actHtml+=`<div class="log-item"><span class="log-ico">💊</span><div class="log-info"><div class="log-ttl">${supls.length} suplemento(s)</div><div class="log-sub">${supls.map(s=>s.name).join(', ')}</div></div></div>`;
   if(!actHtml)actHtml=`<div class="empty"><div class="empty-ico">🌅</div><div class="empty-txt">Nenhuma atividade registrada hoje.<br>Comece registrando um treino ou refeição!</div></div>`;
   document.getElementById('dash-activity').innerHTML=`<div class="log-list">${actHtml}</div>`;
+  renderDashboardEvolution();
+}
+
+function renderDashboardEvolution(){
+  const el=document.getElementById('dash-evolution');if(!el)return;
+  // Find most recent workout with exercises
+  const last=[...D.workouts].filter(w=>w.exercises&&w.exercises.length).sort((a,b)=>b.date.localeCompare(a.date))[0];
+  if(!last){el.innerHTML='<div class="fs12 txt-muted" style="text-align:center;padding:8px">Nenhum treino com exercícios registrado ainda.</div>';return;}
+  let html='';
+  last.exercises.forEach(ex=>{
+    const prev=getLastExerciseLog2(ex.name,last.id);
+    const curMaxW=ex.sets&&ex.sets.length?Math.max(...ex.sets.map(s=>s.weight||0)):0;
+    const curAvgR=ex.sets&&ex.sets.length?Math.round(ex.sets.reduce((s,x)=>s+(x.reps||0),0)/ex.sets.length):0;
+    let badge='same';let badgeTxt='=';let detail=`${ex.sets.length}s · ${curMaxW>0?curMaxW+'kg · ':''}${curAvgR} reps`;
+    if(prev){
+      const prevMaxW=Math.max(...prev.sets.map(s=>s.weight||0));
+      const prevAvgR=Math.round(prev.sets.reduce((s,x)=>s+(x.reps||0),0)/prev.sets.length);
+      const wDiff=curMaxW-prevMaxW;const rDiff=curAvgR-prevAvgR;
+      if(wDiff>0||(wDiff===0&&rDiff>0)){badge='up';badgeTxt=wDiff>0?`+${wDiff}kg`:`+${rDiff}rep`;}
+      else if(wDiff<0||(wDiff===0&&rDiff<0)){badge='down';badgeTxt=wDiff<0?`${wDiff}kg`:`${rDiff}rep`;}
+      detail+=` <span class="txt-muted">(ant: ${prevMaxW>0?prevMaxW+'kg · ':''}${prevAvgR} reps)</span>`;
+    }
+    html+=`<div class="evol-item ${badge}"><div class="fg"><div class="evol-name">${ex.name}</div><div class="evol-vals">${detail}</div></div><span class="evol-badge ${badge}">${badgeTxt}</span></div>`;
+  });
+  el.innerHTML=html||'<div class="fs12 txt-muted" style="text-align:center;padding:8px">Sem dados de evolução.</div>';
+}
+
+function getLastExerciseLog2(exName,excludeId){
+  const wks=[...D.workouts].filter(w=>w.id!==excludeId&&w.exercises&&w.exercises.length).sort((a,b)=>b.date.localeCompare(a.date));
+  for(const w of wks){const ex=w.exercises.find(e=>e.name===exName);if(ex&&ex.sets&&ex.sets.length)return ex;}
+  return null;
 }
 function progBar(lbl,val,goal,cls){
   const pct=goal>0?Math.min(100,Math.round(val/goal*100)):0;
@@ -1116,22 +1182,180 @@ function progBar(lbl,val,goal,cls){
   return `<div class="prog-wrap">${hd}<div class="prog-bar"><div class="prog-fill ${cls}" style="width:${pct}%"></div></div></div>`;
 }
 
+// ===================== WORKOUT DATABASE =====================
+const WORKOUT_DB={
+  A:{name:'Treino A — Pull (Dorsal e Braços)',exercises:[
+    {name:'Pulldown Barra',group:'Dorsal/Bíceps',reps:'6-8'},
+    {name:'Puxada Alta Triângulo',group:'Dorsal/Bíceps',reps:'6-8',obs:'Rest Pause última série'},
+    {name:'Ramada Baixa Aberta',group:'Dorsal/Bíceps',reps:'6-8'},
+    {name:'Rosca Scott Máquina',group:'Bíceps',reps:'8-12'},
+    {name:'Cadeira Abdutora',group:'Post/Glúteo',reps:'6-8'},
+    {name:'RDL',group:'Post/Glúteo',reps:'6-8',obs:'2 Step'},
+    {name:'Abdominal Supra Polia',group:'Abdominal',reps:'12'},
+  ]},
+  B:{name:'Treino B — Push (Peito e Ombros)',exercises:[
+    {name:'Abdominal Supra Máquina',group:'Abdominal',reps:'10-12'},
+    {name:'Panturrilha Máquina',group:'Panturrilha',reps:'10-12'},
+    {name:'Elevação Lateral Polia',group:'Ombros',reps:'11-15',obs:'Polia altura do quadril'},
+    {name:'Desenvolvimento Smith',group:'Ombros',reps:'8-10'},
+    {name:'Elevação Lateral Halter',group:'Ombros',reps:'8-10',obs:'2 Drop Set última série'},
+    {name:'Voador Frente',group:'Peito',reps:'11-15'},
+    {name:'Supino Reto Maq Horizontal',group:'Peito',reps:'8-10'},
+    {name:'Tríceps Corda',group:'Tríceps',reps:'6-8'},
+  ]},
+  C:{name:'Treino C — Leg (Perna Completa)',exercises:[
+    {name:'Cadeira Abdutora',group:'Post/Glúteo',reps:'11-15'},
+    {name:'Cadeira Flexora',group:'Post/Glúteo',reps:'11-15',obs:'Drop Set última série'},
+    {name:'Stiff',group:'Post/Glúteo',reps:'6-8'},
+    {name:'Elevação Pélvica Máquina',group:'Post/Glúteo',reps:'8-10',obs:'2" pico de contração'},
+    {name:'Hack Squat',group:'Quadríceps',reps:'6-8',obs:'Deadstop 3" controlando excêntrica'},
+    {name:'Cadeira Extensora',group:'Quadríceps',reps:'6-8'},
+    {name:'Búlgaro Smith Parcial Baixa',group:'Glúteo',reps:'8'},
+  ]},
+  A2:{name:'Treino A2 — Upper Day',exercises:[
+    {name:'Low Row',group:'Dorsal',reps:'6-8'},
+    {name:'Remada Curvada',group:'Dorsal',reps:'6-8'},
+    {name:'Puxada Alta Aberta',group:'Dorsal',reps:'6-8'},
+    {name:'Pull Around',group:'Dorsal',reps:'8'},
+    {name:'Tríceps Francês Máquina',group:'Tríceps',reps:'8-12'},
+    {name:'Abdominal Máquina',group:'Abdominal',reps:'12-15'},
+  ]},
+  E:{name:'Treino E — Fullbody',exercises:[
+    {name:'Cadeira Adutora',group:'Pernas',reps:'11-15'},
+    {name:'Cadeira Abdutora',group:'Pernas',reps:'8-10'},
+    {name:'Flexora em Pé Unilateral',group:'Pernas',reps:'11-15'},
+    {name:'Agachamento Smith',group:'Pernas',reps:'6-8',obs:'Deadstop 3"'},
+    {name:'Elevação Lateral Máquina',group:'Ombros',reps:'11-15'},
+    {name:'Elevação Frontal Neutra',group:'Ombros',reps:'6-8'},
+    {name:'Supino Inclinado Halter',group:'Peito',reps:'11-15'},
+    {name:'Cross Over Polia Alta',group:'Peito',reps:'8-10'},
+  ]},
+};
+
+let currentTrainingDay='';
+
+function selectTrainingDay(day){
+  currentTrainingDay=day;
+  document.querySelectorAll('.tr-day-btn').forEach(b=>b.classList.toggle('active',b.dataset.day===day));
+  renderExerciseList(day);
+}
+
+function getLastExerciseLog(exName){
+  const wks=[...D.workouts]
+    .filter(w=>w.exercises&&w.exercises.length)
+    .sort((a,b)=>b.date.localeCompare(a.date));
+  for(const w of wks){
+    const ex=w.exercises.find(e=>e.name===exName);
+    if(ex&&ex.sets&&ex.sets.length)return{date:w.date,sets:ex.sets};
+  }
+  return null;
+}
+
+function fmtPrevSets(sets){
+  if(!sets||!sets.length)return null;
+  const maxW=Math.max(...sets.map(s=>s.weight||0));
+  const avgR=Math.round(sets.reduce((s,x)=>s+(x.reps||0),0)/sets.length);
+  return`${sets.length}s · ${maxW>0?maxW+'kg · ':''}${avgR} reps`;
+}
+
+function renderExerciseList(day){
+  const db=WORKOUT_DB[day];
+  if(!db){document.getElementById('tr-ex-list').innerHTML='';return;}
+  let html=`<div class="fs11 txt-muted mb8" style="font-weight:700;text-transform:uppercase;letter-spacing:.5px">${db.name}</div>`;
+  db.exercises.forEach((ex,i)=>{
+    const prev=getLastExerciseLog(ex.name);
+    const prevStr=prev?fmtPrevSets(prev.sets):null;
+    html+=`<div class="tr-ex-card" id="trex_${i}">
+      <div class="tr-ex-hd">
+        <div>
+          <div class="tr-ex-name">${ex.name}</div>
+          <div class="tr-ex-meta">${ex.group} · ${ex.reps} reps · 2-3 min</div>
+          ${ex.obs?`<div class="tr-ex-obs">⚡ ${ex.obs}</div>`:''}
+        </div>
+        <div class="tr-ex-prev">${prevStr?'⏮ '+prevStr:'Novo exercício'}</div>
+      </div>
+      <div class="tr-set-hdr"><span>#</span><span>REPS</span><span>KG</span><span></span></div>
+      <div class="tr-sets-wrap" id="sets_${i}">
+        ${[1,2,3].map(n=>`<div class="tr-set-row">
+          <span class="tr-sn">S${n}</span>
+          <input type="number" class="tr-set-inp" placeholder="${ex.reps}">
+          <input type="number" class="tr-set-inp" placeholder="kg" step="0.5">
+          <button class="tr-set-del" onclick="removeExSet(this)">✕</button>
+        </div>`).join('')}
+      </div>
+      <button class="btn btn-out btn-sm mt4" style="width:100%" onclick="addExSet(${i})">+ Série</button>
+    </div>`;
+  });
+  document.getElementById('tr-ex-list').innerHTML=html;
+}
+
+function addExSet(exIdx){
+  const wrap=document.getElementById('sets_'+exIdx);if(!wrap)return;
+  const n=wrap.querySelectorAll('.tr-set-row').length+1;
+  const row=document.createElement('div');row.className='tr-set-row';
+  const db=WORKOUT_DB[currentTrainingDay];
+  const repsHint=db?db.exercises[exIdx]?.reps:'';
+  row.innerHTML=`<span class="tr-sn">S${n}</span><input type="number" class="tr-set-inp" placeholder="${repsHint}"><input type="number" class="tr-set-inp" placeholder="kg" step="0.5"><button class="tr-set-del" onclick="removeExSet(this)">✕</button>`;
+  wrap.appendChild(row);
+}
+
+function removeExSet(btn){
+  const row=btn.closest('.tr-set-row');if(!row)return;
+  const wrap=row.parentElement;row.remove();
+  // Re-number
+  wrap.querySelectorAll('.tr-set-row').forEach((r,i)=>{const sn=r.querySelector('.tr-sn');if(sn)sn.textContent='S'+(i+1);});
+}
+
+function collectExerciseSets(){
+  const db=WORKOUT_DB[currentTrainingDay];if(!db)return[];
+  return db.exercises.map((ex,i)=>{
+    const wrap=document.getElementById('sets_'+i);if(!wrap)return null;
+    const rows=wrap.querySelectorAll('.tr-set-row');
+    const sets=[...rows].map(r=>{
+      const inps=r.querySelectorAll('.tr-set-inp');
+      return{reps:parseFloat(inps[0]?.value)||0,weight:parseFloat(inps[1]?.value)||0};
+    }).filter(s=>s.reps>0||s.weight>0);
+    return sets.length?{name:ex.name,group:ex.group,sets}:null;
+  }).filter(Boolean);
+}
+
 // ===================== TREINO =====================
 function renderTreino(){
   const wks=todayWorkouts();const total=dayBurned();
   let html=`<div class="card" style="margin-bottom:10px"><div class="flex-bc"><div><div class="fs12 txt-muted">Hoje · ${wks.length} treino(s)</div><div class="fw8" style="font-size:18px">${total} <span class="fs12 txt-muted">kcal queimadas</span></div></div></div></div>`;
   if(!wks.length)html+=`<div class="empty"><div class="empty-ico">🏋️</div><div class="empty-txt">Nenhum treino registrado hoje.<br>Vamos nessa! 💪</div></div>`;
-  else html+=`<div class="log-list">`+wks.map(w=>`<div class="log-item"><span class="log-ico">${tipoEmoji(w.type)}</span><div class="log-info"><div class="log-ttl">${w.name||tipoLabel(w.type)}</div><div class="log-sub">${tipoLabel(w.type)} · ${w.duration}min · ${w.caloriesBurned||0}kcal</div>${w.obs?`<div class="log-meta">${w.obs}</div>`:''}</div><button class="log-del" onclick="deleteTreino('${w.id}')">🗑</button></div>`).join('')+'</div>';
+  else html+=wks.map(w=>{
+    const dayLabel=w.trainingDay?` · ${WORKOUT_DB[w.trainingDay]?.name||w.trainingDay}`:'';
+    let exHtml='';
+    if(w.exercises&&w.exercises.length){
+      exHtml=`<div style="margin-top:8px;display:flex;flex-direction:column;gap:4px">`;
+      w.exercises.forEach(ex=>{
+        const best=ex.sets&&ex.sets.length?ex.sets.reduce((b,s)=>((s.weight||0)>(b.weight||0)?s:b),ex.sets[0]):null;
+        exHtml+=`<div style="display:flex;justify-content:space-between;font-size:11px;padding:4px 8px;background:var(--surface3);border-radius:4px">
+          <span style="font-weight:600">${ex.name}</span>
+          <span class="txt-muted">${ex.sets.length}s${best&&best.weight?' · '+best.weight+'kg':''} · ${best?best.reps+' reps':''}</span>
+        </div>`;
+      });
+      exHtml+='</div>';
+    }
+    return`<div class="card mb8"><div class="flex-bc"><div><div class="fw7">${tipoEmoji(w.type)} ${w.name||tipoLabel(w.type)}${dayLabel}</div><div class="fs11 txt-muted mt4">${w.duration}min · ${w.caloriesBurned||0}kcal${w.obs?' · '+w.obs:''}</div></div><button class="log-del" onclick="deleteTreino('${w.id}')">🗑</button></div>${exHtml}</div>`;
+  }).join('');
   document.getElementById('treino-list').innerHTML=html;
 }
 function tipoLabel(t){const m={musculacao:'Musculação',cardio_moderado:'Cardio Moderado',cardio_intenso:'Cardio Intenso',hiit:'HIIT',funcional:'Funcional',yoga:'Yoga/Pilates',caminhada:'Caminhada',corrida:'Corrida',ciclismo:'Ciclismo',natacao:'Natação',outros:'Outros'};return m[t]||t}
 function tipoEmoji(t){const m={musculacao:'🏋️',cardio_moderado:'🚴',cardio_intenso:'🏃',hiit:'⚡',funcional:'🤸',yoga:'🧘',caminhada:'🚶',corrida:'🏃',ciclismo:'🚴',natacao:'🏊',outros:'🎯'};return m[t]||'🏋️'}
 function saveTreino(){
-  const nome=v('tr-nome');const tipo=v('tr-tipo');const dur=parseInt(v('tr-duracao'));const obs=v('tr-obs');const kcal=parseInt(v('tr-kcal'))||estKcalTreino(tipo,dur||0);const data=v('tr-data')||todayKey();
+  const dur=parseInt(v('tr-duracao'));const obs=v('tr-obs');const data=v('tr-data')||todayKey();
   if(!dur||dur<1){toast('⚠️ Informe a duração!','warning');return}
-  D.workouts.push({id:uid(),date:data,type:tipo,name:nome||tipoLabel(tipo),duration:dur,caloriesBurned:kcal,obs});
+  const exercises=collectExerciseSets();
+  const dayDb=WORKOUT_DB[currentTrainingDay];
+  const nome=dayDb?dayDb.name:(currentTrainingDay?'Treino '+currentTrainingDay:'Musculação');
+  const tipo='musculacao';
+  const kcal=parseInt(v('tr-kcal'))||estKcalTreino(tipo,dur);
+  D.workouts.push({id:uid(),date:data,type:tipo,trainingDay:currentTrainingDay,name:nome,duration:dur,caloriesBurned:kcal,exercises,obs});
   saveData();closeModal('modalTreino');renderTreino();renderDashboard();toast('✅ Treino salvo!');
-  ['tr-nome','tr-duracao','tr-obs','tr-kcal'].forEach(id=>setV(id,''));
+  currentTrainingDay='';
+  ['tr-duracao','tr-obs','tr-kcal'].forEach(id=>setV(id,''));
 }
 function deleteTreino(id){if(!confirm('Remover este treino?'))return;D.workouts=D.workouts.filter(w=>w.id!==id);saveData();renderTreino();renderDashboard();toast('🗑️ Removido')}
 function autoCalcWorkoutKcal(){const t=v('tr-tipo');const d=parseInt(v('tr-duracao'))||0;if(!d){toast('⚠️ Informe a duração primeiro!','warning');return}setV('tr-kcal',estKcalTreino(t,d))}
@@ -1635,7 +1859,13 @@ function confirmReset(){if(!confirm('⚠️ ATENÇÃO: Isso apagará TODOS os se
 function openModal(id){
   document.getElementById(id).classList.add('open');
   const today=todayKey();
-  if(id==='modalTreino')setV('tr-data',today);
+  if(id==='modalTreino'){
+    setV('tr-data',today);
+    currentTrainingDay='';
+    document.querySelectorAll('.tr-day-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById('tr-ex-list').innerHTML='';
+    ['tr-duracao','tr-obs','tr-kcal'].forEach(id=>setV(id,''));
+  }
   if(id==='modalRefeicao'){setV('ref-data-inp',today);document.getElementById('food-rows').innerHTML='';addFoodRow();}
   if(id==='modalSupl'){setV('supl-data',today);const now=new Date();setV('supl-hora',String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0'));}
 }

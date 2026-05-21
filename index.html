@@ -241,11 +241,30 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
 .ficha-tbl-obs{font-size:10px;color:#a78bfa;font-style:italic}
 .ficha-copy-btn{background:transparent;border:1px solid rgba(251,191,36,.3);color:#fbbf24;border-radius:3px;padding:2px 7px;font-size:9px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.15s}
 .ficha-copy-btn:hover{background:#fbbf24;color:#000}
-/* Ficha editor — gold accents */
-.ficha-ex-card{background:#0f0f1a;border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;border:1px solid rgba(251,191,36,.2)}
-.ficha-ex-inp{padding:6px 8px;border-radius:4px;border:1px solid #2a2a3a;background:#13131e;color:var(--text);font-size:12px;width:100%;box-sizing:border-box}
-.ficha-ex-inp:focus{border-color:#fbbf24;outline:none;box-shadow:0 0 0 2px rgba(251,191,36,.1)}
-.ficha-ex-card label{color:rgba(251,191,36,.6)!important}
+/* Ficha editor — tabela estilo PDF */
+.ficha-edit-wrap{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid #2a2a3a}
+.ficha-edit-tbl{width:100%;border-collapse:collapse;min-width:680px}
+.ficha-edit-th{background:#0a0a12;color:#f59e0b;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;padding:8px 7px;border:1px solid #1e1e2e;text-align:center;white-space:nowrap}
+.ficha-edit-th.col-ex{text-align:left;min-width:170px;width:22%}
+.ficha-edit-th.col-s{width:9%}
+.ficha-edit-th.col-des{width:10%}
+.ficha-edit-th.col-obs{width:18%;text-align:left}
+.ficha-edit-row:nth-child(odd){background:#12121c}
+.ficha-edit-row:nth-child(even){background:#181826}
+.ficha-edit-row:hover{background:#1c1c2e}
+.ficha-edit-row td{padding:5px 5px;border:1px solid #1e1e2e;vertical-align:middle}
+.ficha-nm-inp{background:transparent;border:none;color:#f8fafc;font-size:11px;font-weight:700;width:100%;padding:2px 4px;font-family:inherit}
+.ficha-nm-inp:focus{background:rgba(251,191,36,.06);border-bottom:1px solid #fbbf24;outline:none}
+.ficha-grp-lbl{font-size:9px;color:rgba(251,191,36,.45);padding:1px 4px;margin-top:1px}
+.ficha-s-inp{background:transparent;border:1px solid #252535;border-radius:3px;color:#fbbf24;font-size:10px;font-weight:700;text-align:center;padding:4px 2px;width:100%;font-family:inherit}
+.ficha-s-inp:focus{border-color:#fbbf24;background:rgba(251,191,36,.06);outline:none}
+.ficha-s-inp::placeholder{color:#3a3a4a;font-weight:400}
+.ficha-des-inp{background:transparent;border:1px solid #252535;border-radius:3px;color:rgba(255,255,255,.5);font-size:10px;text-align:center;padding:4px 2px;width:100%;font-family:inherit}
+.ficha-des-inp:focus{border-color:rgba(255,255,255,.3);outline:none}
+.ficha-obs-inp{background:transparent;border:1px solid #252535;border-radius:3px;color:#a78bfa;font-size:10px;padding:4px 5px;width:100%;font-family:inherit}
+.ficha-obs-inp:focus{border-color:#a78bfa;outline:none}
+.ficha-del-btn{background:transparent;border:none;color:#3a3a4a;cursor:pointer;font-size:14px;padding:2px 5px;transition:color .15s}
+.ficha-del-btn:hover{color:var(--danger)}
 .ficha-saved-badge{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3);border-radius:var(--radius-sm);padding:6px 12px;font-size:11px;font-weight:700;text-align:center;margin-top:8px}
 /* TREINO — DAY SELECTOR & EXERCISE CARDS */
 .tr-day-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:12px}
@@ -1456,78 +1475,86 @@ function renderFichaEditor(day){
   const nxt=getISOWeekInfo(nextDate);
   const nxtKey=weekKey(nxt.week,nxt.year);
   const saved=D.trainerPlans[nxtKey];
-  // Use saved plan for this day or fall back to WORKOUT_DB
-  let exercises=(saved&&saved.days&&saved.days[day]&&saved.days[day].exercises)||WORKOUT_DB[day]?.exercises||[];
+  const exercises=(saved&&saved.days&&saved.days[day]&&saved.days[day].exercises)||WORKOUT_DB[day]?.exercises||[];
   const el=document.getElementById('ficha-ex-editor');
-  el.innerHTML=exercises.map((ex,i)=>buildFichaExCard(ex,i)).join('');
-}
-
-function buildFichaExCard(ex,i){
-  return`<div class="ficha-ex-card" id="fichaex_${i}">
-    <div class="flex-bc mb6">
-      <div style="font-size:10px;color:var(--text-dim);font-weight:700">EXERCÍCIO ${i+1}</div>
-      <button class="log-del" onclick="removeFichaEx(${i})">🗑</button>
-    </div>
-    <div class="fg mb6"><label style="font-size:9px">Nome do Exercício</label>
-      <input type="text" class="ficha-ex-inp" id="fex-name-${i}" value="${ex.name||''}" placeholder="Nome do exercício">
-    </div>
-    <div class="g3 mb6">
-      <div class="fg" style="margin-bottom:0"><label style="font-size:9px">Grupo</label>
-        <input type="text" class="ficha-ex-inp" id="fex-group-${i}" value="${ex.group||''}" placeholder="Grupo">
-      </div>
-      <div class="fg" style="margin-bottom:0"><label style="font-size:9px">Reps</label>
-        <input type="text" class="ficha-ex-inp" id="fex-reps-${i}" value="${ex.reps||''}" placeholder="6-8">
-      </div>
-      <div class="fg" style="margin-bottom:0"><label style="font-size:9px">Séries</label>
-        <input type="number" class="ficha-ex-inp" id="fex-series-${i}" value="${ex.series||4}" min="1" max="8">
-      </div>
-    </div>
-    <div class="fg" style="margin-bottom:0"><label style="font-size:9px">Observação / Técnica</label>
-      <input type="text" class="ficha-ex-inp" id="fex-obs-${i}" value="${ex.obs||''}" placeholder="Ex: Drop set última série, Rest Pause...">
-    </div>
+  el.innerHTML=`<div class="ficha-edit-wrap">
+    <table class="ficha-edit-tbl">
+      <thead><tr>
+        <th class="ficha-edit-th col-ex">Exercício</th>
+        <th class="ficha-edit-th col-s">Série 1</th>
+        <th class="ficha-edit-th col-s">Série 2</th>
+        <th class="ficha-edit-th col-s">Série 3</th>
+        <th class="ficha-edit-th col-s">Série 4</th>
+        <th class="ficha-edit-th col-s">Série 5</th>
+        <th class="ficha-edit-th col-des">Descanso</th>
+        <th class="ficha-edit-th col-obs">Observação</th>
+        <th class="ficha-edit-th" style="width:30px"></th>
+      </tr></thead>
+      <tbody id="ficha-edit-tbody">${exercises.map((ex,i)=>buildFichaExRow(ex,i)).join('')}</tbody>
+    </table>
   </div>`;
 }
 
+function buildFichaExRow(ex,i){
+  // Pre-fill series intelligently from WORKOUT_DB or saved values
+  const r=ex.reps||'';
+  const s1=ex.s1!==undefined?ex.s1:'AQC 15-20';
+  const s2=ex.s2!==undefined?ex.s2:'REC 3-5';
+  const s3=ex.s3!==undefined?ex.s3:r;
+  const s4=ex.s4!==undefined?ex.s4:r;
+  const s5=ex.s5!==undefined?ex.s5:'';
+  const des=ex.descanso||'2-3 min';
+  const obs=ex.obs||'';
+  return`<tr class="ficha-edit-row" id="fichaex_${i}">
+    <td>
+      <input type="text" class="ficha-nm-inp" value="${ex.name||''}" placeholder="Nome do exercício">
+      <div class="ficha-grp-lbl">${ex.group||''}</div>
+    </td>
+    <td><input type="text" class="ficha-s-inp" value="${s1}" placeholder="—"></td>
+    <td><input type="text" class="ficha-s-inp" value="${s2}" placeholder="—"></td>
+    <td><input type="text" class="ficha-s-inp" value="${s3}" placeholder="—"></td>
+    <td><input type="text" class="ficha-s-inp" value="${s4}" placeholder="—"></td>
+    <td><input type="text" class="ficha-s-inp" value="${s5}" placeholder="—"></td>
+    <td><input type="text" class="ficha-des-inp" value="${des}" placeholder="2-3 min"></td>
+    <td><input type="text" class="ficha-obs-inp" value="${obs}" placeholder="Técnica..."></td>
+    <td style="text-align:center"><button class="ficha-del-btn" onclick="removeFichaEx(${i})">🗑</button></td>
+  </tr>`;
+}
+
 function addFichaExercise(){
-  const el=document.getElementById('ficha-ex-editor');
-  const count=el.querySelectorAll('.ficha-ex-card').length;
-  const div=document.createElement('div');
-  div.innerHTML=buildFichaExCard({name:'',group:'',reps:'6-8',series:4,obs:''},count);
-  el.appendChild(div.firstElementChild);
+  const tbody=document.getElementById('ficha-edit-tbody');if(!tbody)return;
+  const count=tbody.querySelectorAll('.ficha-edit-row').length;
+  tbody.insertAdjacentHTML('beforeend',buildFichaExRow({name:'',group:'',reps:'',s1:'',s2:'',s3:'',s4:'',s5:'',descanso:'2-3 min',obs:''},count));
 }
 
 function removeFichaEx(i){
-  const el=document.getElementById('fichaex_'+i);
-  if(el)el.remove();
-  // Re-index labels
-  document.querySelectorAll('#ficha-ex-editor .ficha-ex-card').forEach((c,idx)=>{
-    const lbl=c.querySelector('.flex-bc div');
-    if(lbl)lbl.textContent='EXERCÍCIO '+(idx+1);
-  });
+  const el=document.getElementById('fichaex_'+i);if(el)el.remove();
 }
 
-function copyRefToEditor(day,ex){
-  // ex comes as object with single quotes from onclick attr, reconstruct
-  addFichaExerciseFromObj(ex);
-}
+function copyRefToEditor(day,ex){addFichaExerciseFromObj(ex);}
 
 function addFichaExerciseFromObj(ex){
-  const el=document.getElementById('ficha-ex-editor');
-  const count=el.querySelectorAll('.ficha-ex-card').length;
-  const div=document.createElement('div');
-  div.innerHTML=buildFichaExCard(ex,count);
-  el.appendChild(div.firstElementChild);
+  const tbody=document.getElementById('ficha-edit-tbody');if(!tbody)return;
+  const count=tbody.querySelectorAll('.ficha-edit-row').length;
+  tbody.insertAdjacentHTML('beforeend',buildFichaExRow(ex,count));
 }
 
 function collectFichaExercises(){
-  const cards=document.querySelectorAll('#ficha-ex-editor .ficha-ex-card');
-  return[...cards].map((c,i)=>({
-    name:document.getElementById('fex-name-'+i)?.value||'',
-    group:document.getElementById('fex-group-'+i)?.value||'',
-    reps:document.getElementById('fex-reps-'+i)?.value||'',
-    series:parseInt(document.getElementById('fex-series-'+i)?.value)||4,
-    obs:document.getElementById('fex-obs-'+i)?.value||'',
-  })).filter(ex=>ex.name);
+  const rows=document.querySelectorAll('#ficha-edit-tbody .ficha-edit-row');
+  return[...rows].map(r=>{
+    const sinps=r.querySelectorAll('.ficha-s-inp');
+    const name=r.querySelector('.ficha-nm-inp')?.value||'';
+    const group=r.querySelector('.ficha-grp-lbl')?.textContent||'';
+    const s3=sinps[2]?.value||'';
+    return{
+      name,group,
+      s1:sinps[0]?.value||'',s2:sinps[1]?.value||'',
+      s3,s4:sinps[3]?.value||'',s5:sinps[4]?.value||'',
+      reps:s3,// keep reps for compatibility with logging
+      descanso:r.querySelector('.ficha-des-inp')?.value||'2-3 min',
+      obs:r.querySelector('.ficha-obs-inp')?.value||'',
+    };
+  }).filter(ex=>ex.name);
 }
 
 function saveFicha(){

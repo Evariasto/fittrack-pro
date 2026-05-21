@@ -192,6 +192,26 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
 .unit-btn{flex:1;padding:3px 5px;font-size:9px;font-weight:700;border-radius:3px;border:1px solid var(--border);background:var(--surface3);color:var(--text-muted);cursor:pointer;letter-spacing:.5px;transition:background .15s,color .15s}
 .unit-btn.active{background:var(--purple);border-color:var(--purple);color:#fff}
 .un-hint{font-size:9px;color:var(--text-dim);margin-top:3px;text-align:center;display:none}
+/* FICHA DE TREINO */
+.ficha-week-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.ficha-week-box{flex:1;border-radius:var(--radius-sm);padding:12px;text-align:center;border:2px solid var(--border)}
+.ficha-week-box.current{border-color:var(--border);background:var(--surface2)}
+.ficha-week-box.next{border-color:var(--purple);background:rgba(124,58,237,.12)}
+.fwb-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-dim);margin-bottom:4px}
+.fwb-num{font-size:28px;font-weight:900;line-height:1;color:var(--text)}
+.fwb-week{font-size:11px;color:var(--text-muted);margin-top:2px;font-weight:600}
+.fwb-dates{font-size:10px;color:var(--text-dim);margin-top:2px}
+.ficha-arrow{font-size:22px;color:var(--purple);font-weight:900;flex:none}
+.ficha-day-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.ficha-tab{padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;font-size:11px;font-weight:700;transition:.2s}
+.ficha-tab.active{background:var(--purple);border-color:var(--purple);color:#fff}
+.ficha-ex-card{background:var(--surface3);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;border:1px solid var(--border)}
+.ficha-ex-inp{padding:6px 8px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:12px;width:100%;box-sizing:border-box}
+.ficha-ex-inp:focus{border-color:var(--purple);outline:none}
+.ficha-ref-card{background:rgba(124,58,237,.06);border:1px dashed rgba(124,58,237,.3);border-radius:var(--radius-sm);padding:8px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.ficha-ref-name{font-size:12px;font-weight:600;color:var(--text-muted)}
+.ficha-ref-meta{font-size:10px;color:var(--text-dim)}
+.ficha-saved-badge{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3);border-radius:var(--radius-sm);padding:6px 12px;font-size:11px;font-weight:700;text-align:center;margin-top:8px}
 /* TREINO — DAY SELECTOR & EXERCISE CARDS */
 .tr-day-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:12px}
 .tr-day-btn{padding:10px 4px;border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:center;transition:.2s;line-height:1.2}
@@ -271,6 +291,7 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
 <nav class="sidebar" id="sidebar">
   <button class="snav-btn active" data-sec="dashboard" onclick="showSection('dashboard')"><span class="ico">🏠</span> Dashboard</button>
   <button class="snav-btn" data-sec="treino" onclick="showSection('treino')"><span class="ico">🏋️</span> Treino</button>
+  <button class="snav-btn" data-sec="ficha" onclick="showSection('ficha')"><span class="ico">📋</span> Ficha de Treino</button>
   <button class="snav-btn" data-sec="refeicoes" onclick="showSection('refeicoes')"><span class="ico">🍽️</span> Refeições</button>
   <button class="snav-btn" data-sec="agua" onclick="showSection('agua')"><span class="ico">💧</span> Hidratação</button>
   <button class="snav-btn" data-sec="suplementos" onclick="showSection('suplementos')"><span class="ico">💊</span> Suplementos</button>
@@ -370,6 +391,77 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
     <button class="btn btn-pri" onclick="openModal('modalTreino')">+ Registrar</button>
   </div>
   <div id="treino-list"></div>
+</section>
+
+<!-- FICHA DE TREINO -->
+<section class="section" id="sec-ficha">
+  <div class="sec-ttl mb8">📋 Ficha de Treino</div>
+
+  <!-- Semanas -->
+  <div class="card">
+    <div class="ficha-week-row">
+      <div class="ficha-week-box current">
+        <div class="fwb-lbl">Semana Atual</div>
+        <div class="fwb-num" id="fw-cur-num">—</div>
+        <div class="fwb-week" id="fw-cur-year"></div>
+        <div class="fwb-dates" id="fw-cur-dates"></div>
+      </div>
+      <div class="ficha-arrow">→</div>
+      <div class="ficha-week-box next">
+        <div class="fwb-lbl">Próxima Semana</div>
+        <div class="fwb-num" id="fw-nxt-num">—</div>
+        <div class="fwb-week" id="fw-nxt-year"></div>
+        <div class="fwb-dates" id="fw-nxt-dates"></div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="fg" style="margin-bottom:0">
+        <label>Fase do Mesociclo</label>
+        <select id="ficha-fase">
+          <option value="REVOLUME">REVOLUME</option>
+          <option value="BASE 01">BASE 01</option>
+          <option value="BASE 02">BASE 02</option>
+          <option value="PEAK">PEAK WEEK</option>
+          <option value="DELOAD">DELOAD</option>
+        </select>
+      </div>
+      <div class="fg" style="margin-bottom:0">
+        <label>Séries × Reps</label>
+        <input type="text" id="ficha-sreps" placeholder="Ex: 06 a 08">
+      </div>
+    </div>
+    <div class="fg mt8" style="margin-bottom:0">
+      <label>Orientações Gerais da Semana</label>
+      <textarea id="ficha-obs-global" rows="2" placeholder="Ex: Semana para progredir carga. Busque sobrecarga em todos os exercícios..."></textarea>
+    </div>
+  </div>
+
+  <!-- Referência atual -->
+  <div class="card">
+    <div class="card-title">📌 Referência — Plano Atual</div>
+    <div id="ficha-ref-content" class="fs12 txt-muted">Selecione um treino abaixo para ver a referência.</div>
+  </div>
+
+  <!-- Editor da próxima semana -->
+  <div class="card">
+    <div class="flex-bc mb8">
+      <div class="card-title" style="margin-bottom:0">✏️ Editar Próxima Semana</div>
+    </div>
+    <div class="ficha-day-tabs" id="ficha-day-tabs">
+      <button class="ficha-tab active" data-day="A" onclick="showFichaDay(this,'A')">A · Pull</button>
+      <button class="ficha-tab" data-day="B" onclick="showFichaDay(this,'B')">B · Push</button>
+      <button class="ficha-tab" data-day="C" onclick="showFichaDay(this,'C')">C · Leg</button>
+      <button class="ficha-tab" data-day="A2" onclick="showFichaDay(this,'A2')">A2 · Upper</button>
+      <button class="ficha-tab" data-day="E" onclick="showFichaDay(this,'E')">E · Full</button>
+    </div>
+    <div id="ficha-ex-editor"></div>
+    <button class="btn btn-out btn-sm mt4" style="width:100%" onclick="addFichaExercise()">+ Adicionar Exercício</button>
+  </div>
+
+  <button class="btn btn-pri btn-block" onclick="saveFicha()">
+    💾 Salvar Ficha — Semana <span id="ficha-save-lbl"></span>
+  </button>
+  <div id="ficha-saved-info" class="mt8"></div>
 </section>
 
 <!-- REFEIÇÕES -->
@@ -677,6 +769,7 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
 <nav class="bot-nav">
   <button class="bnav-btn active" data-sec="dashboard" onclick="showSection('dashboard')"><span class="ico">🏠</span>Início</button>
   <button class="bnav-btn" data-sec="treino" onclick="showSection('treino')"><span class="ico">🏋️</span>Treino</button>
+  <button class="bnav-btn" data-sec="ficha" onclick="showSection('ficha')"><span class="ico">📋</span>Ficha</button>
   <button class="bnav-btn" data-sec="refeicoes" onclick="showSection('refeicoes')"><span class="ico">🍽️</span>Comida</button>
   <button class="bnav-btn" data-sec="agua" onclick="showSection('agua')"><span class="ico">💧</span>Água</button>
   <button class="bnav-btn" data-sec="suplementos" onclick="showSection('suplementos')"><span class="ico">💊</span>Suplem.</button>
@@ -986,7 +1079,7 @@ function loadData(){const s=localStorage.getItem(SK);return s?JSON.parse(s):defa
 function saveData(){localStorage.setItem(SK,JSON.stringify(D))}
 function defaultData(){return{
   profile:{name:'',gender:'m',age:25,height:175,weight:75,goal:'lose',activity:'moderate',waterGoal:3000},
-  workouts:[],meals:[],waterLogs:{},supplements:[],measurements:[],bodyFat:[]
+  workouts:[],meals:[],waterLogs:{},supplements:[],measurements:[],bodyFat:[],trainerPlans:{}
 }}
 let D=loadData();
 
@@ -1083,7 +1176,7 @@ function showSection(id){
   }catch(e){console.error('showSection error:',e);}
 }
 function renderSection(id){
-  const fn={dashboard:renderDashboard,treino:renderTreino,refeicoes:renderRefeicoes,agua:renderAgua,suplementos:renderSupl,alimentos:renderAlimentos,medidas:renderMedidas,calculadoras:renderCalcs,progresso:renderProgresso,perfil:renderPerfil};
+  const fn={dashboard:renderDashboard,treino:renderTreino,ficha:renderFicha,refeicoes:renderRefeicoes,agua:renderAgua,suplementos:renderSupl,alimentos:renderAlimentos,medidas:renderMedidas,calculadoras:renderCalcs,progresso:renderProgresso,perfil:renderPerfil};
   if(fn[id])fn[id]();
 }
 function showTab(btn,tabId){try{window.scrollTo(0,0);}catch(e){}
@@ -1182,6 +1275,184 @@ function progBar(lbl,val,goal,cls){
   return `<div class="prog-wrap">${hd}<div class="prog-bar"><div class="prog-fill ${cls}" style="width:${pct}%"></div></div></div>`;
 }
 
+// ===================== FICHA DE TREINO =====================
+function getISOWeekInfo(date){
+  const d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));
+  const day=d.getUTCDay()||7;
+  d.setUTCDate(d.getUTCDate()+4-day);
+  const yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  const week=Math.ceil((((d-yearStart)/86400000)+1)/7);
+  return{week,year:d.getUTCFullYear()};
+}
+function getWeekStartDate(week,year){
+  const jan4=new Date(Date.UTC(year,0,4));
+  const day=jan4.getUTCDay()||7;
+  const mon=new Date(Date.UTC(year,0,4-day+1));
+  mon.setUTCDate(mon.getUTCDate()+(week-1)*7);
+  return mon;
+}
+function fmtWeekRange(week,year){
+  const s=getWeekStartDate(week,year);
+  const e=new Date(s);e.setUTCDate(s.getUTCDate()+6);
+  const f=d=>`${String(d.getUTCDate()).padStart(2,'0')}/${String(d.getUTCMonth()+1).padStart(2,'0')}`;
+  return`${f(s)} a ${f(e)}`;
+}
+function weekKey(week,year){return`${year}-W${String(week).padStart(2,'0')}`}
+
+let fichaCurrentDay='A';
+
+function renderFicha(){
+  if(!D.trainerPlans)D.trainerPlans={};
+  const now=new Date();
+  const cur=getISOWeekInfo(now);
+  const nextDate=new Date(now);nextDate.setDate(now.getDate()+7);
+  const nxt=getISOWeekInfo(nextDate);
+  // Week display
+  document.getElementById('fw-cur-num').textContent=cur.week;
+  document.getElementById('fw-cur-year').textContent=cur.year;
+  document.getElementById('fw-cur-dates').textContent=fmtWeekRange(cur.week,cur.year);
+  document.getElementById('fw-nxt-num').textContent=nxt.week;
+  document.getElementById('fw-nxt-year').textContent=nxt.year;
+  document.getElementById('fw-nxt-dates').textContent=fmtWeekRange(nxt.week,nxt.year);
+  document.getElementById('ficha-save-lbl').textContent=`${nxt.week} / ${nxt.year}`;
+  // Load next week plan if exists (to pre-fill editor)
+  const nxtKey=weekKey(nxt.week,nxt.year);
+  const saved=D.trainerPlans[nxtKey];
+  if(saved){
+    document.getElementById('ficha-fase').value=saved.phase||'BASE 01';
+    document.getElementById('ficha-sreps').value=saved.sreps||'';
+    document.getElementById('ficha-obs-global').value=saved.obs||'';
+    // Show saved badge
+    document.getElementById('ficha-saved-info').innerHTML=`<div class="ficha-saved-badge">✅ Ficha da semana ${nxt.week} salva em ${saved.savedAt||'—'}</div>`;
+  } else {
+    document.getElementById('ficha-saved-info').innerHTML='';
+  }
+  // Render first tab
+  showFichaDay(document.querySelector('.ficha-tab[data-day="A"]'),'A');
+}
+
+function showFichaDay(btn,day){
+  fichaCurrentDay=day;
+  document.querySelectorAll('.ficha-tab').forEach(b=>b.classList.toggle('active',b.dataset.day===day));
+  renderFichaRef(day);
+  renderFichaEditor(day);
+}
+
+function renderFichaRef(day){
+  const db=WORKOUT_DB[day];
+  const el=document.getElementById('ficha-ref-content');
+  if(!db){el.innerHTML='<span class="txt-muted">—</span>';return;}
+  // Check current week plan
+  const now=new Date();const cur=getISOWeekInfo(now);
+  const curPlan=D.trainerPlans&&D.trainerPlans[weekKey(cur.week,cur.year)];
+  const source=curPlan&&curPlan.days&&curPlan.days[day]?curPlan.days[day].exercises:db.exercises;
+  el.innerHTML=`<div class="fs10 txt-muted mb6" style="font-weight:700;text-transform:uppercase;letter-spacing:.5px">${db.name} — Semana ${cur.week}</div>`+
+    source.map(ex=>`<div class="ficha-ref-card">
+      <div>
+        <div class="ficha-ref-name">${ex.name}</div>
+        <div class="ficha-ref-meta">${ex.group} · ${ex.reps||'—'} reps${ex.series?' · '+ex.series+' séries':''}${ex.obs?' · '+ex.obs:''}</div>
+      </div>
+      <button class="btn btn-out btn-sm" style="font-size:10px;padding:4px 8px;white-space:nowrap" onclick="copyRefToEditor('${day}',${JSON.stringify(ex).replace(/"/g,"'")})">Copiar</button>
+    </div>`).join('');
+}
+
+function renderFichaEditor(day){
+  if(!D.trainerPlans)D.trainerPlans={};
+  const now=new Date();const nextDate=new Date(now);nextDate.setDate(now.getDate()+7);
+  const nxt=getISOWeekInfo(nextDate);
+  const nxtKey=weekKey(nxt.week,nxt.year);
+  const saved=D.trainerPlans[nxtKey];
+  // Use saved plan for this day or fall back to WORKOUT_DB
+  let exercises=(saved&&saved.days&&saved.days[day]&&saved.days[day].exercises)||WORKOUT_DB[day]?.exercises||[];
+  const el=document.getElementById('ficha-ex-editor');
+  el.innerHTML=exercises.map((ex,i)=>buildFichaExCard(ex,i)).join('');
+}
+
+function buildFichaExCard(ex,i){
+  return`<div class="ficha-ex-card" id="fichaex_${i}">
+    <div class="flex-bc mb6">
+      <div style="font-size:10px;color:var(--text-dim);font-weight:700">EXERCÍCIO ${i+1}</div>
+      <button class="log-del" onclick="removeFichaEx(${i})">🗑</button>
+    </div>
+    <div class="fg mb6"><label style="font-size:9px">Nome do Exercício</label>
+      <input type="text" class="ficha-ex-inp" id="fex-name-${i}" value="${ex.name||''}" placeholder="Nome do exercício">
+    </div>
+    <div class="g3 mb6">
+      <div class="fg" style="margin-bottom:0"><label style="font-size:9px">Grupo</label>
+        <input type="text" class="ficha-ex-inp" id="fex-group-${i}" value="${ex.group||''}" placeholder="Grupo">
+      </div>
+      <div class="fg" style="margin-bottom:0"><label style="font-size:9px">Reps</label>
+        <input type="text" class="ficha-ex-inp" id="fex-reps-${i}" value="${ex.reps||''}" placeholder="6-8">
+      </div>
+      <div class="fg" style="margin-bottom:0"><label style="font-size:9px">Séries</label>
+        <input type="number" class="ficha-ex-inp" id="fex-series-${i}" value="${ex.series||4}" min="1" max="8">
+      </div>
+    </div>
+    <div class="fg" style="margin-bottom:0"><label style="font-size:9px">Observação / Técnica</label>
+      <input type="text" class="ficha-ex-inp" id="fex-obs-${i}" value="${ex.obs||''}" placeholder="Ex: Drop set última série, Rest Pause...">
+    </div>
+  </div>`;
+}
+
+function addFichaExercise(){
+  const el=document.getElementById('ficha-ex-editor');
+  const count=el.querySelectorAll('.ficha-ex-card').length;
+  const div=document.createElement('div');
+  div.innerHTML=buildFichaExCard({name:'',group:'',reps:'6-8',series:4,obs:''},count);
+  el.appendChild(div.firstElementChild);
+}
+
+function removeFichaEx(i){
+  const el=document.getElementById('fichaex_'+i);
+  if(el)el.remove();
+  // Re-index labels
+  document.querySelectorAll('#ficha-ex-editor .ficha-ex-card').forEach((c,idx)=>{
+    const lbl=c.querySelector('.flex-bc div');
+    if(lbl)lbl.textContent='EXERCÍCIO '+(idx+1);
+  });
+}
+
+function copyRefToEditor(day,ex){
+  // ex comes as object with single quotes from onclick attr, reconstruct
+  addFichaExerciseFromObj(ex);
+}
+
+function addFichaExerciseFromObj(ex){
+  const el=document.getElementById('ficha-ex-editor');
+  const count=el.querySelectorAll('.ficha-ex-card').length;
+  const div=document.createElement('div');
+  div.innerHTML=buildFichaExCard(ex,count);
+  el.appendChild(div.firstElementChild);
+}
+
+function collectFichaExercises(){
+  const cards=document.querySelectorAll('#ficha-ex-editor .ficha-ex-card');
+  return[...cards].map((c,i)=>({
+    name:document.getElementById('fex-name-'+i)?.value||'',
+    group:document.getElementById('fex-group-'+i)?.value||'',
+    reps:document.getElementById('fex-reps-'+i)?.value||'',
+    series:parseInt(document.getElementById('fex-series-'+i)?.value)||4,
+    obs:document.getElementById('fex-obs-'+i)?.value||'',
+  })).filter(ex=>ex.name);
+}
+
+function saveFicha(){
+  if(!D.trainerPlans)D.trainerPlans={};
+  const now=new Date();const nextDate=new Date(now);nextDate.setDate(now.getDate()+7);
+  const nxt=getISOWeekInfo(nextDate);
+  const nxtKey=weekKey(nxt.week,nxt.year);
+  if(!D.trainerPlans[nxtKey])D.trainerPlans[nxtKey]={days:{}};
+  // Save current day exercises
+  D.trainerPlans[nxtKey].days[fichaCurrentDay]={exercises:collectFichaExercises()};
+  D.trainerPlans[nxtKey].phase=document.getElementById('ficha-fase').value;
+  D.trainerPlans[nxtKey].sreps=document.getElementById('ficha-sreps').value;
+  D.trainerPlans[nxtKey].obs=document.getElementById('ficha-obs-global').value;
+  D.trainerPlans[nxtKey].savedAt=new Date().toLocaleDateString('pt-BR');
+  saveData();
+  document.getElementById('ficha-saved-info').innerHTML=`<div class="ficha-saved-badge">✅ Ficha Semana ${nxt.week} / ${nxt.year} salva com sucesso!</div>`;
+  toast(`✅ Treino ${fichaCurrentDay} salvo para semana ${nxt.week}!`);
+}
+
 // ===================== WORKOUT DATABASE =====================
 const WORKOUT_DB={
   A:{name:'Treino A — Pull (Dorsal e Braços)',exercises:[
@@ -1234,6 +1505,15 @@ const WORKOUT_DB={
 
 let currentTrainingDay='';
 
+function getActivePlanExercises(day){
+  // Check if there's a trainer plan for the current ISO week
+  const now=new Date();const{week,year}=getISOWeekInfo(now);
+  const plan=(D.trainerPlans||{})[weekKey(week,year)];
+  if(plan&&plan.days&&plan.days[day]&&plan.days[day].exercises&&plan.days[day].exercises.length)
+    return plan.days[day].exercises;
+  return WORKOUT_DB[day]?.exercises||[];
+}
+
 function selectTrainingDay(day){
   currentTrainingDay=day;
   document.querySelectorAll('.tr-day-btn').forEach(b=>b.classList.toggle('active',b.dataset.day===day));
@@ -1261,8 +1541,11 @@ function fmtPrevSets(sets){
 function renderExerciseList(day){
   const db=WORKOUT_DB[day];
   if(!db){document.getElementById('tr-ex-list').innerHTML='';return;}
-  let html=`<div class="fs11 txt-muted mb8" style="font-weight:700;text-transform:uppercase;letter-spacing:.5px">${db.name}</div>`;
-  db.exercises.forEach((ex,i)=>{
+  const exercises=getActivePlanExercises(day); // uses trainer plan if available
+  const now=new Date();const{week,year}=getISOWeekInfo(now);
+  const hasPlan=!!(D.trainerPlans&&D.trainerPlans[weekKey(week,year)]?.days?.[day]);
+  let html=`<div class="fs11 txt-muted mb8" style="font-weight:700;text-transform:uppercase;letter-spacing:.5px">${db.name}${hasPlan?` <span style="color:#10b981;font-size:9px">✓ Plano sem. ${week}</span>`:''}</div>`;
+  exercises.forEach((ex,i)=>{
     const prev=getLastExerciseLog(ex.name);
     const prevStr=prev?fmtPrevSets(prev.sets):null;
     html+=`<div class="tr-ex-card" id="trex_${i}">
@@ -1293,8 +1576,8 @@ function addExSet(exIdx){
   const wrap=document.getElementById('sets_'+exIdx);if(!wrap)return;
   const n=wrap.querySelectorAll('.tr-set-row').length+1;
   const row=document.createElement('div');row.className='tr-set-row';
-  const db=WORKOUT_DB[currentTrainingDay];
-  const repsHint=db?db.exercises[exIdx]?.reps:'';
+  const activeExs=getActivePlanExercises(currentTrainingDay);
+  const repsHint=activeExs[exIdx]?.reps||'';
   row.innerHTML=`<span class="tr-sn">S${n}</span><input type="number" class="tr-set-inp" placeholder="${repsHint}"><input type="number" class="tr-set-inp" placeholder="kg" step="0.5"><button class="tr-set-del" onclick="removeExSet(this)">✕</button>`;
   wrap.appendChild(row);
 }

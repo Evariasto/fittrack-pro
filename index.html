@@ -374,6 +374,11 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
     <button class="btn btn-out btn-sm btn-block" onclick="resetWater()">🔄 Zerar Água do Dia</button>
   </div>
   <div class="card">
+    <div class="card-title">⏱️ Hoje — Consumo por Hora</div>
+    <div class="chart-wrap" style="height:130px"><canvas id="aguaHourlyChart"></canvas></div>
+    <div id="agua-timeline" class="mt8"></div>
+  </div>
+  <div class="card">
     <div class="card-title">📅 Histórico (7 dias)</div>
     <div class="chart-wrap"><canvas id="aguaChart"></canvas></div>
   </div>
@@ -1014,7 +1019,12 @@ function bfCategory(bf,gen){
 // ===================== TODAY DATA =====================
 function todayWorkouts(date){return D.workouts.filter(w=>w.date===(date||todayKey()))}
 function todayMeals(date){return D.meals.filter(m=>m.date===(date||todayKey()))}
-function todayWater(date){return D.waterLogs[date||todayKey()]||0}
+function todayWater(date){
+  const logs=D.waterLogs[date||todayKey()];
+  if(!logs)return 0;
+  if(typeof logs==='number')return logs; // legacy support
+  return logs.reduce((s,e)=>s+(e.ml||0),0);
+}
 function todaySupplements(date){return D.supplements.filter(s=>s.date===(date||todayKey()))}
 function dayNutrition(date){
   const meals=todayMeals(date);
@@ -1318,17 +1328,93 @@ function renderAgua(){
   document.getElementById('agua-num').textContent=w;
   document.getElementById('agua-meta-txt').textContent=`Meta: ${g}ml · ${pct}% concluído`;
   document.getElementById('agua-prog').style.width=pct+'%';
+  renderAguaHourly();
   renderAguaChart();
 }
-function addWater(ml){D.waterLogs[todayKey()]=(D.waterLogs[todayKey()]||0)+ml;saveData();renderAgua();renderDashboard();toast(`💧 +${ml}ml`)}
-function addWaterCustom(){const ml=parseInt(v('agua-custom-inp'));if(!ml||ml<1){toast('⚠️ Informe a quantidade!','warning');return}addWater(ml);setV('agua-custom-inp','')}
-function resetWater(){if(!confirm('Zerar água de hoje?'))return;D.waterLogs[todayKey()]=0;saveData();renderAgua();toast('🔄 Água zerada')}
+
+function addWater(ml){
+  const key=todayKey();
+  const now=new Date();
+  const time=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  // migrate legacy number to array
+  if(!D.waterLogs[key]||typeof D.waterLogs[key]==='number') D.waterLogs[key]=[];
+  D.waterLogs[key].push({id:uid(),time,ml});
+  saveData();renderAgua();renderDashboard();toast(`💧 +${ml}ml`);
+}
+
+function addWaterCustom(){
+  const ml=parseInt(v('agua-custom-inp'));
+  if(!ml||ml<1){toast('⚠️ Informe a quantidade!','warning');return}
+  addWater(ml);setV('agua-custom-inp','');
+}
+
+function resetWater(){
+  if(!confirm('Zerar água de hoje?'))return;
+  D.waterLogs[todayKey()]=[];saveData();renderAgua();renderDashboard();toast('🔄 Água zerada');
+}
+
+function deleteWaterEntry(id){
+  const key=todayKey();
+  if(Array.isArray(D.waterLogs[key]))D.waterLogs[key]=D.waterLogs[key].filter(e=>e.id!==id);
+  saveData();renderAgua();renderDashboard();toast('🗑️ Removido');
+}
+
+let aguaHourlyInst=null;
+function renderAguaHourly(){
+  const key=todayKey();
+  const raw=D.waterLogs[key];
+  const entries=Array.isArray(raw)?raw:(raw&&typeof raw==='number'?[{id:'leg',time:'00:00',ml:raw}]:[]);
+
+  // Build per-hour totals
+  const hourly=Array(24).fill(0);
+  entries.forEach(e=>{const h=parseInt((e.time||'0').split(':')[0])||0;hourly[h]+=e.ml;});
+
+  // Range: from first log hour (or 6) to current hour (or last log hour)
+  const currentH=new Date().getHours();
+  const loggedHours=entries.map(e=>parseInt((e.time||'0').split(':')[0])||0);
+  const minH=loggedHours.length?Math.min(...loggedHours,currentH):6;
+  const maxH=loggedHours.length?Math.max(...loggedHours,currentH):Math.max(currentH,22);
+  const labels=[],data=[];
+  for(let h=Math.max(0,minH);h<=Math.min(23,maxH);h++){labels.push(h+'h');data.push(hourly[h]);}
+
+  // Hourly bar chart
+  if(aguaHourlyInst)aguaHourlyInst.destroy();
+  const ctx=document.getElementById('aguaHourlyChart')?.getContext('2d');
+  if(ctx){
+    aguaHourlyInst=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data,backgroundColor:data.map(v=>v>0?'#06b6d4':'rgba(6,182,212,.12)'),borderRadius:4,label:'ml'}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y?c.parsed.y+'ml':''}}},scales:{y:{grid:{color:'#2a2a3a'},ticks:{color:'#94a3b8',font:{size:9}},beginAtZero:true},x:{grid:{display:false},ticks:{color:'#94a3b8',font:{size:9}}}},responsive:true,maintainAspectRatio:false}});
+  }
+
+  // Timeline entries list (most recent first)
+  const tl=document.getElementById('agua-timeline');
+  if(!tl)return;
+  if(!entries.length){
+    tl.innerHTML='<div class="fs12 txt-muted" style="text-align:center;padding:8px 0">Nenhum registro hoje</div>';return;
+  }
+  const goal=D.profile.waterGoal||3000;
+  let acc=0;
+  tl.innerHTML='<div class="log-list">'+[...entries].reverse().map(e=>{
+    acc+=e.ml;
+    return`<div class="log-item">
+      <span class="log-ico">💧</span>
+      <div class="log-info">
+        <div class="log-ttl">${e.ml}ml</div>
+        <div class="log-sub">🕐 ${e.time}</div>
+      </div>
+      <button class="log-del" onclick="deleteWaterEntry('${e.id}')">🗑</button>
+    </div>`;
+  }).join('')+'</div>';
+}
+
 let aguaChartInst=null;
 function renderAguaChart(){
-  const days=today7days();const data=days.map(d=>D.waterLogs[d]||0);const labels=days.map(d=>fmtDateShort(d));
+  const days=today7days();
+  const data=days.map(d=>todayWater(d));
+  const labels=days.map(d=>fmtDateShort(d));
   if(aguaChartInst)aguaChartInst.destroy();
-  const ctx=document.getElementById('aguaChart').getContext('2d');
-  aguaChartInst=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data,backgroundColor:data.map(v=>v>=(D.profile.waterGoal||3000)?'#10b981':'#06b6d4'),borderRadius:6,label:'Água (ml)'}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:'#2a2a3a'},ticks:{color:'#94a3b8',font:{size:10}},beginAtZero:true},x:{grid:{display:false},ticks:{color:'#94a3b8',font:{size:10}}}},responsive:true,maintainAspectRatio:false}});
+  const ctx=document.getElementById('aguaChart')?.getContext('2d');
+  if(!ctx)return;
+  const goal=D.profile.waterGoal||3000;
+  aguaChartInst=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data,backgroundColor:data.map(v=>v>=goal?'#10b981':'#06b6d4'),borderRadius:6,label:'Água (ml)'}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+'ml'}}},scales:{y:{grid:{color:'#2a2a3a'},ticks:{color:'#94a3b8',font:{size:10}},beginAtZero:true},x:{grid:{display:false},ticks:{color:'#94a3b8',font:{size:10}}}},responsive:true,maintainAspectRatio:false}});
 }
 
 // ===================== SUPLEMENTOS =====================

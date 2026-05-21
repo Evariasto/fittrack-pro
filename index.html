@@ -188,6 +188,10 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
 .food-row-new .food-row-macros{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px}
 .food-row-new .macro-chip{background:var(--surface3);border-radius:4px;padding:4px 6px;font-size:11px;text-align:center}
 .food-row-new .macro-chip span{display:block;font-size:9px;color:var(--text-dim)}
+.unit-sel{display:flex;gap:2px;margin-top:4px}
+.unit-btn{flex:1;padding:3px 5px;font-size:9px;font-weight:700;border-radius:3px;border:1px solid var(--border);background:var(--surface3);color:var(--text-muted);cursor:pointer;letter-spacing:.5px;transition:background .15s,color .15s}
+.unit-btn.active{background:var(--purple);border-color:var(--purple);color:#fff}
+.un-hint{font-size:9px;color:var(--text-dim);margin-top:3px;text-align:center;display:none}
 /* ALIMENTOS SECTION */
 .food-db-item{background:var(--surface2);border-radius:var(--radius-sm);padding:10px 12px;display:flex;align-items:center;gap:10px;margin-bottom:6px}
 .food-db-item .fdb-name{flex:1;font-size:13px;font-weight:700}
@@ -1169,9 +1173,15 @@ function addFoodRow(name='',cal='',prot='',carb='',fat=''){
         <input type="text" placeholder="🔍 Buscar na base..." value="${name}" oninput="searchFoodInput(this,'${rid}')" autocomplete="off">
         <div class="food-dropdown" id="dd_${rid}"></div>
       </div>
-      <div class="fg" style="max-width:80px;flex:none">
-        <label>Qtd (g)</label>
-        <input type="number" placeholder="100" value="" oninput="calcFoodRowMacros('${rid}')" data-per100-kcal="${cal?cal:''}" data-per100-p="${prot?prot:''}" data-per100-c="${carb?carb:''}" data-per100-f="${fat?fat:''}">
+      <div class="fg" style="max-width:90px;flex:none">
+        <label id="lbl-qtd-${rid}">Qtd (g)</label>
+        <input type="number" placeholder="100" value="" oninput="calcFoodRowMacros('${rid}')" data-per100-kcal="${cal?cal:''}" data-per100-p="${prot?prot:''}" data-per100-c="${carb?carb:''}" data-per100-f="${fat?fat:''}" data-unit="g" data-porcao="100">
+        <div class="unit-sel" id="unit-${rid}">
+          <button class="unit-btn active" data-unit="g" onclick="setUnit('${rid}','g')">G</button>
+          <button class="unit-btn" data-unit="ml" onclick="setUnit('${rid}','ml')">ML</button>
+          <button class="unit-btn" data-unit="un" onclick="setUnit('${rid}','un')">UN</button>
+        </div>
+        <div class="un-hint" id="un-hint-${rid}"></div>
       </div>
       <button class="food-del" style="align-self:flex-end;margin-bottom:0" onclick="document.getElementById('${rid}').remove();updateRefTotal()">✕</button>
     </div>
@@ -1183,7 +1193,7 @@ function addFoodRow(name='',cal='',prot='',carb='',fat=''){
     </div>`;
   document.getElementById('food-rows').appendChild(div);
   // If values passed directly (manual), set per-100g fields
-  if(cal){const qtdInp=div.querySelector('input[type=number]');qtdInp.value=100;qtdInp.dataset.per100Kcal=cal;qtdInp.dataset.per100P=prot;qtdInp.dataset.per100C=carb;qtdInp.dataset.per100F=fat;}
+  if(cal){const qtdInp=div.querySelector('input[type=number]');qtdInp.value=100;qtdInp.dataset.per100Kcal=cal;qtdInp.dataset.per100P=prot;qtdInp.dataset.per100C=carb;qtdInp.dataset.per100F=fat;qtdInp.dataset.unit='g';qtdInp.dataset.porcao=100;}
 }
 
 function searchFoodInput(inp,rid){
@@ -1214,20 +1224,50 @@ function selectFoodFromDB(rid,fid,name,kcal100,p100,c100,f100,porcao){
   const qtdInp=row.querySelector('input[type=number]');
   if(qtdInp){
     qtdInp.dataset.per100Kcal=kcal100;qtdInp.dataset.per100P=p100;qtdInp.dataset.per100C=c100;qtdInp.dataset.per100F=f100;
-    qtdInp.value=porcao; // set default portion
+    qtdInp.dataset.porcao=porcao; // store reference portion for UN calculation
+    // If unit is UN, default qty to 1; otherwise use porcao grams
+    const currentUnit=qtdInp.dataset.unit||'g';
+    qtdInp.value=currentUnit==='un'?1:porcao;
+    // Update UN hint if visible
+    const hint=document.getElementById('un-hint-'+rid);
+    if(hint&&currentUnit==='un'){hint.style.display='block';hint.textContent='1un≈'+porcao+'g';}
     calcFoodRowMacros(rid);
   }
+}
+
+function setUnit(rid,unit){
+  const row=document.getElementById(rid);if(!row)return;
+  // Update active button
+  row.querySelectorAll('.unit-btn').forEach(b=>b.classList.toggle('active',b.dataset.unit===unit));
+  // Update label
+  const lblMap={g:'Qtd (g)',ml:'Qtd (ml)',un:'Qtd (un)'};
+  const lbl=document.getElementById('lbl-qtd-'+rid);if(lbl)lbl.textContent=lblMap[unit]||'Qtd';
+  // Update data-unit on qty input
+  const qtdInp=row.querySelector('input[type=number]');if(qtdInp)qtdInp.dataset.unit=unit;
+  // Show/hide UN hint
+  const hint=document.getElementById('un-hint-'+rid);
+  if(hint){
+    if(unit==='un'){
+      const porcao=parseFloat(qtdInp?.dataset.porcao)||100;
+      hint.style.display='block';hint.textContent='1un≈'+porcao+'g';
+    } else {hint.style.display='none';}
+  }
+  // Recalculate
+  calcFoodRowMacros(rid);
 }
 
 function calcFoodRowMacros(rid){
   const row=document.getElementById(rid);if(!row)return;
   const qtdInp=row.querySelector('input[type=number]');
   const qtd=parseFloat(qtdInp?.value)||0;
+  const unit=qtdInp?.dataset.unit||'g';
+  const porcao=parseFloat(qtdInp?.dataset.porcao)||100;
   const k100=parseFloat(qtdInp?.dataset.per100Kcal)||0;
   const p100=parseFloat(qtdInp?.dataset.per100P)||0;
   const c100=parseFloat(qtdInp?.dataset.per100C)||0;
   const f100=parseFloat(qtdInp?.dataset.per100F)||0;
-  const mult=qtd/100;
+  // mult: for g and ml treat as grams (1ml≈1g); for un multiply by porcao/100
+  const mult=unit==='un'?(qtd*porcao/100):(qtd/100);
   const rk=document.getElementById('fr-kcal-'+rid);const rp=document.getElementById('fr-p-'+rid);
   const rc=document.getElementById('fr-c-'+rid);const rf=document.getElementById('fr-f-'+rid);
   if(rk)rk.textContent=Math.round(k100*mult);
@@ -1241,9 +1281,12 @@ function getFoodRows(){
   return[...document.querySelectorAll('#food-rows .food-row-new')].map(r=>{
     const nameInp=r.querySelector('.food-search-wrap input');
     const name=nameInp?.value||'';
+    const qtdInp=r.querySelector('input[type=number]');
+    const unit=qtdInp?.dataset.unit||'g';
+    const qty=parseFloat(qtdInp?.value)||0;
     const rk=r.querySelector('[id^="fr-kcal-"]');const rp=r.querySelector('[id^="fr-p-"]');
     const rc=r.querySelector('[id^="fr-c-"]');const rf=r.querySelector('[id^="fr-f-"]');
-    return{name,calories:parseFloat(rk?.textContent)||0,protein:parseFloat(rp?.textContent)||0,carbs:parseFloat(rc?.textContent)||0,fat:parseFloat(rf?.textContent)||0};
+    return{name,unit,qty,calories:parseFloat(rk?.textContent)||0,protein:parseFloat(rp?.textContent)||0,carbs:parseFloat(rc?.textContent)||0,fat:parseFloat(rf?.textContent)||0};
   }).filter(f=>f.name||f.calories);
 }
 

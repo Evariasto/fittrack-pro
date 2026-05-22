@@ -412,6 +412,82 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
 .hero-corner-badge{position:absolute;top:14px;right:14px;z-index:3;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:6px 10px;text-align:center;backdrop-filter:blur(6px)}
 .hero-corner-badge .hcb-top{font-size:8px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:1.5px;font-family:"Oswald",sans-serif}
 .hero-corner-badge .hcb-main{font-size:14px;font-weight:700;color:#fff;font-family:"Bebas Neue",sans-serif;letter-spacing:2px}
+/* ===== MOBILE RESPONSIVENESS ===== */
+html,body{overflow-x:hidden;max-width:100vw}
+*{box-sizing:border-box}
+img,video,canvas,iframe{max-width:100%;height:auto}
+/* Cards: never overflow horizontally */
+.card{overflow:hidden;word-break:break-word;min-width:0}
+/* flex-bc: children never overflow */
+.flex-bc{flex-wrap:wrap;gap:4px}
+.flex-bc>*{min-width:0}
+/* Log items */
+.log-ttl{white-space:normal;word-break:break-word;line-height:1.4}
+.log-info{overflow:hidden;min-width:0}
+.log-sub{white-space:normal;word-break:break-word}
+/* Section safe */
+.section{overflow-x:hidden}
+/* Grids responsive collapse */
+@media(max-width:380px){
+  .g2{grid-template-columns:1fr}
+  .g3{grid-template-columns:1fr 1fr}
+  .section{padding:0 10px 10px}
+  .card{padding:10px}
+  .modal{padding:12px}
+  .sec-ttl{font-size:18px}
+  .water-grid{grid-template-columns:repeat(3,1fr)}
+}
+/* g2 narrow items: allow single column on forms if needed */
+.g2>*{min-width:0}
+.g3>*{min-width:0}
+/* MEAL CARD — food list redesign */
+.meal-food-list{display:flex;flex-direction:column;gap:0;margin-top:6px}
+.mfl-item{display:flex;justify-content:space-between;align-items:flex-start;padding:4px 0;border-bottom:1px solid var(--border);gap:8px}
+.mfl-item:last-child{border-bottom:none}
+.mfl-name{font-size:12px;font-weight:600;color:var(--text);flex:1;min-width:0;word-break:break-word;line-height:1.4;padding-right:4px}
+.mfl-macros{font-size:10px;color:var(--text-muted);white-space:nowrap;flex-shrink:0;text-align:right;line-height:1.6}
+.mfl-kcal{font-size:11px;font-weight:700;color:var(--text);display:block}
+/* Ergo cards safe */
+.ergo-card{overflow:hidden;word-break:break-word}
+.ergo-chips{flex-wrap:wrap}
+.ergo-card-hd{align-items:flex-start}
+/* Base info cards safe */
+.base-card{overflow:hidden;word-break:break-word}
+.base-card-name{word-break:break-word}
+/* Cardio log safe */
+.cardio-log-body{overflow:hidden;min-width:0}
+.cardio-log-sub{white-space:normal;word-break:break-word}
+/* Bottom nav: always scrollable on mobile */
+.bot-nav{-webkit-overflow-scrolling:touch}
+.bnav-btn{min-width:52px;flex-shrink:0}
+/* Tabs: scroll safely */
+.tabs{-webkit-overflow-scrolling:touch}
+.tab-btn{white-space:nowrap}
+/* Stats: dynamic font size */
+.stat-val{font-size:clamp(16px,4.5vw,22px)}
+.sec-ttl{font-size:clamp(17px,5vw,21px)}
+/* Dashboard hero safe */
+.hero-stats{flex-wrap:wrap;justify-content:center;gap:12px}
+/* Week / day selectors: adapt on tiny screens */
+@media(max-width:360px){
+  .tr-week-grid{grid-template-columns:repeat(4,1fr)}
+  .tr-week-btn .wk-lbl{font-size:9px}
+  .cardio-type-grid{grid-template-columns:repeat(2,1fr)}
+  .tr-day-grid{grid-template-columns:repeat(3,1fr)}
+  .cdash-grid{grid-template-columns:repeat(2,1fr)}
+}
+/* Food row modal: wrap on narrow */
+.food-row-new .food-row-top{flex-wrap:wrap}
+.food-row-new .food-row-top .food-search-wrap{flex:1;min-width:140px}
+.food-row-new .food-row-top>div[style*="max-width:90px"]{min-width:80px}
+/* Macro chips in food modal: safe */
+.food-row-new .food-row-macros{overflow-x:auto;scrollbar-width:none}
+/* Progresso / evolução */
+.evol-item{overflow:hidden}
+.evol-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Prevent hero name overflow */
+.hero-name{font-size:clamp(32px,10vw,52px)!important}
+@media(min-width:768px){.hero-name{font-size:clamp(52px,8vw,80px)!important}}
 /* ===== CARDIO MODULE ===== */
 .cardio-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .cardio-type-card{background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);padding:10px 6px;text-align:center;cursor:pointer;transition:all .2s;user-select:none}
@@ -2254,9 +2330,16 @@ function renderRefeicoes(){
       const totP=m.foods.reduce((s,f)=>s+(f.protein||0),0);
       const totC=m.foods.reduce((s,f)=>s+(f.carbs||0),0);
       const totF=m.foods.reduce((s,f)=>s+(f.fat||0),0);
-      const foodList=m.foods.map(f=>`<div class="flex-bc fs12 txt-muted" style="padding:2px 0;border-bottom:1px solid var(--border)"><span>${f.name}</span><span>${f.calories}kcal · P:${f.protein}g C:${f.carbs}g G:${f.fat}g</span></div>`).join('');
-      const salChip=m.sal>0?` <span style="color:var(--text-muted);font-size:11px">🧂 ${m.sal}g sal</span>`:'';
-      return`<div class="card"><div class="flex-bc mb8"><div><div class="fw8 fs13">${mealTypeLabel(m.mealType)} ${m.name?'— '+m.name:''}</div><div class="fs12 txt-muted">${totCal} kcal · P:${Math.round(totP)}g C:${Math.round(totC)}g G:${Math.round(totF)}g${salChip}</div></div><div style="display:flex;gap:4px"><button class="log-edit" onclick="editMeal('${m.id}')" title="Editar refeicao">✏️</button><button class="log-del" onclick="deleteMeal('${m.id}')">🗑</button></div>${foodList}</div>`;
+      const foodList='<div class="meal-food-list">'+m.foods.map(f=>{
+        const qty=f.qty&&f.qty!==100?`<span style="color:var(--text-dim);font-size:9px"> ${f.qty}${f.unit||'g'}</span>`:'';
+        return`<div class="mfl-item">
+          <span class="mfl-name">${f.name}${qty}</span>
+          <div class="mfl-macros"><span class="mfl-kcal">${f.calories} kcal</span>P:${f.protein}g C:${f.carbs}g G:${f.fat}g</div>
+        </div>`;
+      }).join('')+'</div>';
+      const salChip=m.sal>0?`<span style="color:var(--text-muted);font-size:10px;display:inline-block;margin-top:2px">🧂 ${m.sal}g sal</span>`:'';
+      const totLine=`<div class="fs11 txt-muted" style="margin-top:1px">${totCal} kcal · P:${Math.round(totP)}g C:${Math.round(totC)}g G:${Math.round(totF)}g${salChip?'&nbsp;'+salChip:''}</div>`;
+      return`<div class="card"><div class="flex-bc mb6" style="align-items:flex-start"><div style="min-width:0;flex:1"><div class="fw8 fs13" style="word-break:break-word">${mealTypeLabel(m.mealType)}${m.name?' — '+m.name:''}</div>${totLine}</div><div style="display:flex;gap:4px;flex-shrink:0;margin-left:4px"><button class="log-edit" onclick="editMeal('${m.id}')" title="Editar refeição">✏️</button><button class="log-del" onclick="deleteMeal('${m.id}')">🗑</button></div></div>${foodList}</div>`;
     }).join('');
   }
   // Totais

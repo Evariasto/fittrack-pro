@@ -966,6 +966,11 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
     <div id="food-rows"></div>
     <div class="divider"></div>
     <div class="flex-bc fs12 txt-muted" id="ref-total-preview" style="background:var(--surface2);padding:8px 10px;border-radius:var(--radius-sm)">Total: 0 kcal | P:0g C:0g G:0g</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:10px;background:var(--surface2);padding:8px 12px;border-radius:var(--radius-sm)">
+      <span style="font-size:13px">🧂</span><span style="font-size:12px;color:var(--text-muted);white-space:nowrap">Sal adicionado:</span>
+      <input type="number" id="ref-sal" placeholder="0" min="0" step="0.1" style="width:70px;background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text);font-size:13px;text-align:center">
+      <span style="font-size:12px;color:var(--text-muted)">g &nbsp;<span style="color:var(--text-dim)">(opcional)</span></span>
+    </div>
     <button class="btn btn-pri btn-block mt12" onclick="saveRefeicao()">✓ Salvar Refeição</button>
   </div>
 </div>
@@ -1818,7 +1823,8 @@ function renderRefeicoes(){
       const totC=m.foods.reduce((s,f)=>s+(f.carbs||0),0);
       const totF=m.foods.reduce((s,f)=>s+(f.fat||0),0);
       const foodList=m.foods.map(f=>`<div class="flex-bc fs12 txt-muted" style="padding:2px 0;border-bottom:1px solid var(--border)"><span>${f.name}</span><span>${f.calories}kcal · P:${f.protein}g C:${f.carbs}g G:${f.fat}g</span></div>`).join('');
-      return`<div class="card"><div class="flex-bc mb8"><div><div class="fw8 fs13">${mealTypeLabel(m.mealType)} ${m.name?'— '+m.name:''}</div><div class="fs12 txt-muted">${totCal} kcal · P:${Math.round(totP)}g C:${Math.round(totC)}g G:${Math.round(totF)}g</div></div><button class="log-del" onclick="deleteMeal('${m.id}')">🗑</button></div>${foodList}</div>`;
+      const salChip=m.sal>0?` <span style="color:var(--text-muted);font-size:11px">🧂 ${m.sal}g sal</span>`:''';
+      return`<div class="card"><div class="flex-bc mb8"><div><div class="fw8 fs13">${mealTypeLabel(m.mealType)} ${m.name?'— '+m.name:''}</div><div class="fs12 txt-muted">${totCal} kcal · P:${Math.round(totP)}g C:${Math.round(totC)}g G:${Math.round(totF)}g${salChip}</div></div><button class="log-del" onclick="deleteMeal('${m.id}')">🗑</button></div>${foodList}</div>`;
     }).join('');
   }
   // Totais
@@ -1981,7 +1987,8 @@ function saveRefeicao(){
   const foods=getFoodRows();
   if(!foods.length){toast('⚠️ Adicione pelo menos um alimento!','warning');return}
   const mealTypeName={cafe:'Café da Manhã',almoco:'Almoço',lanche:'Lanche',jantar:'Jantar',pre:'Pré-Treino',pos:'Pós-Treino',outros:'Outros'};
-  D.meals.push({id:uid(),date:v('ref-data-inp')||todayKey(),mealType:v('ref-tipo'),name:mealTypeName[v('ref-tipo')]||v('ref-tipo'),foods});
+  const salVal=parseFloat(document.getElementById('ref-sal')?.value)||0;
+  D.meals.push({id:uid(),date:v('ref-data-inp')||todayKey(),mealType:v('ref-tipo'),name:mealTypeName[v('ref-tipo')]||v('ref-tipo'),foods,sal:salVal});
   saveData();closeModal('modalRefeicao');renderRefeicoes();renderDashboard();toast('✅ Refeição salva!');
 }
 function deleteMeal(id){if(!confirm('Remover refeição?'))return;D.meals=D.meals.filter(m=>m.id!==id);saveData();renderRefeicoes();renderDashboard();toast('🗑️ Removido')}

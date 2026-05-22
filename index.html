@@ -850,6 +850,17 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
   </div>
 
   <div class="card mt8">
+  <div class="card mt8">
+    <div class="card-title">☁️ Backup e Restauração</div>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;line-height:1.6">Exporte seus dados para um arquivo <strong style="color:var(--text)">.json</strong> e salve no Google Drive ou iCloud Drive. Para usar em outro dispositivo, importe o arquivo salvo.</p>
+    <div class="g2" style="gap:10px">
+      <button class="btn btn-block" style="background:var(--success);color:#fff;font-weight:700;font-size:13px;padding:12px" onclick="exportData()">📤 Exportar Dados</button>
+      <button class="btn btn-block" style="background:var(--surface3);color:var(--text);border:1px solid var(--border);font-weight:700;font-size:13px;padding:12px" onclick="document.getElementById('import-file').click()">📥 Importar Dados</button>
+    </div>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+    <div id="import-status" style="margin-top:8px;font-size:12px;text-align:center"></div>
+  </div>
+
     <div style="text-align:center">
       <div class="fs12 txt-muted mb8">⚠️ Apagar todos os dados do app</div>
       <button class="btn btn-dan btn-sm" onclick="confirmReset()">🗑️ Resetar App</button>
@@ -2649,6 +2660,45 @@ function generateFichaPDF(nomeAluno){
   doc.text('MFS TEAM · Matheus F Silva · Bodybuilding', pageW/2, fy+2, {align:'center'});
 
   return doc.output('blob');
+}
+
+// ===================== EXPORT / IMPORT DATA =====================
+function exportData(){
+  const now=new Date();
+  const ds=now.toISOString().slice(0,10);
+  const ts=String(now.getHours()).padStart(2,'0')+String(now.getMinutes()).padStart(2,'0');
+  const fname='FitTrack_backup_'+ds+'_'+ts+'.json';
+  const blob=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=fname;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},5000);
+  toast('📤 Backup exportado: '+fname);
+}
+
+function importData(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  const status=document.getElementById('import-status');
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const imp=JSON.parse(e.target.result);
+      if(typeof imp!=='object'||(!imp.meals&&!imp.profile&&!imp.workouts)){
+        status.innerHTML='<span style="color:var(--danger)">❌ Arquivo inválido ou corrompido.</span>';return;
+      }
+      const def=defaultData();
+      Object.keys(def).forEach(function(k){if(imp[k]===undefined)imp[k]=def[k];});
+      D=imp;saveData();renderDashboard();
+      if(document.getElementById('sec-refeicoes').classList.contains('active'))renderRefeicoes();
+      status.innerHTML='<span style="color:var(--success)">✅ Dados importados com sucesso!</span>';
+      toast('✅ Backup restaurado!');
+      document.getElementById('import-file').value='';
+    }catch(err){
+      status.innerHTML='<span style="color:var(--danger)">❌ Erro: '+err.message+'</span>';
+    }
+  };
+  reader.readAsText(file);
 }
 
 // Render initial section

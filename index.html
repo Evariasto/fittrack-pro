@@ -617,6 +617,18 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
   <div id="supl-list"></div>
 </section>
 
+<!-- BASE DE ALIMENTOS -->
+<section class="section" id="sec-alimentos">
+  <div class="sec-hd">
+    <div class="sec-ttl">🥗 Base de Alimentos</div>
+    <button class="btn btn-pri" onclick="openModal('modalNovoAlimento')">+ Novo</button>
+  </div>
+  <div class="card" style="padding:10px 12px">
+    <input type="text" id="alim-search" placeholder="🔍 Buscar alimento..." oninput="renderAlimentos()" style="margin-bottom:0">
+  </div>
+  <div class="cat-filter" id="cat-filter-btns"></div>
+  <div id="alimentos-list"></div>
+</section>
 <!-- MEDIDAS -->
 <section class="section" id="sec-medidas">
   <div class="sec-ttl mb8">📏 Medidas & Corpo</div>
@@ -882,18 +894,6 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
   <button class="bnav-btn" data-sec="progresso" onclick="showSection('progresso')"><span class="ico">📈</span>Progresso</button>
 </nav>
 
-<!-- BASE DE ALIMENTOS -->
-<section class="section" id="sec-alimentos">
-  <div class="sec-hd">
-    <div class="sec-ttl">🥗 Base de Alimentos</div>
-    <button class="btn btn-pri" onclick="openModal('modalNovoAlimento')">+ Novo</button>
-  </div>
-  <div class="card" style="padding:10px 12px">
-    <input type="text" id="alim-search" placeholder="🔍 Buscar alimento..." oninput="renderAlimentos()" style="margin-bottom:0">
-  </div>
-  <div class="cat-filter" id="cat-filter-btns"></div>
-  <div id="alimentos-list"></div>
-</section>
 
 <!-- MODAL NOVO ALIMENTO -->
 <div class="modal-overlay" id="modalNovoAlimento">

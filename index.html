@@ -1836,7 +1836,7 @@ function renderRefeicoes(){
       const totC=m.foods.reduce((s,f)=>s+(f.carbs||0),0);
       const totF=m.foods.reduce((s,f)=>s+(f.fat||0),0);
       const foodList=m.foods.map(f=>`<div class="flex-bc fs12 txt-muted" style="padding:2px 0;border-bottom:1px solid var(--border)"><span>${f.name}</span><span>${f.calories}kcal · P:${f.protein}g C:${f.carbs}g G:${f.fat}g</span></div>`).join('');
-      const salChip=m.sal>0?` <span style="color:var(--text-muted);font-size:11px">🧂 ${m.sal}g sal</span>`:''';
+      const salChip=m.sal>0?` <span style="color:var(--text-muted);font-size:11px">🧂 ${m.sal}g sal</span>`:'';
       return`<div class="card"><div class="flex-bc mb8"><div><div class="fw8 fs13">${mealTypeLabel(m.mealType)} ${m.name?'— '+m.name:''}</div><div class="fs12 txt-muted">${totCal} kcal · P:${Math.round(totP)}g C:${Math.round(totC)}g G:${Math.round(totF)}g${salChip}</div></div><div style="display:flex;gap:4px"><button class="log-edit" onclick="editMeal('${m.id}')" title="Editar refeicao">✏️</button><button class="log-del" onclick="deleteMeal('${m.id}')">🗑</button></div>${foodList}</div>`;
     }).join('');
   }

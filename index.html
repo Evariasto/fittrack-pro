@@ -2321,27 +2321,42 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 
 // ===================== PDF + WHATSAPP FICHA =====================
+// Pre-load trainer images at startup for reliable PDF embedding
+var _trainerImgL = null, _trainerImgR = null;
+
+function _extractB64FromEl(el){
+  if(!el) return null;
+  try{
+    var s = el.getAttribute('style') || '';
+    var i = s.indexOf('base64,');
+    if(i < 0) return null;
+    var start = i + 7;
+    var end = s.indexOf("'", start);
+    if(end < 0) end = s.indexOf('"', start);
+    if(end < 0) end = s.lastIndexOf(')');
+    if(end < 0 || end <= start) return null;
+    return s.substring(start, end);
+  }catch(e){ return null; }
+}
+
+function preloadTrainerImages(){
+  var elL = document.querySelector('.trainer-bg-left');
+  var elR = document.querySelector('.trainer-bg-right');
+  var b64L = _extractB64FromEl(elL);
+  var b64R = _extractB64FromEl(elR);
+  if(b64L){ _trainerImgL = new Image(); _trainerImgL.src = 'data:image/jpeg;base64,'+b64L; }
+  if(b64R){ _trainerImgR = new Image(); _trainerImgR.src = 'data:image/jpeg;base64,'+b64R; }
+}
+// Pre-load on DOM ready (images are data URIs, load instantly)
+document.addEventListener('DOMContentLoaded', preloadTrainerImages);
+
 function openEnviarModal(){
   saveFicha();
+  // Ensure images are loaded
+  if(!_trainerImgL || !_trainerImgR) preloadTrainerImages();
   var nameInp = document.getElementById('enviar-nome');
   if(nameInp && !nameInp.value && D.profile && D.profile.name) nameInp.value = D.profile.name;
   document.getElementById('modalEnviar').classList.add('open');
-}
-
-function getTrainerPhotoBase64(selector){
-  try{
-    var el = document.querySelector(selector || '.trainer-bg-left');
-    if(!el) return null;
-    var style = el.getAttribute('style') || '';
-    var start = style.indexOf('base64,');
-    if(start < 0) return null;
-    start += 7; // skip 'base64,'
-    var end = style.indexOf("')", start);
-    if(end < 0) end = style.indexOf('")', start);
-    if(end < 0) end = style.lastIndexOf(')');
-    if(end < 0 || end <= start) return null;
-    return style.substring(start, end);
-  }catch(e){ return null; }
 }
 
 function previewFichaPDF(){
@@ -2361,9 +2376,7 @@ function generateAndSendFicha(){
   var a = document.createElement('a');
   a.href = url;
   a.download = 'Ficha_' + nome.replace(/\s+/g,'_') + '.pdf';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(function(){ URL.revokeObjectURL(url); }, 8000);
   if(phone){
     var msg = encodeURIComponent('Olá ' + nome + '! 💪\n\nSegue sua ficha de treino da próxima semana em PDF (arquivo enviado acima).\n\nBons treinos! 🏋️\n\n— MFS TEAM | Matheus F Silva');
@@ -2381,72 +2394,120 @@ function generateFichaPDF(nomeAluno){
   var nxt = getISOWeekInfo(nextDate);
   var nxtKey = weekKey(nxt.week, nxt.year);
   var plan = (D.trainerPlans || {})[nxtKey] || {};
-  var pageW = doc.internal.pageSize.getWidth();
-  var pageH = doc.internal.pageSize.getHeight();
+  var pageW = doc.internal.pageSize.getWidth(); // 210mm
+  var pageH = doc.internal.pageSize.getHeight(); // 297mm
   var mg = 10;
 
   function fillPage(){ doc.setFillColor(10,10,15); doc.rect(0,0,pageW,pageH,'F'); }
   fillPage();
 
-  // === BANNER HEADER ===
-  var hh = 44;
-  doc.setFillColor(18,10,2); doc.rect(0,0,pageW,hh,'F');
+  // =========================================================
+  // BANNER — replica o banner do app
+  // =========================================================
+  var hh = 48; // banner height mm
 
-  // ---- Left trainer photo ----
-  var photoW = 0;
-  var b64L = getTrainerPhotoBase64('.trainer-bg-left');
-  if(b64L){
-    try{
-      doc.addImage('data:image/jpeg;base64,'+b64L,'JPEG',0,0,32,hh);
-      photoW = 33;
-    }catch(e){ photoW = 0; }
-  }
+  // Dark gold background
+  doc.setFillColor(15,9,2); doc.rect(0,0,pageW,hh,'F');
 
-  // ---- Right trainer photo ----
-  var b64R = getTrainerPhotoBase64('.trainer-bg-right');
-  if(b64R){
+  // ---- LEFT PHOTO ----
+  var lw = 70; // left photo width mm
+  var hasL = false;
+  if(_trainerImgL && _trainerImgL.complete && _trainerImgL.naturalWidth > 0){
     try{
-      doc.addImage('data:image/jpeg;base64,'+b64R,'JPEG',pageW-32,0,32,hh);
+      doc.addImage(_trainerImgL,'JPEG',0,0,lw,hh);
+      hasL = true;
     }catch(e){}
   }
 
-  // Gold vertical accent
-  var tx = photoW + 3;
-  doc.setFillColor(251,191,36); doc.rect(photoW,0,1.5,hh,'F');
-
-  // Text content area (between photos)
-  var textAreaW = (b64R ? pageW - 32 : pageW) - tx - 2;
-
-  // MFS TEAM
-  doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.setTextColor(251,191,36);
-  doc.text('MFS TEAM', tx+2, 14);
-  doc.setFontSize(7.5); doc.setTextColor(210,160,55);
-  doc.text('MATHEUS F SILVA', tx+2, 21);
-  doc.setFontSize(6.5); doc.setTextColor(160,115,30);
-  doc.text('HEAD TREINADOR · BODYBUILDING', tx+2, 27);
-
-  // Divider
-  doc.setFillColor(70,45,5); doc.rect(tx+2, 30, textAreaW*0.55, 0.5, 'F');
-
-  // Aluno + semana (right side of text area)
-  var rx = b64R ? pageW - 34 : pageW - mg;
-  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(255,215,90);
-  doc.text('ALUNO: '+nomeAluno.toUpperCase(), rx, 12, {align:'right'});
-  doc.setFontSize(8); doc.setTextColor(210,160,55);
-  doc.text('SEMANA '+nxt.week+' / '+nxt.year, rx, 20, {align:'right'});
-  var phase = plan.phase||''; var sreps = plan.sreps||'';
-  if(phase||sreps){
-    doc.setFontSize(7); doc.setTextColor(150,105,25);
-    doc.text((phase?'FASE: '+phase:'')+(phase&&sreps?' · ':'')+sreps, rx, 27, {align:'right'});
+  // ---- RIGHT PHOTO ----
+  var rw = 55; // right photo width mm
+  var hasR = false;
+  if(_trainerImgR && _trainerImgR.complete && _trainerImgR.naturalWidth > 0){
+    try{
+      doc.addImage(_trainerImgR,'JPEG',pageW-rw,0,rw,hh);
+      hasR = true;
+    }catch(e){}
   }
 
-  // Aluno line at bottom of header
-  doc.setFillColor(251,191,36); doc.rect(tx+2, 34, textAreaW*0.55, 0.5, 'F');
+  // Dark gradient overlay on photos (filled rect with low opacity simulation)
+  // Left fade: gradient from photo to dark center
+  if(hasL){
+    // Stepped overlay to simulate gradient
+    var steps = 8;
+    for(var si=0;si<steps;si++){
+      var alpha = Math.round(si*(160/steps));
+      var rx = lw - (steps-si)*(12/steps)*4;
+      var rwidth = 12;
+      doc.setFillColor(15,9,2);
+      // can't do true alpha, skip overlay - let photos show naturally
+    }
+  }
+
+  // Center separator lines
+  doc.setFillColor(180,130,30); doc.rect(hasL?lw:0,0,1,hh,'F');
+  doc.setFillColor(180,130,30); doc.rect(hasR?pageW-rw-1:pageW-1,0,1,hh,'F');
+
+  // ---- CENTER TEXT AREA ----
+  var cx = (hasL ? lw+3 : mg);
+  var cw = (hasR ? pageW-rw-1 : pageW) - cx - 2;
+
+  // MFS TEAM badge (top-left of center, styled like app)
+  var bx = cx+2, by = 4;
+  doc.setFillColor(180,100,5); doc.roundedRect(bx,by,22,8,2,2,'F');
+  doc.setFillColor(251,191,36); doc.roundedRect(bx,by,22,8,2,2,'S');
+  doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.setTextColor(251,191,36);
+  doc.text('MFS', bx+11, by+3.5, {align:'center'});
+  doc.setFontSize(5.5); doc.setTextColor(255,220,150);
+  doc.text('⚡ TEAM', bx+11, by+6.5, {align:'center'});
+
+  // HEAD / TREINADOR badge (top-right of center)
+  var bx2 = cx + cw - 24, by2 = 4;
+  doc.setFillColor(180,100,5); doc.roundedRect(bx2,by2,22,8,2,2,'F');
+  doc.setFillColor(251,191,36); doc.roundedRect(bx2,by2,22,8,2,2,'S');
+  doc.setFont('helvetica','bold'); doc.setFontSize(5); doc.setTextColor(255,220,150);
+  doc.text('HEAD', bx2+11, by2+3.2, {align:'center'});
+  doc.setFontSize(6.5); doc.setTextColor(251,191,36);
+  doc.text('TREINADOR', bx2+11, by2+6.5, {align:'center'});
+
+  // PERSONAL TRAINER badge (bottom of center, before name)
+  var bx3 = cx+2, by3 = hh-17;
+  doc.setFillColor(120,80,5); doc.roundedRect(bx3,by3,32,6,2,2,'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(5.5); doc.setTextColor(251,191,36);
+  doc.text('🏆 PERSONAL TRAINER', bx3+16, by3+4.2, {align:'center'});
+
+  // MATHEUS F SILVA — large name
+  doc.setFont('helvetica','bold'); doc.setFontSize(14); doc.setTextColor(255,255,255);
+  doc.text('MATHEUS F SILVA', cx+2, hh-7);
+
+  // Subtitle
+  doc.setFont('helvetica','normal'); doc.setFontSize(6); doc.setTextColor(180,150,80);
+  doc.text('M F S  T E A M  ·  B O D Y B U I L D I N G', cx+2, hh-2.5);
+
+  // ---- ALUNO + SEMANA (bottom-right corner) ----
+  var rx2 = hasR ? pageW-rw-3 : pageW-mg;
+  doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(255,210,80);
+  doc.text('ALUNO:', rx2, hh-14, {align:'right'});
+  doc.setFontSize(9); doc.setTextColor(251,191,36);
+  doc.text(nomeAluno.toUpperCase(), rx2, hh-7, {align:'right'});
+  doc.setFontSize(7); doc.setTextColor(200,155,50);
+  doc.text('SEMANA '+nxt.week+' / '+nxt.year, rx2, hh-2, {align:'right'});
 
   // Bottom gold bar
   doc.setFillColor(251,191,36); doc.rect(0,hh,pageW,1.2,'F');
 
-  var y = hh + 6;
+  // Phase info bar (below gold bar)
+  var phase = plan.phase||''; var sreps = plan.sreps||'';
+  if(phase||sreps){
+    doc.setFillColor(20,12,2); doc.rect(0,hh+1.2,pageW,5,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(6.5); doc.setTextColor(251,191,36);
+    var phaseStr = (phase?'FASE: '+phase:'')+(phase&&sreps?' · ':'')+sreps;
+    doc.text(phaseStr, pageW/2, hh+4.5, {align:'center'});
+  }
+
+  var y = hh + (phase||sreps ? 9 : 6);
+  // =========================================================
+  // TRAINING DAYS
+  // =========================================================
   var days = ['A','B','C','A2','E'];
   var dayClr = {A:[88,28,135], B:[6,95,70], C:[154,52,18], A2:[30,64,175], E:[120,53,15]};
 
@@ -2469,7 +2530,7 @@ function generateFichaPDF(nomeAluno){
 
     doc.setFillColor(18,18,28); doc.rect(mg,y,pageW-mg*2,5,'F');
     doc.setFont('helvetica','bold'); doc.setFontSize(5.8); doc.setTextColor(251,191,36);
-    var c = {ex:mg+1,s1:mg+63,s2:mg+77,s3:mg+91,s4:mg+105,s5:mg+119,des:mg+133,obs:mg+152};
+    var c={ex:mg+1,s1:mg+63,s2:mg+77,s3:mg+91,s4:mg+105,s5:mg+119,des:mg+133,obs:mg+152};
     doc.text('EXERCÍCIO',c.ex,y+3.5);
     doc.text('S1',c.s1,y+3.5); doc.text('S2',c.s2,y+3.5); doc.text('S3',c.s3,y+3.5);
     doc.text('S4',c.s4,y+3.5); doc.text('S5',c.s5,y+3.5);
@@ -2499,17 +2560,17 @@ function generateFichaPDF(nomeAluno){
     y += 5;
   });
 
-  var gObs = plan.obs || '';
-  if(gObs && y + 12 < pageH - 12){
+  var gObs = plan.obs||'';
+  if(gObs && y+12 < pageH-12){
     doc.setFillColor(20,15,5); doc.rect(mg,y,pageW-mg*2,10,'F');
     doc.setFillColor(251,191,36); doc.rect(mg,y,3,10,'F');
     doc.setFont('helvetica','bold'); doc.setFontSize(6.5); doc.setTextColor(251,191,36);
     doc.text('OBSERVAÇÕES GERAIS', mg+5, y+4);
     doc.setFont('helvetica','normal'); doc.setTextColor(220,220,220);
     doc.text(gObs, mg+5, y+8, {maxWidth:pageW-mg*2-8});
-    y += 14;
   }
 
+  // Footer
   var fy = pageH-8;
   doc.setFillColor(251,191,36); doc.rect(mg,fy-2,pageW-mg*2,0.4,'F');
   doc.setFont('helvetica','normal'); doc.setFontSize(6.5); doc.setTextColor(150,110,30);

@@ -221,6 +221,47 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
 .ev-b{background:rgba(245,158,11,.2);color:var(--warning)}
 .ev-c{background:rgba(239,68,68,.15);color:var(--danger)}
 .ergo-ref-info{font-size:11px;color:var(--text-muted);line-height:1.6}
+/* BASE INFO CARDS */
+.base-search-bar{background:var(--surface2);border-radius:var(--radius);padding:10px 12px;margin-bottom:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.base-search-bar input{flex:1;min-width:160px;margin:0}
+.base-filter-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.base-pill{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);transition:all .2s}
+.base-pill.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.base-grid{display:grid;grid-template-columns:1fr;gap:8px}
+@media(min-width:600px){.base-grid{grid-template-columns:1fr 1fr}}
+.base-card{background:var(--surface2);border-radius:var(--radius-sm);padding:12px 14px;border:1px solid var(--border);border-left:3px solid var(--primary);transition:border-color .2s}
+.base-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:6px}
+.base-card-name{font-size:13px;font-weight:800;color:var(--text);line-height:1.3}
+.base-card-sigla{font-size:10px;font-weight:700;color:var(--text-muted);margin-top:1px}
+.base-card-chips{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
+.bchip{display:inline-flex;align-items:center;gap:2px;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700}
+.bchip-via{background:rgba(6,182,212,.15);color:var(--accent)}
+.bchip-vida{background:rgba(124,58,237,.15);color:var(--primary-light)}
+.bchip-bulk{background:rgba(16,185,129,.15);color:var(--success)}
+.bchip-cutting{background:rgba(239,68,68,.12);color:var(--danger)}
+.bchip-recomp{background:rgba(245,158,11,.15);color:var(--warning)}
+.bchip-terapeutico{background:rgba(6,182,212,.1);color:var(--accent)}
+.bchip-pre-contest{background:rgba(239,68,68,.18);color:#ff8c8c}
+.base-card-dose{font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:4px}
+.base-card-dose span{color:var(--text)}
+.base-card-info{font-size:11px;color:var(--text-dim);line-height:1.55;margin-top:5px;padding-top:5px;border-top:1px solid var(--border)}
+.base-tipo-badge{font-size:9px;font-weight:800;padding:2px 6px;border-radius:8px;white-space:nowrap;flex-shrink:0}
+.base-tipo-test{background:rgba(245,158,11,.2);color:var(--warning)}
+.base-tipo-dht{background:rgba(239,68,68,.15);color:var(--danger)}
+.base-tipo-nandro{background:rgba(124,58,237,.2);color:var(--primary-light)}
+.base-tipo-oral{background:rgba(239,68,68,.2);color:#ff8c8c}
+.base-tipo-horm{background:rgba(16,185,129,.2);color:var(--success)}
+.base-tipo-ghrp{background:rgba(6,182,212,.2);color:var(--accent)}
+.base-tipo-ghrh{background:rgba(124,58,237,.2);color:var(--primary-light)}
+.base-tipo-igf{background:rgba(16,185,129,.2);color:var(--success)}
+.base-tipo-mgf{background:rgba(245,158,11,.15);color:var(--warning)}
+.base-tipo-prot{background:rgba(16,185,129,.15);color:var(--success)}
+.base-tipo-sec{background:rgba(6,182,212,.15);color:var(--accent)}
+.base-tipo-gon{background:rgba(245,158,11,.15);color:var(--warning)}
+.base-tipo-neuro{background:rgba(124,58,237,.15);color:var(--primary-light)}
+.base-tipo-frag{background:rgba(239,68,68,.12);color:var(--danger)}
+.base-tipo-msh{background:rgba(251,191,36,.2);color:#fbbf24}
+.base-count{font-size:11px;color:var(--text-muted);padding:4px 0 6px}
 /* TRAINER BANNER */
 .trainer-banner{position:relative;width:100%;height:300px;border-radius:var(--radius);overflow:hidden;margin-bottom:14px;display:flex;align-items:flex-end}
 .trainer-bg{position:absolute;inset:0;display:flex}
@@ -386,6 +427,8 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
   <button class="snav-btn" data-sec="agua" onclick="showSection('agua')"><span class="ico">💧</span> Hidratação</button>
   <button class="snav-btn" data-sec="suplementos" onclick="showSection('suplementos')"><span class="ico">💊</span> Suplementos</button>
   <button class="snav-btn" data-sec="ergogenicos" onclick="showSection('ergogenicos')"><span class="ico">⚡</span> Ergogênicos</button>
+  <button class="snav-btn" data-sec="base-ergo" onclick="showSection('base-ergo')"><span class="ico">💉</span> Base Ergogênicos</button>
+  <button class="snav-btn" data-sec="base-peptideos" onclick="showSection('base-peptideos')"><span class="ico">🧬</span> Base Peptídeos</button>
   <button class="snav-btn" data-sec="alimentos" onclick="showSection('alimentos')"><span class="ico">🥗</span> Base Alimentos</button>
   <button class="snav-btn" data-sec="medidas" onclick="showSection('medidas')"><span class="ico">📏</span> Medidas</button>
   <button class="snav-btn" data-sec="calculadoras" onclick="showSection('calculadoras')"><span class="ico">🧮</span> Calculadoras</button>
@@ -671,6 +714,32 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
   <div class="tab-content" id="tab-ergo-guia" style="display:none">
     <div id="ergo-guia-content"></div>
   </div>
+</section>
+
+<!-- BASE INFO ERGOGÊNICOS -->
+<section class="section" id="sec-base-ergo">
+  <div class="sec-hd">
+    <div class="sec-ttl">💉 Base Info Ergogênicos</div>
+  </div>
+  <div class="base-search-bar">
+    <input type="text" id="bergo-search" placeholder="🔍 Buscar composto..." oninput="renderBaseErgo()" style="margin:0">
+  </div>
+  <div class="base-filter-pills" id="bergo-pills"></div>
+  <div id="bergo-count" class="base-count"></div>
+  <div class="base-grid" id="bergo-list"></div>
+</section>
+
+<!-- BASE INFO PEPTÍDEOS -->
+<section class="section" id="sec-base-peptideos">
+  <div class="sec-hd">
+    <div class="sec-ttl">🧬 Base Info Peptídeos</div>
+  </div>
+  <div class="base-search-bar">
+    <input type="text" id="bpept-search" placeholder="🔍 Buscar peptídeo..." oninput="renderBasePept()" style="margin:0">
+  </div>
+  <div class="base-filter-pills" id="bpept-pills"></div>
+  <div id="bpept-count" class="base-count"></div>
+  <div class="base-grid" id="bpept-list"></div>
 </section>
 
 <!-- BASE DE ALIMENTOS -->
@@ -1094,8 +1163,11 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
 <!-- MODAL ERGOGÊNICO -->
 <div class="modal-overlay" id="modalErgo">
   <div class="modal">
-    <div class="modal-hd"><span class="modal-ttl">⚡ Adicionar Ergogênico</span><button class="modal-cls" onclick="closeModal('modalErgo')">×</button></div>
-    <div class="fg"><label>Nome / Produto</label><input type="text" id="ergo-nome" placeholder="Ex: Creatina Monohidratada, Cafeína..."></div>
+    <div class="modal-hd"><span class="modal-ttl">⚡ Adicionar ao Stack</span><button class="modal-cls" onclick="closeModal('modalErgo')">×</button></div>
+    <div class="fg"><label>Nome / Produto</label>
+      <input type="text" id="ergo-nome" placeholder="Ex: Creatina, Enantato, BPC-157..." list="ergo-nome-list" autocomplete="off" oninput="ergoAutoFill()">
+      <datalist id="ergo-nome-list"></datalist>
+    </div>
     <div class="g2">
       <div class="fg"><label>Categoria</label>
         <select id="ergo-cat">
@@ -1112,6 +1184,9 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
           <option value="omega3">🐟 Ômega-3</option>
           <option value="vitamina_d">☀️ Vitamina D</option>
           <option value="zinco">🔩 Zinco/Magnésio</option>
+          <option value="anabolizante">💉 Anabolizante</option>
+          <option value="hormonio">🧬 Hormônio / GH</option>
+          <option value="peptideo">🔬 Peptídeo</option>
           <option value="outros">🧪 Outros</option>
         </select>
       </div>
@@ -1290,6 +1365,11 @@ const FOOD_DB_DEFAULT = [
   {id:'fle3',cat:'Leguminosa',name:'Lentilha cozida',kcal:116,p:9.0,c:20.1,f:0.4,porcao:100},
   {id:'fle4',cat:'Leguminosa',name:'Grão-de-bico cozido',kcal:164,p:8.9,c:27.4,f:2.6,porcao:100},
   {id:'fle5',cat:'Leguminosa',name:'Ervilha cozida',kcal:81,p:5.4,c:14.5,f:0.4,porcao:100},
+  // LEGUMES (mistura)
+  {id:'flg1',cat:'Vegetal',name:'Legumes (Cenoura + Brócolis + Couve-flor)',kcal:33,p:1.9,c:7.1,f:0.3,porcao:200},
+  {id:'flg2',cat:'Vegetal',name:'Cenoura cozida',kcal:35,p:0.8,c:8.2,f:0.2,porcao:100},
+  {id:'flg3',cat:'Vegetal',name:'Brócolis vapor',kcal:28,p:2.4,c:5.6,f:0.3,porcao:100},
+  {id:'flg4',cat:'Vegetal',name:'Couve-flor vapor',kcal:23,p:1.9,c:4.7,f:0.3,porcao:100},
   // HIDRATAÇÃO
   {id:'fh1',cat:'Hidratação',name:'Água',kcal:0,p:0,c:0,f:0,porcao:200},
   {id:'fh2',cat:'Hidratação',name:'Água de coco',kcal:19,p:0.7,c:3.7,f:0.2,porcao:200},
@@ -1473,7 +1553,7 @@ function showSection(id){
   }catch(e){console.error('showSection error:',e);}
 }
 function renderSection(id){
-  const fn={dashboard:renderDashboard,treino:renderTreino,ficha:renderFicha,refeicoes:renderRefeicoes,agua:renderAgua,suplementos:renderSupl,ergogenicos:renderErgogenicos,alimentos:renderAlimentos,medidas:renderMedidas,calculadoras:renderCalcs,progresso:renderProgresso,perfil:renderPerfil};
+  const fn={dashboard:renderDashboard,treino:renderTreino,ficha:renderFicha,refeicoes:renderRefeicoes,agua:renderAgua,suplementos:renderSupl,ergogenicos:renderErgogenicos,'base-ergo':renderBaseErgo,'base-peptideos':renderBasePept,alimentos:renderAlimentos,medidas:renderMedidas,calculadoras:renderCalcs,progresso:renderProgresso,perfil:renderPerfil};
   if(fn[id])fn[id]();
 }
 function showTab(btn,tabId){try{window.scrollTo(0,0);}catch(e){}
@@ -2831,6 +2911,9 @@ const ERGO_CAT={
   omega3:{ico:'🐟',label:'Ômega-3',cor:'var(--success)'},
   vitamina_d:{ico:'☀️',label:'Vitamina D',cor:'var(--warning)'},
   zinco:{ico:'🔩',label:'Zinco/Mg',cor:'var(--text-muted)'},
+  anabolizante:{ico:'💉',label:'Anabolizante',cor:'var(--danger)'},
+  hormonio:{ico:'🧬',label:'Hormônio/GH',cor:'var(--warning)'},
+  peptideo:{ico:'🔬',label:'Peptídeo',cor:'var(--accent)'},
   outros:{ico:'🧪',label:'Outros',cor:'var(--text-muted)'}
 };
 const ERGO_TIMING={
@@ -2863,6 +2946,68 @@ const ERGO_GUIA=[
    info:'Tampão para ácido lático. Benefício em esforços de alta intensidade (30s–10min). Risco de desconforto gastrointestinal — testar em treino leve antes.'},
   {name:'Ômega-3 (EPA+DHA)',ev:'A',dose:'2–4g EPA+DHA/dia',timing:'Com refeição',ciclo:'Contínuo',cor:'var(--success)',
    info:'Anti-inflamatório, melhora sensibilidade à insulina e saúde cardiovascular. Benefício indireto na recuperação muscular e redução de DOMS.'},
+  // ── ANABOLIZANTES & HORMÔNIOS ────────────────────────────────
+  {name:'Enantato de Testosterona',ev:'A',dose:'200–500mg/semana (IM)',timing:'Injeção 1–2× por semana',ciclo:'8–12 semanas + PCT',cor:'var(--danger)',
+   info:'Éster de longa duração (meia-vida ~7–10 dias). Aromatiza em estradiol → controle com AI (Anastrozol / Exemestano). Suprime eixo HPTA — obrigatório PCT com Tamoxifeno + HCG. Monitorar: hemograma, hematócrito, lipídios, PSA.'},
+  {name:'Masteron (Drostanolona)',ev:'A',dose:'200–400mg/semana (IM)',timing:'Propionato: EOD · Enantato: 2×/semana',ciclo:'6–10 semanas',cor:'var(--danger)',
+   info:'DHT derivado — não aromatiza. Inibição leve de aromatase. Efeito estético: dureza e densidade muscular. Ideal em cutting final. Requer bodyfat baixo para evidenciar o resultado. Ação anti-estrogênica leve → menos retenção hídrica.'},
+  {name:'Trembolona (Acetato / Enantato)',ev:'A',dose:'150–400mg/semana (IM)',timing:'Acetato: EOD · Enantato: 2×/semana',ciclo:'6–8 semanas',cor:'var(--danger)',
+   info:'Não aromatiza. Alta atividade androgênica e anabólica (5× testosterona). Sem retenção hídrica. Pode elevar prolactina → monitorar com Cabergolina. Efeitos colaterais possíveis: sudorese noturna, insônia, agressividade ("tren rage"). Verificar lipídios e pressão arterial.'},
+  {name:'Stanozolol (Winstrol)',ev:'A',dose:'Oral: 25–50mg/dia · Injet.: 50mg EOD',timing:'Oral: dividir 2× ao dia · Injet.: conforme dose',ciclo:'4–6 semanas',cor:'var(--danger)',
+   info:'DHT derivado — não aromatiza. Melhora definição, densidade e força sem volume hídrico. Oral: hepatotóxico → monitorar TGO/TGP, limitar a 6 semanas. Pode ressecar articulações — suplementar com glucosamina + ômega-3. Não empilhar com outros 17-α alquilados.'},
+  {name:'GH — Hormônio do Crescimento (Somatropina)',ev:'A',dose:'2–4 UI/dia (SC)',timing:'Manhã em jejum OU pós-treino',ciclo:'3–6 meses contínuo',cor:'var(--warning)',
+   info:'Estimula IGF-1, lipólise e recuperação tecidual. SC no abdômen. Jejum → lipólise; pós-treino → anabolismo. Monitorar glicemia e IGF-1 sérico. Possíveis efeitos: retenção hídrica, túnel do carpo.'},
+];
+
+// ===================== BASE INFO: ANABOLIZANTES =====================
+const ANABOLICOS_DB=[
+  {name:'Enantato de Testosterona',sigla:'Test-E',tipo:'Testosterona',tipoKey:'test',via:'IM',meiaVida:'7–10 dias',objetivo:'Massa + Força',fase:'bulk',dose:'200–500mg/sem',info:'Éster longo. Aromatiza → necessita AI (Anastrozol/Exemestano). Suprime eixo HPTA → PCT obrigatório pós-ciclo.'},
+  {name:'Cipionato de Testosterona',sigla:'Test-C',tipo:'Testosterona',tipoKey:'test',via:'IM',meiaVida:'8–12 dias',objetivo:'Massa + Força',fase:'bulk',dose:'200–500mg/sem',info:'Semelhante ao Enantato. Popular em TRT. Injeção 1–2× por semana.'},
+  {name:'Propionato de Testosterona',sigla:'Test-P',tipo:'Testosterona',tipoKey:'test',via:'IM',meiaVida:'2–3 dias',objetivo:'Massa + Definição',fase:'bulk/cutting',dose:'100mg EOD',info:'Éster curto — controle hormonal fino. Injeção EOD necessária. Mais dor no local.'},
+  {name:'Durateston (Sustanon 250)',sigla:'Sus-250',tipo:'Testosterona (mix)',tipoKey:'test',via:'IM',meiaVida:'~15 dias (mix)',objetivo:'Massa + Força',fase:'bulk',dose:'250–500mg/sem',info:'Mix de 4 ésteres de testosterona. Picos hormonais variáveis. Recomendado 2× por semana.'},
+  {name:'Undecanoato de Testosterona',sigla:'Undecan.',tipo:'Testosterona',tipoKey:'test',via:'IM/Oral',meiaVida:'30–40 dias',objetivo:'TRT / Massa',fase:'terapeutico',dose:'1000mg/12sem (inj) · 40–80mg/dia (oral)',info:'Éster ultralongo. Muito usado em TRT. Oral tem baixa biodisponibilidade.'},
+  {name:'Decanoato de Nandrolona (Deca)',sigla:'Deca',tipo:'Nandrolona',tipoKey:'nandro',via:'IM',meiaVida:'6–12 dias',objetivo:'Massa + Articulações',fase:'bulk',dose:'200–400mg/sem',info:'Alto anabolismo, baixo androgênio. Lubrifica articulações. Risco "Deca Dick" → associar com Testosterona.'},
+  {name:'Fenilpropionato de Nandrolona (NPP)',sigla:'NPP',tipo:'Nandrolona',tipoKey:'nandro',via:'IM',meiaVida:'3–5 dias',objetivo:'Massa + Recuperação',fase:'bulk',dose:'100–200mg/sem',info:'Versão de éster curto da Deca. Controle mais rápido dos efeitos. Injeção EOD.'},
+  {name:'Masteron Enantato (Drostanolona E)',sigla:'Mast-E',tipo:'DHT derivado',tipoKey:'dht',via:'IM',meiaVida:'8–10 dias',objetivo:'Definição + Dureza',fase:'cutting',dose:'200–400mg/sem',info:'Não aromatiza. Inibe levemente aromatase. Efeito estético de dureza e densidade. Requer BF baixo (<12%).'},
+  {name:'Masteron Propionato (Drostanolona P)',sigla:'Mast-P',tipo:'DHT derivado',tipoKey:'dht',via:'IM',meiaVida:'2–3 dias',objetivo:'Definição + Dureza',fase:'cutting',dose:'100–150mg EOD',info:'Versão éster curto do Masteron. Mais flexibilidade de ajuste. Injeção EOD.'},
+  {name:'Trembolona Acetato',sigla:'Tren-A',tipo:'Trembolona',tipoKey:'dht',via:'IM',meiaVida:'1–2 dias',objetivo:'Massa + Definição',fase:'bulk/cutting',dose:'50–100mg EOD',info:'5× potência da testosterona. Não aromatiza. Pode elevar prolactina → usar Cabergolina. Efeitos colaterais intensos.'},
+  {name:'Trembolona Enantato',sigla:'Tren-E',tipo:'Trembolona',tipoKey:'dht',via:'IM',meiaVida:'7–10 dias',objetivo:'Massa + Definição',fase:'bulk/cutting',dose:'150–400mg/sem',info:'Éster longo da Trembolona. Efeitos colaterais difíceis de reverter rapidamente. Preferido pela praticidade.'},
+  {name:'Stanozolol Oral (Winstrol)',sigla:'Winst-O',tipo:'DHT oral',tipoKey:'oral',via:'Oral',meiaVida:'9 horas',objetivo:'Definição + Força',fase:'cutting',dose:'25–50mg/dia',info:'Hepatotóxico — máx 4–6 semanas. Monitorar TGO/TGP. Não retém água. Seca e endurece.'},
+  {name:'Stanozolol Injetável',sigla:'Winst-I',tipo:'DHT derivado',tipoKey:'dht',via:'IM',meiaVida:'24 horas',objetivo:'Definição + Força',fase:'cutting',dose:'50mg EOD',info:'Menor hepatotoxicidade vs oral. Mesmo perfil anabólico. Pode causar dor no local de aplicação.'},
+  {name:'Oxandrolona (Anavar)',sigla:'Anavar',tipo:'DHT oral',tipoKey:'oral',via:'Oral',meiaVida:'9–10 horas',objetivo:'Massa Magra + Força',fase:'cutting/recomp',dose:'30–60mg/dia',info:'Suave androgênio, pouco supressivo. Ideal para mulheres (5–15mg/dia). Preserva massa em déficit calórico.'},
+  {name:'Primobolan (Metenolona E)',sigla:'Primo',tipo:'DHT derivado',tipoKey:'dht',via:'IM',meiaVida:'10–14 dias',objetivo:'Massa Magra + Qualidade',fase:'cutting/recomp',dose:'400–600mg/sem',info:'Perfil anabólico suave e qualitativo. Pouco supressivo do eixo. Favorito para fases de corte.'},
+  {name:'Boldenona (Equipoise)',sigla:'EQ',tipo:'Test. derivada',tipoKey:'test',via:'IM',meiaVida:'14 dias',objetivo:'Massa + Vascularidade',fase:'bulk/recomp',dose:'300–600mg/sem',info:'Aumenta eritropoiese (hematócrito). Leve aromatização. Melhora apetite. Ideal em ciclos longos.'},
+  {name:'Dianabol (Metandrostenolona)',sigla:'Dbol',tipo:'17α-Oral',tipoKey:'oral',via:'Oral',meiaVida:'4–6 horas',objetivo:'Massa + Força',fase:'bulk',dose:'20–50mg/dia',info:'Ganho rápido de massa e força. Alta retenção hídrica. Hepatotóxico. Máx 6 semanas.'},
+  {name:'Hemogenin (Oximetolona)',sigla:'Anadrol',tipo:'17α-Oral',tipoKey:'oral',via:'Oral',meiaVida:'8–9 horas',objetivo:'Massa + Força (extremo)',fase:'bulk',dose:'25–100mg/dia',info:'Oral mais potente para ganho de massa. Altíssima hepatotoxicidade. Usar máx 6 semanas com monitoramento.'},
+  {name:'Turinabol (Clorodesidro)',sigla:'Tbol',tipo:'17α-Oral',tipoKey:'oral',via:'Oral',meiaVida:'16 horas',objetivo:'Massa Magra + Força',fase:'bulk/recomp',dose:'30–60mg/dia',info:'Derivado do Dianabol sem retenção hídrica. Anabolismo moderado. Hepatotóxico — máx 8 semanas.'},
+  {name:'Halotestin (Fluoximesterona)',sigla:'Halo',tipo:'DHT oral',tipoKey:'oral',via:'Oral',meiaVida:'9–10 horas',objetivo:'Força + Agressividade',fase:'pre-contest',dose:'10–40mg/dia',info:'Um dos androgênios mais potentes. Uso pré-competição por força máxima. Alta hepatotoxicidade — máx 4 semanas.'},
+  {name:'GH — Hormônio do Crescimento',sigla:'GH/HGH',tipo:'Hormônio',tipoKey:'horm',via:'SC',meiaVida:'3–4 horas',objetivo:'Lipólise + Massa + Recuperação',fase:'recomp',dose:'2–4 UI/dia',info:'Estimula IGF-1, lipólise e recuperação. Em jejum → lipólise. Pós-treino → anabolismo. Monitorar glicemia.'},
+  {name:'Insulina',sigla:'INS',tipo:'Hormônio',tipoKey:'horm',via:'SC',meiaVida:'Varia por tipo',objetivo:'Anabolismo + Transporte',fase:'bulk',dose:'4–10 UI pós-treino',info:'⚠️ ALTO RISCO hipoglicemia. Nunca usar sem carboidratos disponíveis. Requer acompanhamento médico.'},
+  {name:'IGF-1 (Fator de Crescimento)',sigla:'IGF-1',tipo:'Hormônio Peptídico',tipoKey:'horm',via:'SC/IM',meiaVida:'~12–15h (LR3)',objetivo:'Anabolismo + Recuperação',fase:'bulk',dose:'20–60mcg/dia',info:'Estimula crescimento muscular e recuperação tecidual. Potencializado pelo GH. Múltiplas isoformas.'},
+];
+
+// ===================== BASE INFO: PEPTÍDEOS =====================
+const PEPTIDEOS_DB=[
+  {name:'GH / HGH (Somatropina Recombinante)',sigla:'HGH',tipo:'GH',tipoKey:'horm',via:'SC/IM',meiaVida:'3–4 horas',objetivo:'Lipólise + Massa + Recuperação',acao:'Agonista Direto',dose:'2–4 UI/dia',info:'Hormônio do crescimento recombinante. Estimula IGF-1, lipólise e recuperação tecidual.'},
+  {name:'IGF-1 LR3',sigla:'IGF-1 LR3',tipo:'IGF',tipoKey:'igf',via:'SC/IM',meiaVida:'20–30 horas',objetivo:'Anabolismo + Hipertrofia',acao:'Fator de Crescimento',dose:'20–50mcg/dia',info:'Versão de longa duração do IGF-1. Estimula síntese proteica e proliferação de células satélites musculares.'},
+  {name:'IGF-1 DES',sigla:'IGF-1 DES',tipo:'IGF',tipoKey:'igf',via:'IM local',meiaVida:'20–30 min',objetivo:'Anabolismo Local',acao:'Fator de Crescimento',dose:'50–150mcg/injeção',info:'Versão truncada do IGF-1. Efeito local e curta duração. Injetar diretamente no músculo-alvo pós-treino.'},
+  {name:'GHRP-6',sigla:'GHRP-6',tipo:'GHRP',tipoKey:'ghrp',via:'SC/IM',meiaVida:'15–60 min',objetivo:'GH Release + Apetite',acao:'Secretagogo de GH',dose:'100–300mcg/dose 3×/dia',info:'Potente secretagogo de GH. Aumenta apetite via grelina. Associar com GHRH (CJC) para efeito sinérgico.'},
+  {name:'GHRP-2',sigla:'GHRP-2',tipo:'GHRP',tipoKey:'ghrp',via:'SC/IM',meiaVida:'15–60 min',objetivo:'GH Release + Lipólise',acao:'Secretagogo de GH',dose:'100–300mcg/dose 3×/dia',info:'Similar ao GHRP-6, menor estímulo de apetite. Leve efeito lipotrófico. Pode elevar cortisol e prolactina.'},
+  {name:'Ipamorelin',sigla:'Ipa',tipo:'GHRP',tipoKey:'ghrp',via:'SC',meiaVida:'~2 horas',objetivo:'GH Release Seletivo',acao:'Secretagogo de GH',dose:'100–300mcg/dose 3×/dia',info:'Secretagogo mais seletivo — menor impacto em cortisol e prolactina vs GHRP-6/2. Favorito para uso prolongado.'},
+  {name:'CJC-1295 com DAC',sigla:'CJC-DAC',tipo:'GHRH',tipoKey:'ghrh',via:'SC',meiaVida:'8 dias',objetivo:'GH Release Prolongado',acao:'Análogo GHRH',dose:'1–2mg/semana',info:'DAC confere meia-vida longa — GH release contínuo. Injeção 1× por semana. Combinar com GHRP para pico.'},
+  {name:'CJC-1295 sem DAC (Mod GRF 1-29)',sigla:'CJC no-DAC',tipo:'GHRH',tipoKey:'ghrh',via:'SC',meiaVida:'30 min',objetivo:'GH Release Pulsátil',acao:'Análogo GHRH',dose:'100–300mcg/dose 3×/dia',info:'Imita o pulso natural de GH. Associar com GHRP para maior liberação. Injetar em jejum, pré e pré-sono.'},
+  {name:'MK-677 (Ibutamoren)',sigla:'MK-677',tipo:'Secretagogo oral',tipoKey:'sec',via:'Oral',meiaVida:'24 horas',objetivo:'GH/IGF-1 + Massa + Sono',acao:'Secretagogo de GH',dose:'10–25mg/dia',info:'Único secretagogo oral eficaz. Eleva GH e IGF-1. Melhora sono profundo. Pode aumentar apetite e retenção.'},
+  {name:'Tesamorelin',sigla:'Tesam.',tipo:'GHRH',tipoKey:'ghrh',via:'SC',meiaVida:'26 min',objetivo:'Lipólise Visceral',acao:'Análogo GHRH',dose:'1–2mg/dia SC',info:'Aprovado FDA para lipodistrofia. Reduz gordura visceral especificamente. Usado em protocolos TRT+GH.'},
+  {name:'PEG-MGF',sigla:'PEG-MGF',tipo:'MGF',tipoKey:'mgf',via:'SC/IM',meiaVida:'Dias (PEGilado)',objetivo:'Recuperação + Hipertrofia',acao:'Fator de Crescimento',dose:'100–200mcg 2×/sem',info:'Versão PEGilada do MGF com meia-vida estendida. Ação sistêmica. Estimula células satélites musculares.'},
+  {name:'MGF (Mechano Growth Factor)',sigla:'MGF',tipo:'MGF',tipoKey:'mgf',via:'IM local',meiaVida:'~30 min',objetivo:'Recuperação Muscular Local',acao:'Fator de Crescimento',dose:'100–200mcg/injeção',info:'Liberado por trauma mecânico. Injetar localmente pós-treino. Ativa células satélites para reparo e crescimento.'},
+  {name:'BPC-157',sigla:'BPC-157',tipo:'Peptídeo Protetor',tipoKey:'prot',via:'SC/Oral',meiaVida:'~4 horas',objetivo:'Recuperação + Cura Tecidual',acao:'Protetor Gástrico/Tecidual',dose:'250–500mcg/dia',info:'Cura tendões, ligamentos e músculos. Proteção gástrica. Via oral ou SC próximo à lesão.'},
+  {name:'TB-500 (Thymosin Beta-4)',sigla:'TB-500',tipo:'Peptídeo Protetor',tipoKey:'prot',via:'SC/IM',meiaVida:'~24 horas',objetivo:'Recuperação + Anti-inflamatório',acao:'Regulador de Actina',dose:'2–2,5mg 2×/sem (fase inicial)',info:'Promove mobilidade, reparo tecidual e redução de inflamação. Usado para lesões crônicas e recuperação acelerada.'},
+  {name:'Melanotan II',sigla:'MT-2',tipo:'Análogo MSH',tipoKey:'msh',via:'SC',meiaVida:'~1 hora',objetivo:'Bronzeamento + Libido',acao:'Agonista MSH',dose:'0,25–1mg/dia',info:'Estimula melanogênese (bronzeado) e aumenta libido. Náuseas comuns no início. Usar protetor solar.'},
+  {name:'Fragment 176-191',sigla:'Frag 176',tipo:'Fragmento GH',tipoKey:'frag',via:'SC',meiaVida:'~3 horas',objetivo:'Lipólise',acao:'Fragmento GH lipolítico',dose:'250–500mcg 2–3×/dia',info:'Fragmento C-terminal do GH com ação lipolítica seletiva. Sem impacto no crescimento ou glicemia.'},
+  {name:'AOD-9604',sigla:'AOD',tipo:'Fragmento GH',tipoKey:'frag',via:'SC',meiaVida:'~30 min',objetivo:'Lipólise + Regeneração',acao:'Fragmento GH',dose:'300–600mcg/dia',info:'Derivado do GH com foco em lipólise. Melhor perfil de segurança vs Frag 176-191. Sem efeitos no IGF-1.'},
+  {name:'HCG (Gonadotrofina Coriônica)',sigla:'HCG',tipo:'Gonadotrofina',tipoKey:'gon',via:'SC/IM',meiaVida:'24–36 horas',objetivo:'Estimulação Testicular / TRT',acao:'Análogo LH',dose:'250–500 UI 2–3×/sem',info:'Mantém testículos funcionais durante ciclo. Fundamental no PCT. Evitar doses altas de forma crônica.'},
+  {name:'HMG (Gonadotrofina Menopáusica)',sigla:'HMG',tipo:'Gonadotrofina',tipoKey:'gon',via:'SC/IM',meiaVida:'~24 horas',objetivo:'FSH+LH / Fertilidade',acao:'FSH + LH',dose:'75–150 UI/dose',info:'Contém FSH + LH. Estimula espermatogênese quando LH isolado é insuficiente. Usado em PCT complexo.'},
+  {name:'Kisspeptin-10',sigla:'Kiss-10',tipo:'Neuropeptídeo',tipoKey:'neuro',via:'SC',meiaVida:'~25 min',objetivo:'Eixo HPG / LH Release',acao:'Agonista GnRH',dose:'1–10mcg/kg/dose',info:'Estimula liberação pulsátil de GnRH → LH → Testosterona. Promissor para PCT e restauração natural do eixo.'},
 ];
 
 function renderErgogenicos(){
@@ -2969,6 +3114,128 @@ function renderTabContent(id){
   if(id==='tab-ergo-stack')renderErgoStack();
   if(id==='tab-ergo-hist')renderErgoHist();
   if(id==='tab-ergo-guia')renderErgoGuia();
+}
+
+// ===================== BASE INFO ERGOGÊNICOS =====================
+var _bergoFilter='todos';
+function renderBaseErgo(){
+  const search=(document.getElementById('bergo-search')||{value:''}).value.toLowerCase().trim();
+  // Build filter pills
+  const pillsEl=document.getElementById('bergo-pills');
+  if(pillsEl&&!pillsEl.hasChildNodes()){
+    const phases=[
+      {k:'todos',l:'Todos'},
+      {k:'bulk',l:'💪 Bulk'},
+      {k:'cutting',l:'✂️ Cutting'},
+      {k:'recomp',l:'🔄 Recomp'},
+      {k:'pre-contest',l:'🏆 Pre-Contest'},
+      {k:'terapeutico',l:'🏥 Terapêutico'}
+    ];
+    pillsEl.innerHTML=phases.map(p=>`<button class="base-pill${_bergoFilter===p.k?' active':''}" onclick="_bergoFilter='${p.k}';renderBaseErgo()">${p.l}</button>`).join('');
+  }else if(pillsEl){
+    pillsEl.querySelectorAll('.base-pill').forEach(b=>{
+      const k=b.getAttribute('onclick').match(/'([^']+)'/)?.[1]||'';
+      b.classList.toggle('active',k===_bergoFilter);
+    });
+  }
+  let data=ANABOLICOS_DB;
+  if(_bergoFilter!=='todos') data=data.filter(c=>c.fase.includes(_bergoFilter));
+  if(search) data=data.filter(c=>c.name.toLowerCase().includes(search)||c.sigla.toLowerCase().includes(search)||c.tipo.toLowerCase().includes(search)||c.objetivo.toLowerCase().includes(search));
+  const countEl=document.getElementById('bergo-count');
+  if(countEl)countEl.textContent=`${data.length} composto${data.length!==1?'s':''} encontrado${data.length!==1?'s':''}`;
+  const el=document.getElementById('bergo-list');if(!el)return;
+  if(!data.length){el.innerHTML='<div class="empty"><div class="empty-ico">🔍</div><div class="empty-txt">Nenhum composto encontrado</div></div>';return;}
+  el.innerHTML=data.map(c=>{
+    const fases=c.fase.split('/');
+    const faseChips=fases.map(f=>{
+      const map={bulk:'bchip-bulk',cutting:'bchip-cutting',recomp:'bchip-recomp','pre-contest':'bchip-pre-contest',terapeutico:'bchip-terapeutico'};
+      const lbl={bulk:'Bulk',cutting:'Cutting',recomp:'Recomp','pre-contest':'Pre-Contest',terapeutico:'Terapêutico'};
+      return`<span class="bchip ${map[f]||'bchip-recomp'}">${lbl[f]||f}</span>`;
+    }).join('');
+    const tipoMap={test:'base-tipo-test',dht:'base-tipo-dht',nandro:'base-tipo-nandro',oral:'base-tipo-oral',horm:'base-tipo-horm'};
+    const tipoClass=tipoMap[c.tipoKey]||'base-tipo-horm';
+    return`<div class="base-card" style="border-left-color:${c.tipoKey==='oral'?'var(--danger)':c.tipoKey==='horm'?'var(--success)':c.tipoKey==='nandro'?'var(--primary-light)':'var(--warning)'}">
+      <div class="base-card-top">
+        <div>
+          <div class="base-card-name">${c.name}</div>
+          <div class="base-card-sigla">${c.sigla}</div>
+        </div>
+        <span class="base-tipo-badge ${tipoClass}">${c.tipo}</span>
+      </div>
+      <div class="base-card-chips">
+        <span class="bchip bchip-via">💉 ${c.via}</span>
+        <span class="bchip bchip-vida">⏱ ${c.meiaVida}</span>
+        ${faseChips}
+      </div>
+      <div class="base-card-dose">🎯 <span>${c.objetivo}</span></div>
+      <div class="base-card-dose">💊 Dose ref.: <span>${c.dose}</span></div>
+      <div class="base-card-info">${c.info}</div>
+    </div>`;
+  }).join('');
+}
+
+// ===================== BASE INFO PEPTÍDEOS =====================
+var _bpeptFilter='todos';
+function renderBasePept(){
+  const search=(document.getElementById('bpept-search')||{value:''}).value.toLowerCase().trim();
+  const pillsEl=document.getElementById('bpept-pills');
+  if(pillsEl&&!pillsEl.hasChildNodes()){
+    const cats=[
+      {k:'todos',l:'Todos'},
+      {k:'ghrp',l:'🔬 GHRP'},
+      {k:'ghrh',l:'⚗️ GHRH'},
+      {k:'igf',l:'📈 IGF'},
+      {k:'mgf',l:'💪 MGF'},
+      {k:'prot',l:'🛡️ Proteção'},
+      {k:'gon',l:'🧪 Gonadotrofinas'},
+      {k:'frag',l:'🔥 Lipólise'},
+      {k:'sec',l:'💊 Secretagogo'}
+    ];
+    pillsEl.innerHTML=cats.map(p=>`<button class="base-pill${_bpeptFilter===p.k?' active':''}" onclick="_bpeptFilter='${p.k}';renderBasePept()">${p.l}</button>`).join('');
+  }else if(pillsEl){
+    pillsEl.querySelectorAll('.base-pill').forEach(b=>{
+      const k=b.getAttribute('onclick').match(/'([^']+)'/)?.[1]||'';
+      b.classList.toggle('active',k===_bpeptFilter);
+    });
+  }
+  let data=PEPTIDEOS_DB;
+  if(_bpeptFilter!=='todos') data=data.filter(c=>c.tipoKey===_bpeptFilter);
+  if(search) data=data.filter(c=>c.name.toLowerCase().includes(search)||c.sigla.toLowerCase().includes(search)||c.tipo.toLowerCase().includes(search)||c.objetivo.toLowerCase().includes(search));
+  const countEl=document.getElementById('bpept-count');
+  if(countEl)countEl.textContent=`${data.length} peptídeo${data.length!==1?'s':''} encontrado${data.length!==1?'s':''}`;
+  const el=document.getElementById('bpept-list');if(!el)return;
+  if(!data.length){el.innerHTML='<div class="empty"><div class="empty-ico">🔍</div><div class="empty-txt">Nenhum peptídeo encontrado</div></div>';return;}
+  el.innerHTML=data.map(c=>{
+    const tipoClassMap={horm:'base-tipo-horm',ghrp:'base-tipo-ghrp',ghrh:'base-tipo-ghrh',igf:'base-tipo-igf',mgf:'base-tipo-mgf',prot:'base-tipo-prot',sec:'base-tipo-sec',gon:'base-tipo-gon',neuro:'base-tipo-neuro',frag:'base-tipo-frag',msh:'base-tipo-msh'};
+    const borderMap={horm:'var(--success)',ghrp:'var(--accent)',ghrh:'var(--primary-light)',igf:'var(--success)',mgf:'var(--warning)',prot:'var(--success)',sec:'var(--accent)',gon:'var(--warning)',neuro:'var(--primary-light)',frag:'var(--danger)',msh:'#fbbf24'};
+    return`<div class="base-card" style="border-left-color:${borderMap[c.tipoKey]||'var(--primary)'}">
+      <div class="base-card-top">
+        <div>
+          <div class="base-card-name">${c.name}</div>
+          <div class="base-card-sigla">${c.sigla}</div>
+        </div>
+        <span class="base-tipo-badge ${tipoClassMap[c.tipoKey]||'base-tipo-horm'}">${c.tipo}</span>
+      </div>
+      <div class="base-card-chips">
+        <span class="bchip bchip-via">💉 ${c.via}</span>
+        <span class="bchip bchip-vida">⏱ ${c.meiaVida}</span>
+      </div>
+      <div class="base-card-dose">🎯 <span>${c.objetivo}</span></div>
+      <div class="base-card-dose">⚙️ Ação: <span>${c.acao}</span></div>
+      <div class="base-card-dose">💊 Dose ref.: <span>${c.dose}</span></div>
+      <div class="base-card-info">${c.info}</div>
+    </div>`;
+  }).join('');
+}
+
+// Autocomplete datalist for ergo modal (from both databases)
+function ergoAutoFill(){
+  const dl=document.getElementById('ergo-nome-list');if(!dl)return;
+  const val=(document.getElementById('ergo-nome')||{value:''}).value.toLowerCase();
+  if(val.length<2){dl.innerHTML='';return;}
+  const all=[...ANABOLICOS_DB.map(c=>({name:c.name,cat:'anabolizante'})),...PEPTIDEOS_DB.map(c=>({name:c.name,cat:'peptideo'}))];
+  const matches=all.filter(c=>c.name.toLowerCase().includes(val)).slice(0,8);
+  dl.innerHTML=matches.map(c=>`<option value="${c.name}">`).join('');
 }
 var _editingErgoId=null;
 function saveErgo(){

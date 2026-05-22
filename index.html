@@ -100,6 +100,8 @@ textarea{resize:vertical;min-height:70px}
 .log-sub{font-size:11px;color:var(--text-muted)}
 .log-meta{font-size:10px;color:var(--text-dim);margin-top:2px}
 .log-del{flex-shrink:0;background:none;border:none;color:var(--text-dim);font-size:17px;cursor:pointer;padding:2px;-webkit-tap-highlight-color:transparent}
+.log-edit{flex-shrink:0;background:none;border:none;color:var(--primary-light);font-size:15px;cursor:pointer;padding:2px;-webkit-tap-highlight-color:transparent;opacity:.75}
+.log-edit:hover{opacity:1}
 .log-del:hover{color:var(--danger)}
 /* WATER */
 .water-big{text-align:center;padding:16px 0 8px}
@@ -1824,7 +1826,7 @@ function renderRefeicoes(){
       const totF=m.foods.reduce((s,f)=>s+(f.fat||0),0);
       const foodList=m.foods.map(f=>`<div class="flex-bc fs12 txt-muted" style="padding:2px 0;border-bottom:1px solid var(--border)"><span>${f.name}</span><span>${f.calories}kcal · P:${f.protein}g C:${f.carbs}g G:${f.fat}g</span></div>`).join('');
       const salChip=m.sal>0?` <span style="color:var(--text-muted);font-size:11px">🧂 ${m.sal}g sal</span>`:''';
-      return`<div class="card"><div class="flex-bc mb8"><div><div class="fw8 fs13">${mealTypeLabel(m.mealType)} ${m.name?'— '+m.name:''}</div><div class="fs12 txt-muted">${totCal} kcal · P:${Math.round(totP)}g C:${Math.round(totC)}g G:${Math.round(totF)}g${salChip}</div></div><button class="log-del" onclick="deleteMeal('${m.id}')">🗑</button></div>${foodList}</div>`;
+      return`<div class="card"><div class="flex-bc mb8"><div><div class="fw8 fs13">${mealTypeLabel(m.mealType)} ${m.name?'— '+m.name:''}</div><div class="fs12 txt-muted">${totCal} kcal · P:${Math.round(totP)}g C:${Math.round(totC)}g G:${Math.round(totF)}g${salChip}</div></div><div style="display:flex;gap:4px"><button class="log-edit" onclick="editMeal('${m.id}')" title="Editar refeicao">✏️</button><button class="log-del" onclick="deleteMeal('${m.id}')">🗑</button></div>${foodList}</div>`;
     }).join('');
   }
   // Totais
@@ -1874,6 +1876,7 @@ function addFoodRow(name='',cal='',prot='',carb='',fat=''){
   else document.getElementById('food-rows').prepend(div);
   // If values passed directly (manual), set per-100g fields
   if(cal){const qtdInp=div.querySelector('input[type=number]');qtdInp.value=100;qtdInp.dataset.per100Kcal=cal;qtdInp.dataset.per100P=prot;qtdInp.dataset.per100C=carb;qtdInp.dataset.per100F=fat;qtdInp.dataset.unit='g';qtdInp.dataset.porcao=100;}
+  return rid;
 }
 
 function searchFoodInput(inp,rid){
@@ -1983,12 +1986,53 @@ document.addEventListener('click',e=>{
     document.querySelectorAll('.food-dropdown').forEach(d=>d.classList.remove('open'));
   }
 });
+var editingMealId = null;
+
+function editMeal(id){
+  const meal = D.meals.find(m => m.id === id);
+  if(!meal) return;
+  editingMealId = id;
+  // Set meal type and date
+  setV('ref-tipo', meal.mealType);
+  setV('ref-data-inp', meal.date || todayKey());
+  // Set salt
+  const salInp = document.getElementById('ref-sal');
+  if(salInp) salInp.value = (meal.sal > 0) ? meal.sal : '';
+  // Clear and populate food rows
+  document.getElementById('food-rows').innerHTML = '';
+  meal.foods.forEach(function(f){
+    const qty = f.qty || 100;
+    const p100k = qty > 0 ? Math.round((f.calories / qty) * 100) : f.calories;
+    const p100p = qty > 0 ? ((f.protein  / qty) * 100).toFixed(1) : f.protein;
+    const p100c = qty > 0 ? ((f.carbs    / qty) * 100).toFixed(1) : f.carbs;
+    const p100f = qty > 0 ? ((f.fat      / qty) * 100).toFixed(1) : f.fat;
+    const rid = addFoodRow(f.name, p100k, p100p, p100c, p100f);
+    // Set real qty (addFoodRow sets 100 by default)
+    const qtdInp = document.querySelector('#'+rid+' input[type=number]');
+    if(qtdInp){ qtdInp.value = qty; }
+    if(f.unit && f.unit !== 'g') setUnit(rid, f.unit);
+    if(rid) calcFoodRowMacros(rid);
+  });
+  // Change save button
+  const saveBtn = document.querySelector('#modalRefeicao .btn-pri.btn-block');
+  if(saveBtn) saveBtn.innerHTML = '✏️ Atualizar Refeição';
+  // Open modal
+  document.getElementById('modalRefeicao').classList.add('open');
+  updateRefTotal();
+}
+
 function saveRefeicao(){
   const foods=getFoodRows();
   if(!foods.length){toast('⚠️ Adicione pelo menos um alimento!','warning');return}
   const mealTypeName={cafe:'Café da Manhã',almoco:'Almoço',lanche:'Lanche',jantar:'Jantar',pre:'Pré-Treino',pos:'Pós-Treino',outros:'Outros'};
   const salVal=parseFloat(document.getElementById('ref-sal')?.value)||0;
-  D.meals.push({id:uid(),date:v('ref-data-inp')||todayKey(),mealType:v('ref-tipo'),name:mealTypeName[v('ref-tipo')]||v('ref-tipo'),foods,sal:salVal});
+  if(editingMealId){
+    const idx=D.meals.findIndex(m=>m.id===editingMealId);
+    if(idx>=0)D.meals[idx]={...D.meals[idx],mealType:v('ref-tipo'),name:mealTypeName[v('ref-tipo')]||v('ref-tipo'),date:v('ref-data-inp')||todayKey(),foods,sal:salVal};
+    editingMealId=null;
+  }else{
+    D.meals.push({id:uid(),date:v('ref-data-inp')||todayKey(),mealType:v('ref-tipo'),name:mealTypeName[v('ref-tipo')]||v('ref-tipo'),foods,sal:salVal});
+  }
   saveData();closeModal('modalRefeicao');renderRefeicoes();renderDashboard();toast('✅ Refeição salva!');
 }
 function deleteMeal(id){if(!confirm('Remover refeição?'))return;D.meals=D.meals.filter(m=>m.id!==id);saveData();renderRefeicoes();renderDashboard();toast('🗑️ Removido')}
@@ -2313,7 +2357,7 @@ function openModal(id){
     document.getElementById('tr-ex-list').innerHTML='';
     ['tr-duracao','tr-obs','tr-kcal'].forEach(id=>setV(id,''));
   }
-  if(id==='modalRefeicao'){setV('ref-data-inp',today);document.getElementById('food-rows').innerHTML='';addFoodRow();}
+  if(id==='modalRefeicao'){editingMealId=null;setV('ref-data-inp',today);setV('ref-sal','');document.getElementById('food-rows').innerHTML='';addFoodRow();const sb=document.querySelector('#modalRefeicao .btn-pri.btn-block');if(sb)sb.innerHTML='✓ Salvar Refeição';}
   if(id==='modalSupl'){setV('supl-data',today);const now=new Date();setV('supl-hora',String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0'));}
 }
 function closeModal(id){document.getElementById(id).classList.remove('open')}

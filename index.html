@@ -678,6 +678,30 @@ img,video,canvas,iframe{max-width:100%;height:auto}
       <div class="fs12 txt-muted" style="text-align:center;padding:8px">Registre um treino para ver a evolução.</div>
     </div>
   </div>
+
+  <!-- Cardio Hoje -->
+  <div class="card">
+    <div class="card-title">🏃 Cardio Hoje</div>
+    <div id="dash-cardio"></div>
+  </div>
+
+  <!-- Suplementos Hoje -->
+  <div class="card">
+    <div class="card-title">💊 Suplementos Hoje</div>
+    <div id="dash-supls"></div>
+  </div>
+
+  <!-- Stack Ergogênico -->
+  <div class="card">
+    <div class="card-title">⚡ Stack Ergogênico</div>
+    <div id="dash-ergo"></div>
+  </div>
+
+  <!-- Peso em Jejum -->
+  <div class="card">
+    <div class="card-title">⚖️ Peso em Jejum</div>
+    <div id="dash-peso"></div>
+  </div>
 </section>
 
 <!-- TREINO -->
@@ -1798,6 +1822,9 @@ function dayNutrition(date){
   return t;
 }
 function dayBurned(date){return todayWorkouts(date).reduce((s,w)=>s+(w.caloriesBurned||0),0)}
+function todayCardioLogs(date){if(!D.cardioLogs)return[];return D.cardioLogs.filter(e=>e.data===(date||todayKey()))}
+function dayCardioKcal(date){return todayCardioLogs(date).reduce((s,e)=>s+(e.kcal||0),0)}
+function totalDayBurned(date){return dayBurned(date)+dayCardioKcal(date)}
 
 // ===================== NAVIGATION =====================
 function closeSidebar(){var s=document.getElementById('sidebar');var o=document.getElementById('sidebar-overlay');if(s)s.classList.remove('open');if(o)o.classList.remove('open');document.body.classList.remove('sidebar-open')}
@@ -1842,7 +1869,7 @@ function renderDashboard(){
   document.getElementById('topDate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
   document.getElementById('dash-subttl').textContent=todayKey();
   applyProfilePhoto();
-  const nut=dayNutrition();const burned=dayBurned();const mg=macroGoals();const water=todayWater();const wg=p.waterGoal||3000;
+  const nut=dayNutrition();const burned=totalDayBurned();const mg=macroGoals();const water=todayWater();const wg=p.waterGoal||3000;
   const net=nut.calories;const goal=mg.calories||2000;const pct=Math.min(100,Math.round(net/goal*100));
   document.getElementById('ringCalNum').textContent=net;
   // Ring chart
@@ -1865,14 +1892,15 @@ function renderDashboard(){
   const wpct=Math.min(100,Math.round(water/wg*100));
   document.getElementById('dash-water').innerHTML=`<div class="flex-bc fs12 txt-muted mb8"><span>💧 ${water}ml de ${wg}ml</span><span>${wpct}%</span></div>`+progBar(null,water,wg,'c-acc');
   // Activity
-  const wks=todayWorkouts();const supls=todaySupplements();const mls=todayMeals();
+  const wks=todayWorkouts();const supls=todaySupplements();const mls=todayMeals();const cardios=todayCardioLogs();
   let actHtml='';
   if(wks.length)actHtml+=wks.map(w=>`<div class="log-item"><span class="log-ico">🏋️</span><div class="log-info"><div class="log-ttl">${w.name||tipoLabel(w.type)}</div><div class="log-sub">${w.duration}min · ${w.caloriesBurned||0}kcal</div></div></div>`).join('');
+  if(cardios.length){cardios.forEach(function(e){var ct=(typeof CARDIO_TIPOS!=='undefined'&&CARDIO_TIPOS[e.tipo])||{nome:e.tipo,ico:'🏃'};actHtml+='<div class="log-item"><span class="log-ico">'+ct.ico+'</span><div class="log-info"><div class="log-ttl">'+ct.nome+' · '+e.duracao+'min</div><div class="log-sub">'+e.kcal+' kcal'+(e.distancia>0?' · '+e.distancia.toFixed(1)+'km':'')+'</div></div></div>';});}
   if(mls.length){const t=dayNutrition();actHtml+=`<div class="log-item"><span class="log-ico">🍽️</span><div class="log-info"><div class="log-ttl">${mls.length} refeição(ões)</div><div class="log-sub">${Math.round(t.calories)} kcal · P:${Math.round(t.protein)}g C:${Math.round(t.carbs)}g G:${Math.round(t.fat)}g</div></div></div>`;}
   if(supls.length)actHtml+=`<div class="log-item"><span class="log-ico">💊</span><div class="log-info"><div class="log-ttl">${supls.length} suplemento(s)</div><div class="log-sub">${supls.map(s=>s.name).join(', ')}</div></div></div>`;
   if(!actHtml)actHtml=`<div class="empty"><div class="empty-ico">🌅</div><div class="empty-txt">Nenhuma atividade registrada hoje.<br>Comece registrando um treino ou refeição!</div></div>`;
   document.getElementById('dash-activity').innerHTML=`<div class="log-list">${actHtml}</div>`;
-  renderDashboardEvolution();
+  renderDashboardEvolution();renderDashCardio();renderDashSupls();renderDashErgo();renderDashPeso();
 }
 
 function renderDashboardEvolution(){
@@ -1899,6 +1927,38 @@ function renderDashboardEvolution(){
   el.innerHTML=html||'<div class="fs12 txt-muted" style="text-align:center;padding:8px">Sem dados de evolução.</div>';
 }
 
+function renderDashCardio(){
+  const el=document.getElementById('dash-cardio');if(!el)return;
+  const logs=todayCardioLogs();
+  if(!logs.length){el.innerHTML='<div class="fs12 txt-muted" style="text-align:center;padding:8px">Nenhum cardio registrado hoje.</div>';return;}
+  const totalKcal=dayCardioKcal();const totalDur=logs.reduce((s,e)=>s+(e.duracao||0),0);
+  let html=`<div class="g2 mb8"><div class="stat"><div class="stat-val txt-dan">${totalKcal}</div><div class="stat-lbl">kcal queimadas</div></div><div class="stat"><div class="stat-val txt-pri">${totalDur}min</div><div class="stat-lbl">duração total</div></div></div>`;
+  html+='<div class="log-list">'+logs.map(function(e){var t=(typeof CARDIO_TIPOS!=='undefined'&&CARDIO_TIPOS[e.tipo])||{nome:e.tipo,ico:'🏃'};return'<div class="log-item"><span class="log-ico">'+t.ico+'</span><div class="log-info"><div class="log-ttl">'+t.nome+(e.hora?' · '+e.hora:'')+'</div><div class="log-sub">'+e.duracao+'min · '+e.kcal+' kcal'+(e.distancia>0?' · '+e.distancia.toFixed(1)+'km':'')+'</div></div></div>'}).join('')+'</div>';
+  el.innerHTML=html;
+}
+function renderDashSupls(){
+  const el=document.getElementById('dash-supls');if(!el)return;
+  const supls=todaySupplements();
+  if(!supls.length){el.innerHTML='<div class="fs12 txt-muted" style="text-align:center;padding:8px">Nenhum suplemento registrado hoje.</div>';return;}
+  el.innerHTML='<div class="log-list">'+supls.map(function(s){return'<div class="log-item"><span class="log-ico">💊</span><div class="log-info"><div class="log-ttl">'+s.name+(s.time?' · '+s.time:'')+'</div><div class="log-sub">'+(s.dose?s.dose+' ':'')+  (s.type||'')+'</div></div></div>'}).join('')+'</div>';
+}
+function renderDashErgo(){
+  const el=document.getElementById('dash-ergo');if(!el)return;
+  if(!D.ergogenicos||!D.ergogenicos.length){el.innerHTML='<div class="fs12 txt-muted" style="text-align:center;padding:8px">Nenhum ergogênico cadastrado.</div>';return;}
+  const ativos=D.ergogenicos.filter(function(e){return e.active!==false;});
+  if(!ativos.length){el.innerHTML='<div class="fs12 txt-muted" style="text-align:center;padding:8px">Nenhum ciclo ativo no stack.</div>';return;}
+  el.innerHTML='<div class="log-list">'+ativos.slice(0,6).map(function(e){return'<div class="log-item"><span class="log-ico">⚡</span><div class="log-info"><div class="log-ttl">'+e.name+'</div><div class="log-sub">'+(e.dose||'')+(e.doseUnit||'mg')+(e.timing?' · '+e.timing:'')+'</div></div></div>'}).join('')+(ativos.length>6?'<div class="fs11 txt-muted" style="text-align:center;padding-top:4px">+'+(ativos.length-6)+' mais no stack</div>':'')+'</div>';
+}
+function renderDashPeso(){
+  const el=document.getElementById('dash-peso');if(!el)return;
+  const hist=D.measurements.filter(function(m){return m.weight;}).sort(function(a,b){return b.date.localeCompare(a.date);});
+  if(!hist.length){el.innerHTML='<div class="fs12 txt-muted" style="text-align:center;padding:8px">Nenhum peso registrado ainda.</div>';return;}
+  const lat=hist[0];const prev=hist[1];
+  const diff=prev?Math.round((lat.weight-prev.weight)*10)/10:null;
+  const dStr=diff===null?'':(diff>0?'+'+diff+'kg':diff+'kg');
+  const dCls=diff===null?'':(diff>0?'txt-dan':diff<0?'txt-suc':'txt-muted');
+  el.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0"><div><div style="font-size:30px;font-weight:800;color:var(--primary-light)">'+lat.weight+'<span style="font-size:14px;font-weight:400;color:var(--text-muted)"> kg</span></div><div class="fs11 txt-muted">Registrado em '+fmtDate(lat.date)+'</div></div>'+(diff!==null?'<div class="'+dCls+'" style="font-size:20px;font-weight:700">'+dStr+'</div>':'')+'</div>';
+}
 function getLastExerciseLog2(exName,excludeId){
   const wks=[...D.workouts].filter(w=>w.id!==excludeId&&w.exercises&&w.exercises.length).sort((a,b)=>b.date.localeCompare(a.date));
   for(const w of wks){const ex=w.exercises.find(e=>e.name===exName);if(ex&&ex.sets&&ex.sets.length)return ex;}

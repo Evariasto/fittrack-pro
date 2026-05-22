@@ -196,6 +196,31 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
 .unit-btn{flex:1;padding:3px 5px;font-size:9px;font-weight:700;border-radius:3px;border:1px solid var(--border);background:var(--surface3);color:var(--text-muted);cursor:pointer;letter-spacing:.5px;transition:background .15s,color .15s}
 .unit-btn.active{background:var(--purple);border-color:var(--purple);color:#fff}
 .un-hint{font-size:9px;color:var(--text-dim);margin-top:3px;text-align:center;display:none}
+/* ERGOGÊNICOS */
+.ergo-card{background:var(--surface2);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px;border:1px solid var(--border);border-left:4px solid var(--accent);transition:opacity .2s}
+.ergo-card.inactive{opacity:.45;border-left-color:var(--text-dim)}
+.ergo-card-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.ergo-name{font-size:14px;font-weight:800;color:var(--text)}
+.ergo-cat-ico{font-size:22px;flex-shrink:0;line-height:1.2}
+.ergo-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.echip{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:12px;font-size:10px;font-weight:700;letter-spacing:.2px}
+.echip-dose{background:rgba(6,182,212,.15);color:var(--accent)}
+.echip-time{background:rgba(124,58,237,.15);color:var(--primary-light)}
+.echip-cycle{background:rgba(245,158,11,.15);color:var(--warning)}
+.echip-days{background:rgba(16,185,129,.15);color:var(--success)}
+.echip-off{background:rgba(239,68,68,.12);color:var(--danger)}
+.ergo-actions{display:flex;gap:6px;margin-top:10px;align-items:center}
+.ergo-toggle{flex:1;padding:6px 10px;border-radius:var(--radius-sm);font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--surface3);color:var(--text-muted);transition:all .2s}
+.ergo-toggle.active{background:rgba(16,185,129,.15);border-color:var(--success);color:var(--success)}
+/* Guia de referência */
+.ergo-ref{background:var(--surface2);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:8px;border-left:3px solid var(--primary)}
+.ergo-ref-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.ergo-ref-name{font-size:13px;font-weight:800}
+.ev-badge{font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;letter-spacing:.5px}
+.ev-a{background:rgba(16,185,129,.2);color:var(--success)}
+.ev-b{background:rgba(245,158,11,.2);color:var(--warning)}
+.ev-c{background:rgba(239,68,68,.15);color:var(--danger)}
+.ergo-ref-info{font-size:11px;color:var(--text-muted);line-height:1.6}
 /* TRAINER BANNER */
 .trainer-banner{position:relative;width:100%;height:300px;border-radius:var(--radius);overflow:hidden;margin-bottom:14px;display:flex;align-items:flex-end}
 .trainer-bg{position:absolute;inset:0;display:flex}
@@ -360,6 +385,7 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
   <button class="snav-btn" data-sec="refeicoes" onclick="showSection('refeicoes')"><span class="ico">🍽️</span> Refeições</button>
   <button class="snav-btn" data-sec="agua" onclick="showSection('agua')"><span class="ico">💧</span> Hidratação</button>
   <button class="snav-btn" data-sec="suplementos" onclick="showSection('suplementos')"><span class="ico">💊</span> Suplementos</button>
+  <button class="snav-btn" data-sec="ergogenicos" onclick="showSection('ergogenicos')"><span class="ico">⚡</span> Ergogênicos</button>
   <button class="snav-btn" data-sec="alimentos" onclick="showSection('alimentos')"><span class="ico">🥗</span> Base Alimentos</button>
   <button class="snav-btn" data-sec="medidas" onclick="showSection('medidas')"><span class="ico">📏</span> Medidas</button>
   <button class="snav-btn" data-sec="calculadoras" onclick="showSection('calculadoras')"><span class="ico">🧮</span> Calculadoras</button>
@@ -623,6 +649,28 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
     <button class="btn btn-pri" onclick="openModal('modalSupl')">+ Adicionar</button>
   </div>
   <div id="supl-list"></div>
+</section>
+
+<!-- ERGOGÊNICOS -->
+<section class="section" id="sec-ergogenicos">
+  <div class="sec-hd">
+    <div class="sec-ttl">⚡ Ergogênicos</div>
+    <button class="btn btn-pri" onclick="openModal('modalErgo')">+ Adicionar</button>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab(this,'tab-ergo-stack')">⚡ Stack Ativo</button>
+    <button class="tab-btn" onclick="showTab(this,'tab-ergo-hist')">📋 Histórico</button>
+    <button class="tab-btn" onclick="showTab(this,'tab-ergo-guia')">📖 Guia</button>
+  </div>
+  <div class="tab-content active" id="tab-ergo-stack">
+    <div id="ergo-stack-list"></div>
+  </div>
+  <div class="tab-content" id="tab-ergo-hist" style="display:none">
+    <div id="ergo-hist-list"></div>
+  </div>
+  <div class="tab-content" id="tab-ergo-guia" style="display:none">
+    <div id="ergo-guia-content"></div>
+  </div>
 </section>
 
 <!-- BASE DE ALIMENTOS -->
@@ -904,6 +952,7 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
   <button class="bnav-btn" data-sec="refeicoes" onclick="showSection('refeicoes')"><span class="ico">🍽️</span>Comida</button>
   <button class="bnav-btn" data-sec="agua" onclick="showSection('agua')"><span class="ico">💧</span>Água</button>
   <button class="bnav-btn" data-sec="suplementos" onclick="showSection('suplementos')"><span class="ico">💊</span>Suplem.</button>
+  <button class="bnav-btn" data-sec="ergogenicos" onclick="showSection('ergogenicos')"><span class="ico">⚡</span>Ergog.</button>
   <button class="bnav-btn" data-sec="alimentos" onclick="showSection('alimentos')"><span class="ico">🥗</span>Alimentos</button>
   <button class="bnav-btn" data-sec="progresso" onclick="showSection('progresso')"><span class="ico">📈</span>Progresso</button>
 </nav>
@@ -1039,6 +1088,74 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
     <button class="btn btn-block mt8" style="background:#1c1c26;color:#fbbf24;border:1px solid #fbbf24;font-weight:900;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px" onclick="previewFichaPDF()">👁️ VISUALIZAR PDF ANTES DE ENVIAR</button>
     <div style="margin:8px 0 4px;font-size:11px;color:#64748b;text-align:center">— revise o PDF e então envie —</div>
     <button class="btn btn-block" style="background:#25D366;color:#fff;font-weight:900;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px" onclick="generateAndSendFicha()">📲 GERAR PDF E ENVIAR VIA WHATSAPP</button>
+  </div>
+</div>
+
+<!-- MODAL ERGOGÊNICO -->
+<div class="modal-overlay" id="modalErgo">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-ttl">⚡ Adicionar Ergogênico</span><button class="modal-cls" onclick="closeModal('modalErgo')">×</button></div>
+    <div class="fg"><label>Nome / Produto</label><input type="text" id="ergo-nome" placeholder="Ex: Creatina Monohidratada, Cafeína..."></div>
+    <div class="g2">
+      <div class="fg"><label>Categoria</label>
+        <select id="ergo-cat">
+          <option value="creatina">💪 Creatina</option>
+          <option value="cafeina">☕ Cafeína</option>
+          <option value="pre_treino">🔥 Pré-Treino</option>
+          <option value="beta_alanina">⚡ Beta-Alanina</option>
+          <option value="citrulina">🩸 Citrulina</option>
+          <option value="carnitina">🔥 Carnitina</option>
+          <option value="hmb">🛡️ HMB</option>
+          <option value="glutamina">🔬 Glutamina</option>
+          <option value="bcaa">💊 BCAA</option>
+          <option value="arginina">💉 Arginina</option>
+          <option value="omega3">🐟 Ômega-3</option>
+          <option value="vitamina_d">☀️ Vitamina D</option>
+          <option value="zinco">🔩 Zinco/Magnésio</option>
+          <option value="outros">🧪 Outros</option>
+        </select>
+      </div>
+      <div class="fg"><label>Dose</label>
+        <div class="row" style="gap:6px">
+          <input type="number" id="ergo-dose" placeholder="5" step="0.1" style="flex:1">
+          <select id="ergo-dose-un" style="width:70px;flex:none">
+            <option value="g">g</option>
+            <option value="mg">mg</option>
+            <option value="ml">ml</option>
+            <option value="caps">caps</option>
+            <option value="ui">UI</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="fg"><label>Momento</label>
+        <select id="ergo-timing">
+          <option value="pre_treino">⚡ Pré-Treino (30-45min)</option>
+          <option value="intra">🏋️ Intra-Treino</option>
+          <option value="pos_treino">💪 Pós-Treino</option>
+          <option value="manha">🌅 Manhã (em jejum)</option>
+          <option value="manha_ref">🍳 Manhã (com refeição)</option>
+          <option value="noite">🌙 À Noite</option>
+          <option value="qualquer">🕐 Qualquer Hora</option>
+        </select>
+      </div>
+      <div class="fg"><label>Ciclo de Uso</label>
+        <select id="ergo-ciclo">
+          <option value="continuo">♾️ Contínuo</option>
+          <option value="8on4off">🔄 8 sem on / 4 off</option>
+          <option value="6on2off">🔄 6 sem on / 2 off</option>
+          <option value="4on2off">🔄 4 sem on / 2 off</option>
+          <option value="loading">📈 Loading + Manutenção</option>
+          <option value="conforme">📅 Conforme Necessidade</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label>Data de Início</label><input type="date" id="ergo-inicio"></div>
+    <div class="fg"><label>Protocolo / Observações <span class="txt-muted">(opcional)</span></label>
+      <textarea id="ergo-protocol" rows="2" placeholder="Ex: Tomar com 300ml de água, dividir em 2 doses, tomar com carboidrato..."></textarea>
+    </div>
+    <button class="btn btn-pri btn-block mt8" onclick="saveErgo()">✓ Salvar Ergogênico</button>
   </div>
 </div>
 
@@ -1259,7 +1376,7 @@ function saveData(){
 }
 function defaultData(){return{
   profile:{name:'',gender:'m',age:25,height:175,weight:75,goal:'lose',activity:'moderate',waterGoal:3000},
-  workouts:[],meals:[],waterLogs:{},supplements:[],measurements:[],bodyFat:[],trainerPlans:{}
+  workouts:[],meals:[],waterLogs:{},supplements:[],measurements:[],bodyFat:[],trainerPlans:{},ergogenicos:[]
 }}
 let D=loadData();
 
@@ -1356,7 +1473,7 @@ function showSection(id){
   }catch(e){console.error('showSection error:',e);}
 }
 function renderSection(id){
-  const fn={dashboard:renderDashboard,treino:renderTreino,ficha:renderFicha,refeicoes:renderRefeicoes,agua:renderAgua,suplementos:renderSupl,alimentos:renderAlimentos,medidas:renderMedidas,calculadoras:renderCalcs,progresso:renderProgresso,perfil:renderPerfil};
+  const fn={dashboard:renderDashboard,treino:renderTreino,ficha:renderFicha,refeicoes:renderRefeicoes,agua:renderAgua,suplementos:renderSupl,ergogenicos:renderErgogenicos,alimentos:renderAlimentos,medidas:renderMedidas,calculadoras:renderCalcs,progresso:renderProgresso,perfil:renderPerfil};
   if(fn[id])fn[id]();
 }
 function showTab(btn,tabId){try{window.scrollTo(0,0);}catch(e){}
@@ -1367,13 +1484,7 @@ function showTab(btn,tabId){try{window.scrollTo(0,0);}catch(e){}
   const el=document.getElementById(tabId);
   if(el){el.style.display='block';renderTabContent(tabId);}
 }
-function renderTabContent(id){
-  if(id==='tab-peso')renderPesoChart();
-  if(id==='tab-gordura')renderBfChart();
-  if(id==='tab-proj')renderProjecao();
-  if(id==='tab-semana')renderSemana();
-  if(id==='tab-historico')renderHistorico();
-}
+
 
 // ===================== DASHBOARD =====================
 let calRingChartInst=null;
@@ -2411,6 +2522,7 @@ function openModal(id){
   }
   if(id==='modalRefeicao'){editingMealId=null;setV('ref-data-inp',today);setV('ref-sal','');document.getElementById('food-rows').innerHTML='';addFoodRow();const sb=document.querySelector('#modalRefeicao .btn-pri.btn-block');if(sb)sb.innerHTML='✓ Salvar Refeição';}
   if(id==='modalSupl'){setV('supl-data',today);const now=new Date();setV('supl-hora',String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0'));}
+  if(id==='modalErgo'){setV('ergo-inicio',today);['ergo-nome','ergo-dose','ergo-protocol'].forEach(x=>setV(x,''));}
 }
 function closeModal(id){document.getElementById(id).classList.remove('open')}
 // Close modal on overlay click
@@ -2702,6 +2814,204 @@ function generateFichaPDF(nomeAluno){
   doc.text('MFS TEAM · Matheus F Silva · Bodybuilding', pageW/2, fy+2, {align:'center'});
 
   return doc.output('blob');
+}
+
+// ===================== ERGOGÊNICOS =====================
+const ERGO_CAT={
+  creatina:{ico:'💪',label:'Creatina',cor:'var(--accent)'},
+  cafeina:{ico:'☕',label:'Cafeína',cor:'var(--warning)'},
+  pre_treino:{ico:'🔥',label:'Pré-Treino',cor:'var(--danger)'},
+  beta_alanina:{ico:'⚡',label:'Beta-Alanina',cor:'var(--primary-light)'},
+  citrulina:{ico:'🩸',label:'Citrulina',cor:'var(--danger)'},
+  carnitina:{ico:'🔥',label:'Carnitina',cor:'var(--warning)'},
+  hmb:{ico:'🛡️',label:'HMB',cor:'var(--success)'},
+  glutamina:{ico:'🔬',label:'Glutamina',cor:'var(--accent)'},
+  bcaa:{ico:'💊',label:'BCAA',cor:'var(--primary-light)'},
+  arginina:{ico:'💉',label:'Arginina',cor:'var(--accent)'},
+  omega3:{ico:'🐟',label:'Ômega-3',cor:'var(--success)'},
+  vitamina_d:{ico:'☀️',label:'Vitamina D',cor:'var(--warning)'},
+  zinco:{ico:'🔩',label:'Zinco/Mg',cor:'var(--text-muted)'},
+  outros:{ico:'🧪',label:'Outros',cor:'var(--text-muted)'}
+};
+const ERGO_TIMING={
+  pre_treino:'⚡ Pré-Treino',intra:'🏋️ Intra',pos_treino:'💪 Pós-Treino',
+  manha:'🌅 Manhã (jejum)',manha_ref:'🍳 Manhã (refeição)',noite:'🌙 Noite',qualquer:'🕐 Qualquer'
+};
+const ERGO_CICLO={
+  continuo:'♾️ Contínuo',
+  '8on4off':'8s on / 4s off','6on2off':'6s on / 2s off','4on2off':'4s on / 2s off',
+  loading:'Loading + Mant.',conforme:'Conforme Necessidade'
+};
+const ERGO_GUIA=[
+  {name:'Creatina Monohidratada',ev:'A',dose:'3–5g/dia',timing:'Qualquer hora',ciclo:'Contínuo',cor:'var(--accent)',
+   info:'Ergogênico mais estudado do mundo. Aumenta força e hipertrofia. Loading opcional: 20g/dia por 5–7 dias. Tomar com carboidrato potencializa absorção.'},
+  {name:'Cafeína',ev:'A',dose:'3–6mg/kg (~200–400mg)',timing:'45–60min pré-treino',ciclo:'Ciclar para evitar tolerância',cor:'var(--warning)',
+   info:'Melhora força, resistência e foco. Evitar após 14h para não prejudicar o sono. Associação com L-Teanina (1:2) reduz efeitos colaterais.'},
+  {name:'Beta-Alanina',ev:'A',dose:'3,2–6,4g/dia',timing:'Dividir em doses (com refeição)',ciclo:'Contínuo',cor:'var(--primary-light)',
+   info:'Aumenta carnosina muscular → reduz fadiga em esforços de 1–4 minutos. Formigamento (parestesia) é normal e inofensivo.'},
+  {name:'Citrulina Malato',ev:'B',dose:'6–8g',timing:'30–60min pré-treino',ciclo:'Conforme uso',cor:'var(--danger)',
+   info:'Aumenta bomba muscular e reduz fadiga. Superior à arginina na elevação de óxido nítrico. 2:1 malato recomendado.'},
+  {name:'HMB (β-Hidroxi β-Metilbutirato)',ev:'B',dose:'3g/dia (3×1g)',timing:'Dividir 3x ao dia',ciclo:'Contínuo',cor:'var(--success)',
+   info:'Anticatabólico — útil em déficit calórico ou iniciantes. Efeito mais pronunciado em treinos intensos. Dois meses para resultado.'},
+  {name:'L-Carnitina',ev:'B',dose:'2–3g',timing:'Com refeição rica em carboidratos',ciclo:'8–12 semanas',cor:'var(--warning)',
+   info:'Auxilia no transporte de gordura para mitocôndrias. Necessita de insulina para captação muscular → tomar com carbo.'},
+  {name:'Citrulina + Arginina',ev:'B',dose:'6g Cit + 3g Arg',timing:'30–45min pré-treino',ciclo:'Conforme uso',cor:'var(--danger)',
+   info:'Sinergia para produção de NO (óxido nítrico). Vasodilatação potencializada. Útil em treinos de hipertrofia.'},
+  {name:'Glutamina',ev:'C',dose:'5–10g',timing:'Pós-treino ou antes de dormir',ciclo:'Contínuo',cor:'var(--text-muted)',
+   info:'Evidência limitada em indivíduos saudáveis com dieta adequada. Pode ser útil em períodos de alto stress ou imunossupressão.'},
+  {name:'Bicarbonato de Sódio',ev:'B',dose:'0,2–0,3g/kg',timing:'60–90min pré-treino',ciclo:'Conforme uso',cor:'var(--accent)',
+   info:'Tampão para ácido lático. Benefício em esforços de alta intensidade (30s–10min). Risco de desconforto gastrointestinal — testar em treino leve antes.'},
+  {name:'Ômega-3 (EPA+DHA)',ev:'A',dose:'2–4g EPA+DHA/dia',timing:'Com refeição',ciclo:'Contínuo',cor:'var(--success)',
+   info:'Anti-inflamatório, melhora sensibilidade à insulina e saúde cardiovascular. Benefício indireto na recuperação muscular e redução de DOMS.'},
+];
+
+function renderErgogenicos(){
+  if(!D.ergogenicos)D.ergogenicos=[];
+  renderErgoStack();
+}
+function renderErgoStack(){
+  if(!D.ergogenicos)D.ergogenicos=[];
+  const active=D.ergogenicos.filter(e=>e.active!==false);
+  const inactive=D.ergogenicos.filter(e=>e.active===false);
+  const el=document.getElementById('ergo-stack-list');if(!el)return;
+  if(!D.ergogenicos.length){
+    el.innerHTML=`<div class="empty"><div class="empty-ico">⚡</div><div class="empty-txt">Nenhum ergogênico cadastrado.<br>Adicione seu stack atual!</div></div>`;return;
+  }
+  // Summary card
+  const totalAtivos=active.length;
+  let summaryHtml=`<div class="card" style="margin-bottom:10px">
+    <div class="card-title">📊 Resumo do Stack</div>
+    <div class="g3">
+      <div class="stat"><div class="stat-val txt-acc">${totalAtivos}</div><div class="stat-lbl">Ativos</div></div>
+      <div class="stat"><div class="stat-val txt-muted">${inactive.length}</div><div class="stat-lbl">Pausados</div></div>
+      <div class="stat"><div class="stat-val txt-pri">${D.ergogenicos.length}</div><div class="stat-lbl">Total</div></div>
+    </div></div>`;
+  const cardsHtml=[...active,...inactive].map(e=>buildErgoCard(e)).join('');
+  el.innerHTML=summaryHtml+cardsHtml;
+}
+function buildErgoCard(e){
+  const cat=ERGO_CAT[e.category]||ERGO_CAT.outros;
+  const dias=e.startDate?Math.floor((new Date()-new Date(e.startDate+'T00:00:00'))/86400000):0;
+  const timing=ERGO_TIMING[e.timing]||e.timing||'';
+  const ciclo=ERGO_CICLO[e.ciclo]||e.ciclo||'';
+  const isActive=e.active!==false;
+  // Cycle warning
+  let cycleWarn='';
+  if(e.ciclo==='8on4off'&&dias>56)cycleWarn=`<span class="echip echip-off">⚠️ Tempo de pausa!</span>`;
+  else if(e.ciclo==='6on2off'&&dias>42)cycleWarn=`<span class="echip echip-off">⚠️ Tempo de pausa!</span>`;
+  else if(e.ciclo==='4on2off'&&dias>28)cycleWarn=`<span class="echip echip-off">⚠️ Tempo de pausa!</span>`;
+  return`<div class="ergo-card${isActive?'':' inactive'}">
+    <div class="ergo-card-hd">
+      <div>
+        <div class="ergo-name">${cat.ico} ${e.name}</div>
+        <div class="fs11 txt-muted" style="margin-top:2px">${cat.label}${e.protocol?` · <em>${e.protocol.substring(0,50)}${e.protocol.length>50?'...':''}</em>`:''}</div>
+      </div>
+      <div style="display:flex;gap:4px">
+        <button class="log-edit" onclick="editErgo('${e.id}')" title="Editar">✏️</button>
+        <button class="log-del" onclick="deleteErgo('${e.id}')">🗑</button>
+      </div>
+    </div>
+    <div class="ergo-chips">
+      <span class="echip echip-dose">💊 ${e.dose}${e.doseUnit}</span>
+      <span class="echip echip-time">${timing}</span>
+      <span class="echip echip-cycle">${ciclo}</span>
+      ${dias>0?`<span class="echip echip-days">📅 ${dias} dias</span>`:''}
+      ${cycleWarn}
+    </div>
+    <div class="ergo-actions">
+      <button class="ergo-toggle${isActive?' active':''}" onclick="toggleErgo('${e.id}')">
+        ${isActive?'✅ Ativo — toque para pausar':'⏸ Pausado — toque para ativar'}
+      </button>
+    </div>
+  </div>`;
+}
+function renderErgoHist(){
+  const el=document.getElementById('ergo-hist-list');if(!el)return;
+  if(!D.ergogenicos||!D.ergogenicos.length){
+    el.innerHTML='<div class="empty"><div class="empty-ico">📋</div><div class="empty-txt">Nenhum ergogênico cadastrado ainda.</div></div>';return;
+  }
+  el.innerHTML='<div class="log-list">'+D.ergogenicos.map(e=>{
+    const cat=ERGO_CAT[e.category]||ERGO_CAT.outros;
+    const dias=e.startDate?Math.floor((new Date()-new Date(e.startDate+'T00:00:00'))/86400000):0;
+    return`<div class="log-item"><span class="log-ico">${cat.ico}</span>
+      <div class="log-info">
+        <div class="log-ttl">${e.name}</div>
+        <div class="log-sub">${e.dose}${e.doseUnit} · ${ERGO_TIMING[e.timing]||''}</div>
+        <div class="log-meta">${e.startDate?fmtDate(e.startDate):''} · ${dias} dias · ${e.active!==false?'<span style="color:var(--success)">Ativo</span>':'<span style="color:var(--text-dim)">Pausado</span>'}</div>
+      </div>
+      <button class="log-del" onclick="deleteErgo('${e.id}')">🗑</button>
+    </div>`;
+  }).join('')+'</div>';
+}
+function renderErgoGuia(){
+  const el=document.getElementById('ergo-guia-content');if(!el)return;
+  el.innerHTML='<div class="card" style="margin-bottom:10px;border-color:rgba(124,58,237,.3)"><div class="fs12 txt-muted" style="line-height:1.7"><strong style="color:var(--primary-light)">Níveis de Evidência:</strong> <span class="ev-badge ev-a">A</span> Forte &nbsp;·&nbsp; <span class="ev-badge ev-b">B</span> Moderada &nbsp;·&nbsp; <span class="ev-badge ev-c">C</span> Limitada</div></div>'+
+  ERGO_GUIA.map(g=>`
+    <div class="ergo-ref">
+      <div class="ergo-ref-top">
+        <span class="ergo-ref-name">${g.name}</span>
+        <span class="ev-badge ev-${g.ev.toLowerCase()}">${g.ev}</span>
+      </div>
+      <div class="ergo-ref-info">
+        <strong>Dose:</strong> ${g.dose}<br>
+        <strong>Timing:</strong> ${g.timing}<br>
+        <strong>Ciclo:</strong> ${g.ciclo}<br>
+        ${g.info}
+      </div>
+    </div>`).join('');
+}
+function renderTabContent(id){
+  if(id==='tab-peso')renderPesoChart();
+  if(id==='tab-gordura')renderBfChart();
+  if(id==='tab-proj')renderProjecao();
+  if(id==='tab-semana')renderSemana();
+  if(id==='tab-historico')renderHistorico();
+  if(id==='tab-ergo-stack')renderErgoStack();
+  if(id==='tab-ergo-hist')renderErgoHist();
+  if(id==='tab-ergo-guia')renderErgoGuia();
+}
+var _editingErgoId=null;
+function saveErgo(){
+  const nome=v('ergo-nome');if(!nome){toast('⚠️ Informe o nome!','warning');return}
+  const obj={
+    id:_editingErgoId||uid(),
+    name:nome,category:v('ergo-cat'),
+    dose:v('ergo-dose')||'0',doseUnit:v('ergo-dose-un')||'g',
+    timing:v('ergo-timing'),ciclo:v('ergo-ciclo'),
+    startDate:v('ergo-inicio')||todayKey(),
+    protocol:v('ergo-protocol'),
+    active:true
+  };
+  if(!D.ergogenicos)D.ergogenicos=[];
+  if(_editingErgoId){
+    const idx=D.ergogenicos.findIndex(e=>e.id===_editingErgoId);
+    if(idx>=0){obj.active=D.ergogenicos[idx].active;D.ergogenicos[idx]=obj;}
+    _editingErgoId=null;
+  }else{
+    D.ergogenicos.push(obj);
+  }
+  saveData();closeModal('modalErgo');renderErgoStack();toast('✅ Ergogênico salvo!');
+}
+function editErgo(id){
+  const e=D.ergogenicos.find(x=>x.id===id);if(!e)return;
+  _editingErgoId=id;
+  setV('ergo-nome',e.name);setV('ergo-cat',e.category);
+  setV('ergo-dose',e.dose);setV('ergo-dose-un',e.doseUnit||'g');
+  setV('ergo-timing',e.timing);setV('ergo-ciclo',e.ciclo);
+  setV('ergo-inicio',e.startDate||todayKey());
+  setV('ergo-protocol',e.protocol||'');
+  document.getElementById('modalErgo').classList.add('open');
+}
+function deleteErgo(id){
+  if(!confirm('Remover este ergogênico?'))return;
+  D.ergogenicos=D.ergogenicos.filter(e=>e.id!==id);
+  saveData();renderErgoStack();renderErgoHist();toast('🗑️ Removido');
+}
+function toggleErgo(id){
+  const e=D.ergogenicos.find(x=>x.id===id);if(!e)return;
+  e.active=e.active===false?true:false;
+  saveData();renderErgoStack();
+  toast(e.active?'✅ Ergogênico ativado!':'⏸ Ergogênico pausado');
 }
 
 // ===================== FOTO DE PERFIL — CROPPER =====================

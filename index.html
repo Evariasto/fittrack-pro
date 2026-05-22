@@ -26,7 +26,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .date-chip{font-size:11px;color:var(--text-muted);background:var(--surface2);padding:4px 10px;border-radius:20px;white-space:nowrap}
 /* BOTTOM NAV */
 .bot-nav{position:fixed;bottom:0;left:0;right:0;height:var(--bot-nav);background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;z-index:100;padding-bottom:env(safe-area-inset-bottom,0px)}
-.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;cursor:pointer;border:none;background:none;color:var(--text-dim);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;-webkit-tap-highlight-color:transparent;transition:color .2s}
+.bnav-btn{width:62px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;cursor:pointer;border:none;background:none;color:var(--text-dim);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;-webkit-tap-highlight-color:transparent;transition:color .2s;overflow:hidden}
 .bnav-btn.active{color:var(--primary-light)}
 .bnav-btn .ico{font-size:20px;line-height:1}
 /* SIDEBAR (desktop) */
@@ -466,7 +466,7 @@ img,video,canvas,iframe{max-width:100%;height:auto}
 .cardio-log-sub{white-space:normal;word-break:break-word}
 /* Bottom nav: always scrollable on mobile */
 .bot-nav{-webkit-overflow-scrolling:touch}
-.bnav-btn{min-width:52px;flex-shrink:0}
+.bnav-btn{min-width:62px;flex-shrink:0}
 /* Tabs: scroll safely */
 .tabs{-webkit-overflow-scrolling:touch}
 .tab-btn{white-space:nowrap}

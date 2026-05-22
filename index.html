@@ -1863,7 +1863,9 @@ function addFoodRow(name='',cal='',prot='',carb='',fat=''){
       <div class="macro-chip"><span>Carb.g</span><strong id="fr-c-${rid}">${carb||0}</strong></div>
       <div class="macro-chip"><span>Gord.g</span><strong id="fr-f-${rid}">${fat||0}</strong></div>
     </div>`;
-  document.getElementById('food-rows').appendChild(div);
+  // Novo campo vazio vai pro topo; campos com dados vão pro final (carregamento)
+  if(name) document.getElementById('food-rows').appendChild(div);
+  else document.getElementById('food-rows').prepend(div);
   // If values passed directly (manual), set per-100g fields
   if(cal){const qtdInp=div.querySelector('input[type=number]');qtdInp.value=100;qtdInp.dataset.per100Kcal=cal;qtdInp.dataset.per100P=prot;qtdInp.dataset.per100C=carb;qtdInp.dataset.per100F=fat;qtdInp.dataset.unit='g';qtdInp.dataset.porcao=100;}
 }

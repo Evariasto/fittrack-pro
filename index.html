@@ -343,6 +343,11 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
 .tr-day-btn .day-sub{font-size:9px;display:block;margin-top:2px}
 .tr-day-btn.active{border-color:var(--purple);background:rgba(124,58,237,.18);color:var(--purple)}
 .tr-day-btn.active .day-lbl{color:var(--purple)}
+.tr-week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:12px}
+.tr-week-btn{padding:8px 2px;border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:center;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.tr-week-btn .wk-lbl{font-size:10px;font-weight:900;display:block;color:var(--text);text-transform:uppercase;letter-spacing:.3px}
+.tr-week-btn.active{border-color:var(--accent);background:rgba(6,182,212,.15)}
+.tr-week-btn.active .wk-lbl{color:var(--accent)}
 .tr-ex-card{background:var(--surface2);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;border:1px solid var(--border)}
 .tr-ex-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
 .tr-ex-name{font-size:13px;font-weight:700;color:var(--text)}
@@ -1192,22 +1197,39 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
 <div class="modal-overlay" id="modalTreino">
   <div class="modal" style="max-height:90vh;overflow-y:auto;padding-bottom:20px">
     <div class="modal-hd"><span class="modal-ttl">🏋️ Registrar Treino</span><button class="modal-cls" onclick="closeModal('modalTreino')">×</button></div>
-    <!-- Day Selector -->
-    <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Treino do Dia</label>
+    <!-- Dia da Semana -->
+    <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Dia da Semana</label>
+    <div class="tr-week-grid mt4" id="tr-week-grid">
+      <button class="tr-week-btn" data-dia="Segunda"  onclick="selectDiaSemana('Segunda')"><span class="wk-lbl">SEG</span></button>
+      <button class="tr-week-btn" data-dia="Terça"    onclick="selectDiaSemana('Terça')"><span class="wk-lbl">TER</span></button>
+      <button class="tr-week-btn" data-dia="Quarta"   onclick="selectDiaSemana('Quarta')"><span class="wk-lbl">QUA</span></button>
+      <button class="tr-week-btn" data-dia="Quinta"   onclick="selectDiaSemana('Quinta')"><span class="wk-lbl">QUI</span></button>
+      <button class="tr-week-btn" data-dia="Sexta"    onclick="selectDiaSemana('Sexta')"><span class="wk-lbl">SEX</span></button>
+      <button class="tr-week-btn" data-dia="Sábado"   onclick="selectDiaSemana('Sábado')"><span class="wk-lbl">SÁB</span></button>
+      <button class="tr-week-btn" data-dia="Domingo"  onclick="selectDiaSemana('Domingo')"><span class="wk-lbl">DOM</span></button>
+    </div>
+    <!-- Tipo de Treino -->
+    <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Tipo de Treino</label>
     <div class="tr-day-grid mt4 mb4">
-      <button class="tr-day-btn" data-day="A" onclick="selectTrainingDay('A')"><span class="day-lbl">A</span><span class="day-sub">Pull</span></button>
-      <button class="tr-day-btn" data-day="B" onclick="selectTrainingDay('B')"><span class="day-lbl">B</span><span class="day-sub">Push</span></button>
-      <button class="tr-day-btn" data-day="C" onclick="selectTrainingDay('C')"><span class="day-lbl">C</span><span class="day-sub">Leg</span></button>
+      <button class="tr-day-btn" data-day="A"  onclick="selectTrainingDay('A')"><span class="day-lbl">A</span><span class="day-sub">Pull</span></button>
+      <button class="tr-day-btn" data-day="B"  onclick="selectTrainingDay('B')"><span class="day-lbl">B</span><span class="day-sub">Push</span></button>
+      <button class="tr-day-btn" data-day="C"  onclick="selectTrainingDay('C')"><span class="day-lbl">C</span><span class="day-sub">Leg</span></button>
       <button class="tr-day-btn" data-day="A2" onclick="selectTrainingDay('A2')"><span class="day-lbl">A2</span><span class="day-sub">Upper</span></button>
-      <button class="tr-day-btn" data-day="E" onclick="selectTrainingDay('E')"><span class="day-lbl">E</span><span class="day-sub">Full</span></button>
+      <button class="tr-day-btn" data-day="E"  onclick="selectTrainingDay('E')"><span class="day-lbl">E</span><span class="day-sub">Full</span></button>
     </div>
     <!-- Exercise List (populated by JS) -->
     <div id="tr-ex-list"></div>
     <div class="divider"></div>
     <!-- Footer fields -->
+    <div class="fg"><label>Data</label><input type="date" id="tr-data"></div>
+    <div class="g2 mt4">
+      <div class="fg"><label>⏱ Início</label><input type="time" id="tr-hora-ini" oninput="calcTreinoDur()"></div>
+      <div class="fg"><label>🏁 Fim</label><input type="time" id="tr-hora-fim" oninput="calcTreinoDur()"></div>
+    </div>
+    <div style="font-size:10px;color:var(--text-muted);margin:-4px 0 8px;text-align:center">Preencha início e fim — a duração é calculada automaticamente</div>
     <div class="g2">
-      <div class="fg"><label>Duração (min)</label><input type="number" id="tr-duracao" placeholder="60"></div>
-      <div class="fg"><label>Data</label><input type="date" id="tr-data"></div>
+      <div class="fg"><label>Duração (min) <span class="txt-muted" style="font-size:9px">auto</span></label><input type="number" id="tr-duracao" placeholder="60"></div>
+      <div class="fg" style="display:flex;align-items:flex-end"><div style="flex:1"></div></div>
     </div>
     <div class="fg mt4"><label>Calorias Queimadas</label>
       <div class="row"><input type="number" id="tr-kcal" placeholder="Auto"><button class="btn btn-out btn-sm" onclick="autoCalcWorkoutKcal()" style="white-space:nowrap">⚡ Auto</button></div>
@@ -2037,7 +2059,22 @@ const WORKOUT_DB={
   ]},
 };
 
-let currentTrainingDay='';
+let currentTrainingDay='', currentDiaSemana='';
+const DIAS_SEMANA=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+function selectDiaSemana(dia){
+  currentDiaSemana=dia;
+  document.querySelectorAll('#tr-week-grid .tr-week-btn').forEach(b=>b.classList.toggle('active',b.dataset.dia===dia));
+}
+function calcTreinoDur(){
+  const ini=v('tr-hora-ini'),fim=v('tr-hora-fim');
+  if(!ini||!fim)return;
+  const [ih,im]=ini.split(':').map(Number);
+  const [fh,fm]=fim.split(':').map(Number);
+  let start=ih*60+im,end=fh*60+fm;
+  if(end<=start)end+=1440;
+  const dur=end-start;
+  if(dur>0)setV('tr-duracao',dur);
+}
 
 function getActivePlanExercises(day){
   // Check if there's a trainer plan for the current ISO week
@@ -2155,7 +2192,9 @@ function renderTreino(){
       });
       exHtml+='</div>';
     }
-    return`<div class="card mb8"><div class="flex-bc"><div><div class="fw7">${tipoEmoji(w.type)} ${w.name||tipoLabel(w.type)}${dayLabel}</div><div class="fs11 txt-muted mt4">${w.duration}min · ${w.caloriesBurned||0}kcal${w.obs?' · '+w.obs:''}</div></div><div style="display:flex;gap:4px"><button class="log-edit" onclick="editTreino('${w.id}')" title="Editar">✏️</button><button class="log-del" onclick="deleteTreino('${w.id}')">🗑</button></div></div>${exHtml}</div>`;
+    const diaStr=w.diaSemana?`<span style="font-size:10px;color:var(--accent);font-weight:700;margin-right:6px">${w.diaSemana}</span>`:'';
+    const horaStr=w.horaInicio?(w.horaFim?w.horaInicio+'→'+w.horaFim:w.horaInicio)+' · ':'';
+    return`<div class="card mb8"><div class="flex-bc"><div><div class="fw7">${diaStr}${tipoEmoji(w.type)} ${w.name||tipoLabel(w.type)}${dayLabel}</div><div class="fs11 txt-muted mt4">${horaStr}${w.duration}min · ${w.caloriesBurned||0}kcal${w.obs?' · '+w.obs:''}</div></div><div style="display:flex;gap:4px"><button class="log-edit" onclick="editTreino('${w.id}')" title="Editar">✏️</button><button class="log-del" onclick="deleteTreino('${w.id}')">🗑</button></div></div>${exHtml}</div>`;
   }).join('');
   document.getElementById('treino-list').innerHTML=html;
 }
@@ -2176,17 +2215,20 @@ function saveTreino(){
     _editingTreinoId=null;
     const ttl=document.querySelector('#modalTreino .modal-ttl');if(ttl)ttl.textContent='🏋️ Registrar Treino';
   }else{
-    D.workouts.push({id:uid(),date:data,type:tipo,trainingDay:currentTrainingDay,name:nome,duration:dur,caloriesBurned:kcal,exercises,obs});
+    D.workouts.push({id:uid(),date:data,type:tipo,trainingDay:currentTrainingDay,diaSemana:currentDiaSemana,horaInicio:v('tr-hora-ini')||'',horaFim:v('tr-hora-fim')||'',name:nome,duration:dur,caloriesBurned:kcal,exercises,obs});
   }
   saveData();closeModal('modalTreino');renderTreino();renderDashboard();toast('✅ Treino salvo!');
-  currentTrainingDay='';
-  ['tr-duracao','tr-obs','tr-kcal'].forEach(id=>setV(id,''));
+  currentTrainingDay='';currentDiaSemana='';
+  ['tr-duracao','tr-obs','tr-kcal','tr-hora-ini','tr-hora-fim'].forEach(id=>setV(id,''));
 }
 function editTreino(id){
   const w=D.workouts.find(x=>x.id===id);if(!w)return;
   _editingTreinoId=id;
   setV('tr-duracao',w.duration||'');setV('tr-kcal',w.caloriesBurned||'');
   setV('tr-obs',w.obs||'');setV('tr-data',w.date||todayKey());
+  setV('tr-hora-ini',w.horaInicio||'');setV('tr-hora-fim',w.horaFim||'');
+  if(w.diaSemana)selectDiaSemana(w.diaSemana);
+  if(w.trainingDay)selectTrainingDay(w.trainingDay);
   const ttl=document.querySelector('#modalTreino .modal-ttl');if(ttl)ttl.textContent='✏️ Editar Treino';
   openModal('modalTreino');
 }
@@ -2759,8 +2801,16 @@ function openModal(id){
   const today=todayKey();
   if(id==='modalTreino'){
     setV('tr-data',today);
-    currentTrainingDay='';
-    document.querySelectorAll('.tr-day-btn').forEach(b=>b.classList.remove('active'));
+    const now=new Date();
+    const hh=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+    setV('tr-hora-ini',hh);setV('tr-hora-fim','');
+    // Auto-select today's day of week (if not in edit mode)
+    if(!_editingTreinoId){
+      currentTrainingDay='';currentDiaSemana='';
+      document.querySelectorAll('.tr-day-btn').forEach(b=>b.classList.remove('active'));
+      const diaHoje=DIAS_SEMANA[now.getDay()];
+      selectDiaSemana(diaHoje);
+    }
     document.getElementById('tr-ex-list').innerHTML='';
     ['tr-duracao','tr-obs','tr-kcal'].forEach(id=>setV(id,''));
   }

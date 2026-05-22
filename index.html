@@ -407,6 +407,53 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
 .hero-corner-badge{position:absolute;top:14px;right:14px;z-index:3;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:6px 10px;text-align:center;backdrop-filter:blur(6px)}
 .hero-corner-badge .hcb-top{font-size:8px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:1.5px;font-family:"Oswald",sans-serif}
 .hero-corner-badge .hcb-main{font-size:14px;font-weight:700;color:#fff;font-family:"Bebas Neue",sans-serif;letter-spacing:2px}
+/* ===== CARDIO MODULE ===== */
+.cardio-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.cardio-type-card{background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);padding:10px 6px;text-align:center;cursor:pointer;transition:all .2s;user-select:none}
+.cardio-type-card:hover{border-color:var(--primary-light);background:var(--surface3)}
+.cardio-type-card.selected{border-color:var(--primary);background:rgba(124,58,237,.18);box-shadow:0 0 0 1px rgba(124,58,237,.4)}
+.cardio-type-ico{font-size:26px;margin-bottom:4px;line-height:1}
+.cardio-type-name{font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;line-height:1.3}
+.cardio-type-card.selected .cardio-type-name{color:var(--primary-light)}
+.intensity-row{display:flex;gap:6px;margin-bottom:10px}
+.intensity-btn{flex:1;padding:8px 4px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;-webkit-tap-highlight-color:transparent}
+.intensity-btn.selected-leve{background:rgba(16,185,129,.18);border-color:var(--success);color:var(--success)}
+.intensity-btn.selected-moderada{background:rgba(245,158,11,.18);border-color:var(--warning);color:var(--warning)}
+.intensity-btn.selected-intensa{background:rgba(239,68,68,.18);border-color:var(--danger);color:var(--danger)}
+.cardio-preview{background:linear-gradient(135deg,rgba(239,68,68,.12),rgba(245,158,11,.06));border:1px solid rgba(239,68,68,.25);border-radius:var(--radius);padding:14px 12px;margin:10px 0;text-align:center}
+.cardio-preview-kcal{font-size:52px;font-weight:900;font-family:"Bebas Neue",sans-serif;letter-spacing:3px;background:linear-gradient(135deg,#f87171,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.cardio-preview-unit{font-size:11px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase}
+.cardio-preview-row{display:flex;justify-content:center;gap:22px;margin-top:10px}
+.cprev-stat{text-align:center}
+.cprev-val{font-size:15px;font-weight:800;color:var(--text)}
+.cprev-lbl{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
+.sauna-hydro{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);border-radius:var(--radius-sm);padding:8px 12px;margin-top:6px;font-size:11px;color:var(--accent);line-height:1.6}
+/* Cardio section */
+.cardio-today-box{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(245,158,11,.06));border:1px solid rgba(239,68,68,.2);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.cardio-summary-row{display:flex;justify-content:space-around}
+.cardio-sum-stat{text-align:center}
+.cardio-sum-val{font-size:32px;font-weight:900;font-family:"Bebas Neue",sans-serif;line-height:1}
+.cardio-sum-lbl{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.cardio-log-item{background:var(--surface2);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:7px;display:flex;align-items:center;gap:10px;border-left:3px solid var(--danger)}
+.cardio-log-ico{font-size:22px;width:32px;text-align:center;flex-shrink:0}
+.cardio-log-body{flex:1;min-width:0}
+.cardio-log-name{font-size:13px;font-weight:800;line-height:1.2}
+.cardio-log-sub{font-size:10px;color:var(--text-muted);margin-top:2px;line-height:1.5}
+.cardio-log-kcal{font-size:22px;font-weight:900;font-family:"Bebas Neue",sans-serif;color:var(--danger);letter-spacing:1px;white-space:nowrap}
+.cardio-log-kcal-lbl{font-size:8px;color:var(--text-muted);text-transform:uppercase;text-align:right}
+.cardio-date-sep{font-size:10px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.8px;padding:8px 0 4px}
+/* Dashboard cardio */
+.cdash-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+@media(min-width:500px){.cdash-grid{grid-template-columns:repeat(3,1fr)}}
+.cdash-card{background:var(--surface2);border-radius:var(--radius-sm);padding:12px 10px;text-align:center;border:1px solid var(--border)}
+.cdash-val{font-size:30px;font-weight:900;font-family:"Bebas Neue",sans-serif;line-height:1}
+.cdash-lbl{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+.cdash-sub{font-size:10px;color:var(--text-dim);margin-top:2px}
+.cdash-tipo-bar{background:var(--surface2);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:6px}
+.cdash-tipo-row{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.cdash-tipo-name{font-size:11px;font-weight:700;flex:1}
+.cdash-tipo-fill{height:6px;border-radius:3px;background:var(--danger);transition:width .5s}
+.cdash-tipo-kcal{font-size:11px;font-weight:700;color:var(--danger);white-space:nowrap}
 </style>
 </head>
 <body>
@@ -421,6 +468,7 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
 <!-- SIDEBAR (desktop) -->
 <nav class="sidebar" id="sidebar">
   <button class="snav-btn active" data-sec="dashboard" onclick="showSection('dashboard')"><span class="ico">🏠</span> Dashboard</button>
+  <button class="snav-btn" data-sec="cardio" onclick="showSection('cardio')"><span class="ico">🏃</span> Cardio</button>
   <button class="snav-btn" data-sec="treino" onclick="showSection('treino')"><span class="ico">🏋️</span> Treino</button>
   <button class="snav-btn" data-sec="ficha" onclick="showSection('ficha')"><span class="ico">📋</span> Ficha de Treino</button>
   <button class="snav-btn" data-sec="refeicoes" onclick="showSection('refeicoes')"><span class="ico">🍽️</span> Refeições</button>
@@ -1011,11 +1059,91 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
   </div>
 </section>
 
+<!-- CARDIO -->
+<section class="section" id="sec-cardio">
+  <div class="sec-hd">
+    <div class="sec-ttl">🏃 Cardio</div>
+    <button class="btn btn-pri" onclick="openModal('modalCardio');initModalCardio()">+ Registrar</button>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab(this,'tab-cardio-hoje')">🔥 Hoje</button>
+    <button class="tab-btn" onclick="showTab(this,'tab-cardio-hist')">📋 Histórico</button>
+    <button class="tab-btn" onclick="showTab(this,'tab-cardio-dash')">📊 Dashboard</button>
+  </div>
+  <div class="tab-content active" id="tab-cardio-hoje"><div id="cardio-hoje-content"></div></div>
+  <div class="tab-content" id="tab-cardio-hist" style="display:none"><div id="cardio-hist-content"></div></div>
+  <div class="tab-content" id="tab-cardio-dash" style="display:none">
+    <div id="cardio-dash-content"></div>
+    <div class="card mt8">
+      <div class="card-title">📈 Evolução Semanal (kcal/dia)</div>
+      <div class="chart-wrap"><canvas id="cardioChart"></canvas></div>
+    </div>
+  </div>
+</section>
+
 </main>
+
+<!-- MODAL CARDIO -->
+<div class="modal-overlay" id="modalCardio">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-hd"><span class="modal-ttl">🏃 Registrar Cardio</span><button class="modal-cls" onclick="closeModal('modalCardio')">×</button></div>
+
+    <!-- Type selector -->
+    <div class="fs11 txt-muted mb6" style="font-weight:700;text-transform:uppercase;letter-spacing:.5px">Tipo de Cardio</div>
+    <div class="cardio-type-grid" id="cardio-type-grid">
+      <div class="cardio-type-card selected" data-tipo="cam_rua" onclick="selectCardioTipo('cam_rua')"><div class="cardio-type-ico">🚶</div><div class="cardio-type-name">Caminhada Rua</div></div>
+      <div class="cardio-type-card" data-tipo="cam_est" onclick="selectCardioTipo('cam_est')"><div class="cardio-type-ico">🚶‍♂️</div><div class="cardio-type-name">Caminhada Esteira</div></div>
+      <div class="cardio-type-card" data-tipo="cor_est" onclick="selectCardioTipo('cor_est')"><div class="cardio-type-ico">🏃</div><div class="cardio-type-name">Corrida Esteira</div></div>
+      <div class="cardio-type-card" data-tipo="bici_spin" onclick="selectCardioTipo('bici_spin')"><div class="cardio-type-ico">🚴</div><div class="cardio-type-name">Spinning</div></div>
+      <div class="cardio-type-card" data-tipo="bici_ar" onclick="selectCardioTipo('bici_ar')"><div class="cardio-type-ico">🚵</div><div class="cardio-type-name">Bicicleta Ar Livre</div></div>
+      <div class="cardio-type-card" data-tipo="sauna" onclick="selectCardioTipo('sauna')"><div class="cardio-type-ico">🧖</div><div class="cardio-type-name">Sauna</div></div>
+    </div>
+
+    <!-- Intensidade -->
+    <div class="fs11 txt-muted mb6" style="font-weight:700;text-transform:uppercase;letter-spacing:.5px">Intensidade</div>
+    <div class="intensity-row" id="cardio-intensity-row">
+      <button class="intensity-btn selected-leve" data-int="leve" onclick="selectCardioInt('leve')">🟢 Leve</button>
+      <button class="intensity-btn" data-int="moderada" onclick="selectCardioInt('moderada')">🟡 Moderada</button>
+      <button class="intensity-btn" data-int="intensa" onclick="selectCardioInt('intensa')">🔴 Intensa</button>
+    </div>
+
+    <!-- Campos principais -->
+    <div class="g2">
+      <div class="fg"><label>Data</label><input type="date" id="cardio-data"></div>
+      <div class="fg"><label>Horário</label><input type="time" id="cardio-hora"></div>
+    </div>
+    <div class="g2">
+      <div class="fg"><label>Duração (min)</label><input type="number" id="cardio-dur" placeholder="30" min="1" max="360" oninput="calcCardioPreview()"></div>
+      <div class="fg"><label id="cardio-vel-label">Velocidade (km/h)</label><input type="number" id="cardio-vel" placeholder="6.0" step="0.5" oninput="calcCardioPreview()"></div>
+    </div>
+    <div class="g2">
+      <div class="fg"><label>Peso Corporal (kg)</label><input type="number" id="cardio-peso" placeholder="80" step="0.1" oninput="calcCardioPreview()"></div>
+      <div class="fg"><label>Distância (km) <span class="txt-muted">opcional</span></label><input type="number" id="cardio-dist" placeholder="auto" step="0.1"></div>
+    </div>
+
+    <!-- Live preview -->
+    <div class="cardio-preview" id="cardio-preview-box">
+      <div class="cardio-preview-kcal" id="cprev-kcal">—</div>
+      <div class="cardio-preview-unit">kcal estimadas</div>
+      <div class="cardio-preview-row">
+        <div class="cprev-stat"><div class="cprev-val" id="cprev-met">—</div><div class="cprev-lbl">MET</div></div>
+        <div class="cprev-stat"><div class="cprev-val" id="cprev-kpm">—</div><div class="cprev-lbl">kcal/min</div></div>
+        <div class="cprev-stat"><div class="cprev-val" id="cprev-dist">—</div><div class="cprev-lbl">km estimado</div></div>
+      </div>
+      <div id="cprev-sauna-info" class="sauna-hydro" style="display:none"></div>
+    </div>
+
+    <div class="fg"><label>Observações <span class="txt-muted">(opcional)</span></label>
+      <input type="text" id="cardio-obs" placeholder="Ex: inclinação 2%, pista de terra...">
+    </div>
+    <button class="btn btn-pri btn-block mt8" onclick="saveCardio()">💾 Salvar Cardio</button>
+  </div>
+</div>
 
 <!-- BOTTOM NAV (mobile) -->
 <nav class="bot-nav">
   <button class="bnav-btn active" data-sec="dashboard" onclick="showSection('dashboard')"><span class="ico">🏠</span>Início</button>
+  <button class="bnav-btn" data-sec="cardio" onclick="showSection('cardio')"><span class="ico">🏃</span>Cardio</button>
   <button class="bnav-btn" data-sec="treino" onclick="showSection('treino')"><span class="ico">🏋️</span>Treino</button>
   <button class="bnav-btn" data-sec="ficha" onclick="showSection('ficha')"><span class="ico">📋</span>Ficha</button>
   <button class="bnav-btn" data-sec="refeicoes" onclick="showSection('refeicoes')"><span class="ico">🍽️</span>Comida</button>
@@ -1456,7 +1584,7 @@ function saveData(){
 }
 function defaultData(){return{
   profile:{name:'',gender:'m',age:25,height:175,weight:75,goal:'lose',activity:'moderate',waterGoal:3000},
-  workouts:[],meals:[],waterLogs:{},supplements:[],measurements:[],bodyFat:[],trainerPlans:{},ergogenicos:[]
+  workouts:[],meals:[],waterLogs:{},supplements:[],measurements:[],bodyFat:[],trainerPlans:{},ergogenicos:[],cardioLogs:[]
 }}
 let D=loadData();
 
@@ -1553,7 +1681,7 @@ function showSection(id){
   }catch(e){console.error('showSection error:',e);}
 }
 function renderSection(id){
-  const fn={dashboard:renderDashboard,treino:renderTreino,ficha:renderFicha,refeicoes:renderRefeicoes,agua:renderAgua,suplementos:renderSupl,ergogenicos:renderErgogenicos,'base-ergo':renderBaseErgo,'base-peptideos':renderBasePept,alimentos:renderAlimentos,medidas:renderMedidas,calculadoras:renderCalcs,progresso:renderProgresso,perfil:renderPerfil};
+  const fn={dashboard:renderDashboard,cardio:renderCardio,treino:renderTreino,ficha:renderFicha,refeicoes:renderRefeicoes,agua:renderAgua,suplementos:renderSupl,ergogenicos:renderErgogenicos,'base-ergo':renderBaseErgo,'base-peptideos':renderBasePept,alimentos:renderAlimentos,medidas:renderMedidas,calculadoras:renderCalcs,progresso:renderProgresso,perfil:renderPerfil};
   if(fn[id])fn[id]();
 }
 function showTab(btn,tabId){try{window.scrollTo(0,0);}catch(e){}
@@ -3114,6 +3242,9 @@ function renderTabContent(id){
   if(id==='tab-ergo-stack')renderErgoStack();
   if(id==='tab-ergo-hist')renderErgoHist();
   if(id==='tab-ergo-guia')renderErgoGuia();
+  if(id==='tab-cardio-hoje')renderCardioHoje();
+  if(id==='tab-cardio-hist')renderCardioHist();
+  if(id==='tab-cardio-dash')renderCardioDash();
 }
 
 // ===================== BASE INFO ERGOGÊNICOS =====================
@@ -3279,6 +3410,297 @@ function toggleErgo(id){
   e.active=e.active===false?true:false;
   saveData();renderErgoStack();
   toast(e.active?'✅ Ergogênico ativado!':'⏸ Ergogênico pausado');
+}
+
+// ===================== CARDIO MODULE =====================
+const CARDIO_TIPOS={
+  cam_rua:{nome:'Caminhada Rua',ico:'🚶',cor:'var(--success)'},
+  cam_est:{nome:'Caminhada Esteira',ico:'🚶‍♂️',cor:'var(--accent)'},
+  cor_est:{nome:'Corrida Esteira',ico:'🏃',cor:'var(--danger)'},
+  bici_spin:{nome:'Spinning',ico:'🚴',cor:'var(--primary-light)'},
+  bici_ar:{nome:'Bicicleta Ar Livre',ico:'🚵',cor:'var(--warning)'},
+  sauna:{nome:'Sauna',ico:'🧖',cor:'#f97316'}
+};
+
+var _cardioTipo='cam_rua', _cardioInt='leve', _editingCardioId=null, _cardioChart=null;
+
+function getMET(tipo,vel,intensidade){
+  const v=parseFloat(vel)||0;
+  const iMult={leve:.88,moderada:1,intensa:1.18}[intensidade]||1;
+  switch(tipo){
+    case 'cam_rua': case 'cam_est':
+      let wm=v<=3?2.5:v<=4?3.0:v<=5?3.5:v<=6?4.3:v<=7?5.0:5.8;
+      return wm*iMult;
+    case 'cor_est':
+      let rm=v<=7?6.0:v<=8?8.3:v<=9?9.0:v<=10?10.0:v<=11?11.0:v<=12?11.8:v<=13?12.8:v<=14?13.8:14.5;
+      return rm*iMult;
+    case 'bici_spin':
+      return intensidade==='leve'?6.8:intensidade==='intensa'?12.0:9.5;
+    case 'bici_ar':
+      let bm=v<=12?4.5:v<=16?6.0:v<=20?8.0:v<=25?10.0:12.0;
+      return bm*iMult;
+    case 'sauna':
+      return intensidade==='intensa'?2.0:intensidade==='moderada'?1.8:1.5;
+    default: return 5.0;
+  }
+}
+
+function calcCardioKcal(tipo,durMin,vel,peso,intensidade){
+  const met=getMET(tipo,vel,intensidade);
+  const kcal=met*peso*(durMin/60);
+  const kcalPerMin=kcal/durMin;
+  const dist=(tipo==='sauna')?0:(parseFloat(vel)||0)*(durMin/60);
+  let saunaInfo=null;
+  if(tipo==='sauna'){
+    const litros=(durMin/30)*(intensidade==='intensa'?1.2:intensidade==='moderada'?0.9:0.6);
+    saunaInfo={litros:litros.toFixed(1)};
+  }
+  return{met:met.toFixed(1),kcal:Math.round(kcal),kcalPerMin:kcalPerMin.toFixed(1),dist:dist.toFixed(2),saunaInfo};
+}
+
+function selectCardioTipo(tipo){
+  _cardioTipo=tipo;
+  document.querySelectorAll('#cardio-type-grid .cardio-type-card').forEach(c=>c.classList.toggle('selected',c.dataset.tipo===tipo));
+  // Update velocity label
+  const velLabel=document.getElementById('cardio-vel-label');
+  if(velLabel) velLabel.textContent=tipo==='sauna'?'Temperatura (°C)':'Velocidade (km/h)';
+  const velInput=document.getElementById('cardio-vel');
+  if(velInput) velInput.placeholder=tipo==='sauna'?'80':tipo.includes('bici')?'20':tipo.includes('cor')? '9':'5';
+  calcCardioPreview();
+}
+
+function selectCardioInt(intensidade){
+  _cardioInt=intensidade;
+  document.querySelectorAll('#cardio-intensity-row .intensity-btn').forEach(b=>{
+    b.className='intensity-btn';
+    if(b.dataset.int===intensidade) b.classList.add('selected-'+intensidade);
+  });
+  calcCardioPreview();
+}
+
+function calcCardioPreview(){
+  const dur=parseFloat(document.getElementById('cardio-dur')?.value)||0;
+  const vel=parseFloat(document.getElementById('cardio-vel')?.value)||0;
+  const peso=parseFloat(document.getElementById('cardio-peso')?.value)||D.profile.weight||75;
+  if(!dur){
+    const kc=document.getElementById('cprev-kcal');if(kc)kc.textContent='—';
+    return;
+  }
+  const r=calcCardioKcal(_cardioTipo,dur,vel,peso,_cardioInt);
+  const kc=document.getElementById('cprev-kcal');if(kc)kc.textContent=r.kcal;
+  const me=document.getElementById('cprev-met');if(me)me.textContent=r.met;
+  const km=document.getElementById('cprev-kpm');if(km)km.textContent=r.kcalPerMin;
+  const di=document.getElementById('cprev-dist');if(di)di.textContent=r.dist==='0.00'?'—':r.dist+'km';
+  const si=document.getElementById('cprev-sauna-info');
+  if(si){
+    if(r.saunaInfo){
+      si.style.display='block';
+      si.innerHTML=`💧 Perda hídrica estimada: <strong>${r.saunaInfo.litros}L</strong> · Repor com água+eletrólitos`;
+    }else{si.style.display='none';}
+  }
+  // Auto-fill distance if empty
+  const di2=document.getElementById('cardio-dist');
+  if(di2&&!di2.value&&r.dist!=='0.00') di2.placeholder=r.dist+'km';
+}
+
+function initModalCardio(){
+  const now=new Date();
+  setV('cardio-data',todayKey());
+  setV('cardio-hora',now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0'));
+  const savedW=D.profile.weight||75;
+  setV('cardio-peso',savedW);
+  setV('cardio-dur','');setV('cardio-vel','');setV('cardio-dist','');setV('cardio-obs','');
+  if(!_editingCardioId){_cardioTipo='cam_rua';_cardioInt='leve';}
+  selectCardioTipo(_cardioTipo);
+  selectCardioInt(_cardioInt);
+  const kc=document.getElementById('cprev-kcal');if(kc)kc.textContent='—';
+}
+
+function saveCardio(){
+  const dur=parseFloat(v('cardio-dur'));
+  if(!dur||dur<1){toast('⚠️ Informe a duração!','warning');return;}
+  const vel=parseFloat(v('cardio-vel'))||0;
+  const peso=parseFloat(v('cardio-peso'))||D.profile.weight||75;
+  const r=calcCardioKcal(_cardioTipo,dur,vel,peso,_cardioInt);
+  const dist=parseFloat(v('cardio-dist'))||parseFloat(r.dist)||0;
+  const entry={
+    id:_editingCardioId||uid(),
+    tipo:_cardioTipo,
+    data:v('cardio-data')||todayKey(),
+    hora:v('cardio-hora')||'',
+    duracao:dur,
+    velocidade:vel,
+    distancia:dist,
+    peso:peso,
+    intensidade:_cardioInt,
+    kcal:r.kcal,
+    met:parseFloat(r.met),
+    kcalPerMin:parseFloat(r.kcalPerMin),
+    obs:v('cardio-obs')||''
+  };
+  if(!D.cardioLogs)D.cardioLogs=[];
+  if(_editingCardioId){
+    const idx=D.cardioLogs.findIndex(e=>e.id===_editingCardioId);
+    if(idx>=0)D.cardioLogs[idx]=entry;
+    _editingCardioId=null;
+  }else{
+    D.cardioLogs.unshift(entry);
+  }
+  saveData();closeModal('modalCardio');
+  renderCardioHoje();
+  toast('🏃 Cardio salvo! '+r.kcal+' kcal');
+}
+
+function editCardio(id){
+  const e=D.cardioLogs.find(x=>x.id===id);if(!e)return;
+  _editingCardioId=id;
+  _cardioTipo=e.tipo;_cardioInt=e.intensidade;
+  openModal('modalCardio');initModalCardio();
+  setV('cardio-data',e.data);setV('cardio-hora',e.hora);
+  setV('cardio-dur',e.duracao);setV('cardio-vel',e.velocidade||'');
+  setV('cardio-dist',e.distancia||'');setV('cardio-peso',e.peso);
+  setV('cardio-obs',e.obs||'');
+  calcCardioPreview();
+}
+
+function deleteCardio(id){
+  if(!confirm('Remover este registro?'))return;
+  D.cardioLogs=D.cardioLogs.filter(e=>e.id!==id);
+  saveData();renderCardioHoje();renderCardioHist();
+  toast('🗑️ Removido');
+}
+
+function renderCardio(){
+  if(!D.cardioLogs)D.cardioLogs=[];
+  renderCardioHoje();
+}
+
+function renderCardioHoje(){
+  if(!D.cardioLogs)D.cardioLogs=[];
+  const today=todayKey();
+  const logs=D.cardioLogs.filter(e=>e.data===today);
+  const el=document.getElementById('cardio-hoje-content');if(!el)return;
+  const totalKcal=logs.reduce((a,e)=>a+e.kcal,0);
+  const totalMin=logs.reduce((a,e)=>a+e.duracao,0);
+  const totalDist=logs.reduce((a,e)=>a+(e.distancia||0),0);
+  const sumHtml=`<div class="cardio-today-box">
+    <div class="cardio-summary-row">
+      <div class="cardio-sum-stat"><div class="cardio-sum-val" style="color:var(--danger)">${totalKcal}</div><div class="cardio-sum-lbl">kcal hoje</div></div>
+      <div class="cardio-sum-stat"><div class="cardio-sum-val" style="color:var(--warning)">${totalMin}'</div><div class="cardio-sum-lbl">minutos</div></div>
+      <div class="cardio-sum-stat"><div class="cardio-sum-val" style="color:var(--accent)">${totalDist.toFixed(1)}</div><div class="cardio-sum-lbl">km totais</div></div>
+      <div class="cardio-sum-stat"><div class="cardio-sum-val" style="color:var(--primary-light)">${logs.length}</div><div class="cardio-sum-lbl">sessões</div></div>
+    </div></div>`;
+  if(!logs.length){
+    el.innerHTML=sumHtml+'<div class="empty"><div class="empty-ico">🏃</div><div class="empty-txt">Nenhum cardio registrado hoje.<br>Pressione + Registrar para começar!</div></div>';
+    return;
+  }
+  el.innerHTML=sumHtml+logs.map(e=>buildCardioCard(e)).join('');
+}
+
+function buildCardioCard(e){
+  const t=CARDIO_TIPOS[e.tipo]||{nome:e.tipo,ico:'🏃',cor:'var(--danger)'};
+  const intBadge={leve:'<span style="color:var(--success);font-size:10px">🟢 Leve</span>',moderada:'<span style="color:var(--warning);font-size:10px">🟡 Moderada</span>',intensa:'<span style="color:var(--danger);font-size:10px">🔴 Intensa</span>'}[e.intensidade]||'';
+  const distStr=e.distancia>0?` · 📍 ${e.distancia.toFixed(1)}km`:'';
+  return`<div class="cardio-log-item" style="border-left-color:${t.cor}">
+    <div class="cardio-log-ico">${t.ico}</div>
+    <div class="cardio-log-body">
+      <div class="cardio-log-name">${t.nome}</div>
+      <div class="cardio-log-sub">${e.hora?e.hora+' · ':''}⏱ ${e.duracao}min${e.velocidade>0?' · '+e.velocidade+'km/h':''}${distStr}<br>${intBadge} · MET ${e.met}${e.obs?' · <em>'+e.obs+'</em>':''}</div>
+    </div>
+    <div style="text-align:right;flex-shrink:0">
+      <div class="cardio-log-kcal">${e.kcal}</div>
+      <div class="cardio-log-kcal-lbl">kcal</div>
+      <div style="display:flex;gap:4px;margin-top:5px">
+        <button class="log-edit" onclick="editCardio('${e.id}')" title="Editar">✏️</button>
+        <button class="log-del" onclick="deleteCardio('${e.id}')">🗑</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderCardioHist(){
+  if(!D.cardioLogs)D.cardioLogs=[];
+  const el=document.getElementById('cardio-hist-content');if(!el)return;
+  if(!D.cardioLogs.length){el.innerHTML='<div class="empty"><div class="empty-ico">📋</div><div class="empty-txt">Nenhum registro ainda.</div></div>';return;}
+  const sorted=[...D.cardioLogs].sort((a,b)=>b.data.localeCompare(a.data)||b.hora.localeCompare(a.hora));
+  const byDate={};
+  sorted.forEach(e=>{if(!byDate[e.data])byDate[e.data]=[];byDate[e.data].push(e);});
+  let html='';
+  Object.keys(byDate).forEach(dt=>{
+    const logs=byDate[dt];
+    const totalKcal=logs.reduce((a,e)=>a+e.kcal,0);
+    const totalMin=logs.reduce((a,e)=>a+e.duracao,0);
+    html+=`<div class="cardio-date-sep">${fmtDate(dt)} · ${totalKcal} kcal · ${totalMin} min</div>`;
+    html+=logs.map(e=>buildCardioCard(e)).join('');
+  });
+  el.innerHTML=html;
+}
+
+function renderCardioDash(){
+  if(!D.cardioLogs)D.cardioLogs=[];
+  const el=document.getElementById('cardio-dash-content');if(!el)return;
+  const today=todayKey();
+  const now=new Date();
+  const week=[];for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);week.push(d.toISOString().split('T')[0]);}
+  const month=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  const todayLogs=D.cardioLogs.filter(e=>e.data===today);
+  const weekLogs=D.cardioLogs.filter(e=>week.includes(e.data));
+  const monthLogs=D.cardioLogs.filter(e=>e.data.startsWith(month));
+  const kcalHoje=todayLogs.reduce((a,e)=>a+e.kcal,0);
+  const kcalSemana=weekLogs.reduce((a,e)=>a+e.kcal,0);
+  const kcalMes=monthLogs.reduce((a,e)=>a+e.kcal,0);
+  const totalSessoes=D.cardioLogs.length;
+  const minHoje=todayLogs.reduce((a,e)=>a+e.duracao,0);
+  const minSemana=weekLogs.reduce((a,e)=>a+e.duracao,0);
+  const mediaDiaria=weekLogs.length?Math.round(kcalSemana/7):0;
+  // By type breakdown
+  const byTipo={};D.cardioLogs.forEach(e=>{if(!byTipo[e.tipo])byTipo[e.tipo]=0;byTipo[e.tipo]+=e.kcal;});
+  const maxTipo=Math.max(...Object.values(byTipo),1);
+  const tipoHtml=Object.entries(byTipo).sort((a,b)=>b[1]-a[1]).map(([tp,kc])=>{
+    const t=CARDIO_TIPOS[tp]||{ico:'🏃',nome:tp};
+    const pct=Math.round(kc/maxTipo*100);
+    return`<div class="cdash-tipo-bar"><div class="cdash-tipo-row"><span>${t.ico}</span><span class="cdash-tipo-name">${t.nome}</span><span class="cdash-tipo-kcal">${kc} kcal</span></div><div style="background:var(--surface3);border-radius:3px;height:6px"><div class="cdash-tipo-fill" style="width:${pct}%"></div></div></div>`;
+  }).join('');
+  el.innerHTML=`<div class="cdash-grid">
+    <div class="cdash-card"><div class="cdash-val" style="color:var(--danger)">${kcalHoje}</div><div class="cdash-lbl">Kcal Hoje</div><div class="cdash-sub">${minHoje} min</div></div>
+    <div class="cdash-card"><div class="cdash-val" style="color:var(--warning)">${kcalSemana}</div><div class="cdash-lbl">Kcal Semana</div><div class="cdash-sub">${minSemana} min</div></div>
+    <div class="cdash-card"><div class="cdash-val" style="color:var(--primary-light)">${kcalMes}</div><div class="cdash-lbl">Kcal Mês</div><div class="cdash-sub">${monthLogs.length} sessões</div></div>
+    <div class="cdash-card"><div class="cdash-val" style="color:var(--accent)">${mediaDiaria}</div><div class="cdash-lbl">Média Diária</div><div class="cdash-sub">últimos 7 dias</div></div>
+    <div class="cdash-card"><div class="cdash-val" style="color:var(--success)">${Math.round(minSemana/60*10)/10}h</div><div class="cdash-lbl">Tempo Semana</div><div class="cdash-sub">total cardio</div></div>
+    <div class="cdash-card"><div class="cdash-val" style="color:var(--text)">${totalSessoes}</div><div class="cdash-lbl">Total Sessões</div><div class="cdash-sub">histórico geral</div></div>
+  </div>
+  <div class="card mb8"><div class="card-title">🏆 Kcal por Modalidade</div>${tipoHtml||'<div class="fs12 txt-muted">Sem dados</div>'}</div>`;
+  // Weekly chart
+  renderCardioChart(week);
+}
+
+function renderCardioChart(week){
+  if(!D.cardioLogs)return;
+  const labels=week.map(d=>{const p=d.split('-');return p[2]+'/'+p[1];});
+  const data=week.map(d=>D.cardioLogs.filter(e=>e.data===d).reduce((a,e)=>a+e.kcal,0));
+  const ctx=document.getElementById('cardioChart');if(!ctx)return;
+  if(_cardioChart){try{_cardioChart.destroy();}catch(e){} _cardioChart=null;}
+  _cardioChart=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[{
+        label:'Kcal',
+        data,
+        backgroundColor:data.map(v=>v>0?'rgba(239,68,68,.7)':'rgba(239,68,68,.15)'),
+        borderColor:data.map(v=>v>0?'rgba(239,68,68,1)':'rgba(239,68,68,.3)'),
+        borderWidth:1,borderRadius:4
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'rgba(255,255,255,.5)',font:{size:10}}},
+        y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'rgba(255,255,255,.5)',font:{size:10}},beginAtZero:true}
+      }
+    }
+  });
 }
 
 // ===================== FOTO DE PERFIL — CROPPER =====================

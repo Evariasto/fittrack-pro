@@ -571,6 +571,7 @@ img,video,canvas,iframe{max-width:100%;height:auto}
   <span class="snav-cat">Área do Atleta</span>
   <button class="snav-btn active" data-sec="dashboard" onclick="showSection('dashboard')"><span class="ico">🏠</span> Dashboard</button>
   <button class="snav-btn" data-sec="medidas" onclick="showSection('medidas')"><span class="ico">⚖️</span> Peso em Jejum</button>
+  <button class="snav-btn" data-sec="lancamentos" onclick="showSection('lancamentos')"><span class="ico">💉</span> Lançamentos</button>
   <button class="snav-btn" data-sec="suplementos" onclick="showSection('suplementos')"><span class="ico">💊</span> Suplementos/STMs</button>
   <button class="snav-btn" data-sec="ergogenicos" onclick="showSection('ergogenicos')"><span class="ico">⚡</span> Stack Ergo/Ciclos</button>
   <button class="snav-btn" data-sec="cardio" onclick="showSection('cardio')"><span class="ico">🏃</span> Cardio</button>
@@ -704,6 +705,97 @@ img,video,canvas,iframe{max-width:100%;height:auto}
   </div>
 </section>
 
+<!-- LANÇAMENTOS -->
+<section class="section" id="sec-lancamentos">
+  <div class="sec-hd"><h2 class="sec-ttl">💉 Lançamentos</h2></div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab(this,'tab-lanc-ergo')">⚡ Ergogênicos</button>
+    <button class="tab-btn" onclick="showTab(this,'tab-lanc-pept')">🧬 Peptídeos</button>
+    <button class="tab-btn" onclick="showTab(this,'tab-lanc-supl')">💊 Suplementos</button>
+    <button class="tab-btn" onclick="showTab(this,'tab-lanc-vita')">🌿 Vitaminas</button>
+  </div>
+  <!-- TAB ERGOGÊNICOS -->
+  <div class="tab-content active" id="tab-lanc-ergo">
+    <div class="card">
+      <div class="card-title">💉 Registrar Ergogênico</div>
+      <div class="fg"><label>Substância</label><select id="lanc-ergo-sub"></select></div>
+      <div class="g2">
+        <div class="fg"><label>Dose (mg)</label><input type="number" id="lanc-ergo-mg" placeholder="ex: 100"></div>
+        <div class="fg"><label>Dose (ml)</label><input type="number" id="lanc-ergo-ml" step="0.1" placeholder="ex: 1.0"></div>
+      </div>
+      <div class="g2">
+        <div class="fg"><label>Via de Administração</label><select id="lanc-ergo-via"><option value="">Selecionar</option><option value="IM">IM — Intramuscular</option><option value="SC">SC — Subcutâneo</option><option value="Oral">Oral</option><option value="Sublingual">Sublingual</option><option value="Transdérmico">Transdérmico</option><option value="IV">IV — Intravenoso</option></select></div>
+        <div class="fg"><label>Local de Aplicação</label><input type="text" id="lanc-ergo-local" placeholder="ex: Glúteo D, Abdômen..."></div>
+      </div>
+      <div class="g2">
+        <div class="fg"><label>Data</label><input type="date" id="lanc-ergo-data"></div>
+        <div class="fg"><label>Horário</label><input type="time" id="lanc-ergo-hora"></div>
+      </div>
+      <div class="fg"><label>Observações</label><textarea id="lanc-ergo-obs" rows="2" placeholder="Observações..."></textarea></div>
+      <button class="btn btn-pri btn-block mt8" onclick="saveLanc('ergo')">✓ Registrar Lançamento</button>
+    </div>
+    <div class="card"><div class="card-title">📋 Histórico do Dia</div><div id="lanc-hist-ergo"></div></div>
+  </div>
+  <!-- TAB PEPTÍDEOS -->
+  <div class="tab-content" id="tab-lanc-pept">
+    <div class="card">
+      <div class="card-title">🧬 Registrar Peptídeo</div>
+      <div class="fg"><label>Substância</label><select id="lanc-pept-sub"></select></div>
+      <div class="g2">
+        <div class="fg"><label>Dose (mcg)</label><input type="number" id="lanc-pept-mg" placeholder="ex: 100"></div>
+        <div class="fg"><label>Dose (ml)</label><input type="number" id="lanc-pept-ml" step="0.1" placeholder="ex: 0.2"></div>
+      </div>
+      <div class="g2">
+        <div class="fg"><label>Via de Administração</label><select id="lanc-pept-via"><option value="">Selecionar</option><option value="SC">SC — Subcutâneo</option><option value="IM">IM — Intramuscular</option><option value="Oral">Oral</option><option value="Sublingual">Sublingual</option><option value="Intranasal">Intranasal</option></select></div>
+        <div class="fg"><label>Local de Aplicação</label><input type="text" id="lanc-pept-local" placeholder="ex: Abdômen, Coxa..."></div>
+      </div>
+      <div class="g2">
+        <div class="fg"><label>Data</label><input type="date" id="lanc-pept-data"></div>
+        <div class="fg"><label>Horário</label><input type="time" id="lanc-pept-hora"></div>
+      </div>
+      <div class="fg"><label>Observações</label><textarea id="lanc-pept-obs" rows="2" placeholder="Observações..."></textarea></div>
+      <button class="btn btn-pri btn-block mt8" onclick="saveLanc('pept')">✓ Registrar Lançamento</button>
+    </div>
+    <div class="card"><div class="card-title">📋 Histórico do Dia</div><div id="lanc-hist-pept"></div></div>
+  </div>
+  <!-- TAB SUPLEMENTOS -->
+  <div class="tab-content" id="tab-lanc-supl">
+    <div class="card">
+      <div class="card-title">💊 Registrar Suplemento</div>
+      <div class="fg"><label>Suplemento</label><select id="lanc-supl-sub"></select></div>
+      <div class="g2">
+        <div class="fg"><label>Dose</label><input type="number" id="lanc-supl-dose" step="0.1" placeholder="ex: 5"></div>
+        <div class="fg"><label>Unidade</label><select id="lanc-supl-un"><option value="g">g</option><option value="mg" selected>mg</option><option value="mcg">mcg</option><option value="caps">cáps.</option><option value="ml">ml</option></select></div>
+      </div>
+      <div class="fg"><label>Momento</label><select id="lanc-supl-momento"><option value="">Qualquer momento</option><option value="Ao acordar">Ao acordar</option><option value="Pré-treino">Pré-treino</option><option value="Intra-treino">Intra-treino</option><option value="Pós-treino">Pós-treino</option><option value="Com refeição">Com refeição</option><option value="Antes de dormir">Antes de dormir</option></select></div>
+      <div class="g2">
+        <div class="fg"><label>Data</label><input type="date" id="lanc-supl-data"></div>
+        <div class="fg"><label>Horário</label><input type="time" id="lanc-supl-hora"></div>
+      </div>
+      <div class="fg"><label>Observações</label><textarea id="lanc-supl-obs" rows="2" placeholder="Observações..."></textarea></div>
+      <button class="btn btn-pri btn-block mt8" onclick="saveLanc('supl')">✓ Registrar Lançamento</button>
+    </div>
+    <div class="card"><div class="card-title">📋 Histórico do Dia</div><div id="lanc-hist-supl"></div></div>
+  </div>
+  <!-- TAB VITAMINAS & MINERAIS -->
+  <div class="tab-content" id="tab-lanc-vita">
+    <div class="card">
+      <div class="card-title">🌿 Registrar Vitamina / Mineral</div>
+      <div class="fg"><label>Vitamina / Mineral</label><select id="lanc-vita-sub"></select></div>
+      <div class="g2">
+        <div class="fg"><label>Dose</label><input type="number" id="lanc-vita-dose" step="0.1" placeholder="ex: 1000"></div>
+        <div class="fg"><label>Unidade</label><select id="lanc-vita-un"><option value="mg" selected>mg</option><option value="mcg">mcg</option><option value="UI">UI</option><option value="g">g</option><option value="caps">cáps.</option></select></div>
+      </div>
+      <div class="g2">
+        <div class="fg"><label>Data</label><input type="date" id="lanc-vita-data"></div>
+        <div class="fg"><label>Horário</label><input type="time" id="lanc-vita-hora"></div>
+      </div>
+      <div class="fg"><label>Observações</label><textarea id="lanc-vita-obs" rows="2" placeholder="Observações..."></textarea></div>
+      <button class="btn btn-pri btn-block mt8" onclick="saveLanc('vita')">✓ Registrar Lançamento</button>
+    </div>
+    <div class="card"><div class="card-title">📋 Histórico do Dia</div><div id="lanc-hist-vita"></div></div>
+  </div>
+</section>
 <!-- TREINO -->
 <section class="section" id="sec-treino">
   <div class="sec-hd">
@@ -1740,7 +1832,7 @@ function saveData(){
 }
 function defaultData(){return{
   profile:{name:'',gender:'m',age:25,height:175,weight:75,goal:'lose',activity:'moderate',waterGoal:3000},
-  workouts:[],meals:[],waterLogs:{},supplements:[],measurements:[],bodyFat:[],trainerPlans:{},ergogenicos:[],cardioLogs:[]
+  workouts:[],meals:[],waterLogs:{},supplements:[],measurements:[],bodyFat:[],trainerPlans:{},ergogenicos:[],cardioLogs:[],lancamentos:[]
 }}
 let D=loadData();
 
@@ -1843,7 +1935,7 @@ function showSection(id){
   }catch(e){console.error('showSection error:',e);}
 }
 function renderSection(id){
-  const fn={dashboard:renderDashboard,cardio:renderCardio,treino:renderTreino,ficha:renderFicha,refeicoes:renderRefeicoes,agua:renderAgua,suplementos:renderSupl,ergogenicos:renderErgogenicos,'base-ergo':renderBaseErgo,'base-peptideos':renderBasePept,alimentos:renderAlimentos,medidas:renderMedidas,calculadoras:renderCalcs,progresso:renderProgresso,perfil:renderPerfil};
+  const fn={dashboard:renderDashboard,cardio:renderCardio,treino:renderTreino,ficha:renderFicha,refeicoes:renderRefeicoes,agua:renderAgua,suplementos:renderSupl,ergogenicos:renderErgogenicos,'base-ergo':renderBaseErgo,'base-peptideos':renderBasePept,alimentos:renderAlimentos,medidas:renderMedidas,calculadoras:renderCalcs,progresso:renderProgresso,perfil:renderPerfil,lancamentos:renderLancamentos};
   if(fn[id])fn[id]();
 }
 function showTab(btn,tabId){try{window.scrollTo(0,0);}catch(e){}
@@ -3372,6 +3464,8 @@ const ANABOLICOS_DB=[
   {name:'Dianabol (Metandrostenolona)',sigla:'Dbol',tipo:'17α-Oral',tipoKey:'oral',via:'Oral',meiaVida:'4–6 horas',objetivo:'Massa + Força',fase:'bulk',dose:'20–50mg/dia',info:'Ganho rápido de massa e força. Alta retenção hídrica. Hepatotóxico. Máx 6 semanas.'},
   {name:'Hemogenin (Oximetolona)',sigla:'Anadrol',tipo:'17α-Oral',tipoKey:'oral',via:'Oral',meiaVida:'8–9 horas',objetivo:'Massa + Força (extremo)',fase:'bulk',dose:'25–100mg/dia',info:'Oral mais potente para ganho de massa. Altíssima hepatotoxicidade. Usar máx 6 semanas com monitoramento.'},
   {name:'Turinabol (Clorodesidro)',sigla:'Tbol',tipo:'17α-Oral',tipoKey:'oral',via:'Oral',meiaVida:'16 horas',objetivo:'Massa Magra + Força',fase:'bulk/recomp',dose:'30–60mg/dia',info:'Derivado do Dianabol sem retenção hídrica. Anabolismo moderado. Hepatotóxico — máx 8 semanas.'},
+  {name:'Proviron (Mesterolona)',sigla:'Proviron',tipo:'DHT oral',tipoKey:'oral',via:'Oral',meiaVida:'12 horas',objetivo:'Androgenicidade + Libido + Anti-E2',fase:'cut/bulk',doseMin:25,doseMax:100,doseUnit:'mg/dia',monitor:'Hematócrito, Lipídios',info:'Derivado DHT, não aromatiza, efeito androgênico puro. Melhora libido, dureza muscular e reduz SHBG. Monitorar lipídios (reduz HDL).'},
+  {name:'Superdrol (Metasterona)',sigla:'Superdrol',tipo:'17α-Oral',tipoKey:'oral',via:'Oral',meiaVida:'8–12 horas',objetivo:'Massa + Força (seco)',fase:'bulk',doseMin:10,doseMax:20,doseUnit:'mg/dia',monitor:'ALT/AST, Lipídios, PA',info:'17α-alquilado extremamente potente. Alta toxicidade hepática — limitar 4–6 sem. com suporte (UDCA/TUDCA). Sem aromatização, sem retenção hídrica. Ganhos rápidos de força e massa seca.'},
   {name:'Halotestin (Fluoximesterona)',sigla:'Halo',tipo:'DHT oral',tipoKey:'oral',via:'Oral',meiaVida:'9–10 horas',objetivo:'Força + Agressividade',fase:'pre-contest',dose:'10–40mg/dia',info:'Um dos androgênios mais potentes. Uso pré-competição por força máxima. Alta hepatotoxicidade — máx 4 semanas.'},
   {name:'GH — Hormônio do Crescimento',sigla:'GH/HGH',tipo:'Hormônio',tipoKey:'horm',via:'SC',meiaVida:'3–4 horas',objetivo:'Lipólise + Massa + Recuperação',fase:'recomp',dose:'2–4 UI/dia',info:'Estimula IGF-1, lipólise e recuperação. Em jejum → lipólise. Pós-treino → anabolismo. Monitorar glicemia.'},
   {name:'Insulina',sigla:'INS',tipo:'Hormônio',tipoKey:'horm',via:'SC',meiaVida:'Varia por tipo',objetivo:'Anabolismo + Transporte',fase:'bulk',dose:'4–10 UI pós-treino',info:'⚠️ ALTO RISCO hipoglicemia. Nunca usar sem carboidratos disponíveis. Requer acompanhamento médico.'},
@@ -3399,6 +3493,7 @@ const PEPTIDEOS_DB=[
   {name:'AOD-9604',sigla:'AOD',tipo:'Fragmento GH',tipoKey:'frag',via:'SC',meiaVida:'~30 min',objetivo:'Lipólise + Regeneração',acao:'Fragmento GH',dose:'300–600mcg/dia',info:'Derivado do GH com foco em lipólise. Melhor perfil de segurança vs Frag 176-191. Sem efeitos no IGF-1.'},
   {name:'HCG (Gonadotrofina Coriônica)',sigla:'HCG',tipo:'Gonadotrofina',tipoKey:'gon',via:'SC/IM',meiaVida:'24–36 horas',objetivo:'Estimulação Testicular / TRT',acao:'Análogo LH',dose:'250–500 UI 2–3×/sem',info:'Mantém testículos funcionais durante ciclo. Fundamental no PCT. Evitar doses altas de forma crônica.'},
   {name:'HMG (Gonadotrofina Menopáusica)',sigla:'HMG',tipo:'Gonadotrofina',tipoKey:'gon',via:'SC/IM',meiaVida:'~24 horas',objetivo:'FSH+LH / Fertilidade',acao:'FSH + LH',dose:'75–150 UI/dose',info:'Contém FSH + LH. Estimula espermatogênese quando LH isolado é insuficiente. Usado em PCT complexo.'},
+  {name:'Retatrutida (GLP-1/GIP/Glucagon)',sigla:'Retat.',tipo:'Agonista Triplo',tipoKey:'ghrp',via:'SC',meiaVida:'~6 dias',objetivo:'Perda de peso agressiva + melhora metabólica',monitor:'Glicemia, TSH, PA, FC',info:'Agonista triplo de GLP-1, GIP e glucagón. Potente anorexígeno e lipolítico. Titulação obrigatória. Monitorar tireoide e FC.'},
   {name:'Kisspeptin-10',sigla:'Kiss-10',tipo:'Neuropeptídeo',tipoKey:'neuro',via:'SC',meiaVida:'~25 min',objetivo:'Eixo HPG / LH Release',acao:'Agonista GnRH',dose:'1–10mcg/kg/dose',info:'Estimula liberação pulsátil de GnRH → LH → Testosterona. Promissor para PCT e restauração natural do eixo.'},
 ];
 
@@ -3677,6 +3772,74 @@ function toggleErgo(id){
 }
 
 // ===================== CARDIO MODULE =====================
+// ===================== LANÇAMENTOS =====================
+const SUPLS_BASE=['Creatina','Whey Protein','BCAA','L-Glutamina','Beta-Alanina','Cafeína','L-Carnitina','Arginina','Citrulina Malato','Yohimbina','NAC (N-Acetil-Cisteína)','Ômega 3','Colágeno','Caseína','HMB','Taurina','Extrato de Chá Verde','Ashwagandha','Rhodiola Rosea','ZMA','Espirulina','Cúrcuma + Piperina','Melatonina','GABA','5-HTP','Vitamina C','Magnésio','Vitamina D3'];
+const VITALS_BASE=['Vitamina C (Ácido Ascórbico)','Vitamina D3 (Colecalciferol)','Vitamina E (Tocoferol)','Vitamina K2 (MK-7)','Vitamina B12 (Cobalamina)','Vitamina B6 (Piridoxina)','Vitamina A (Retinol)','Biotina (B7)','Folato (B9)','Magnésio','Zinco','Ferro','Cálcio','Selênio','Ômega 3 (EPA/DHA)','Potássio','Cobre','Manganês','Cromo','Coenzima Q10','Ácido Alfa-Lipóico','Quercetina','Resveratrol','Iodo','Boro','Molibdênio'];
+function renderLancamentos(){
+  if(!D.lancamentos)D.lancamentos=[];
+  var now=new Date();
+  var tstr=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  // Populate dropdowns once
+  var ergoSel=document.getElementById('lanc-ergo-sub');
+  if(ergoSel&&!ergoSel.options.length)ergoSel.innerHTML=ANABOLICOS_DB.map(function(c){return'<option value="'+c.name+'">'+c.name+'</option>'}).join('');
+  var peptSel=document.getElementById('lanc-pept-sub');
+  if(peptSel&&!peptSel.options.length)peptSel.innerHTML=PEPTIDEOS_DB.map(function(c){return'<option value="'+c.name+'">'+c.name+'</option>'}).join('');
+  var suplSel=document.getElementById('lanc-supl-sub');
+  if(suplSel&&!suplSel.options.length)suplSel.innerHTML=SUPLS_BASE.map(function(s){return'<option value="'+s+'">'+s+'</option>'}).join('');
+  var vitaSel=document.getElementById('lanc-vita-sub');
+  if(vitaSel&&!vitaSel.options.length)vitaSel.innerHTML=VITALS_BASE.map(function(s){return'<option value="'+s+'">'+s+'</option>'}).join('');
+  // Set default date/time
+  ['lanc-ergo-data','lanc-pept-data','lanc-supl-data','lanc-vita-data'].forEach(function(id){var el=document.getElementById(id);if(el&&!el.value)el.value=todayKey();});
+  ['lanc-ergo-hora','lanc-pept-hora','lanc-supl-hora','lanc-vita-hora'].forEach(function(id){var el=document.getElementById(id);if(el&&!el.value)el.value=tstr;});
+  renderLancHist('ergo');renderLancHist('pept');renderLancHist('supl');renderLancHist('vita');
+}
+function saveLanc(tipo){
+  if(!D.lancamentos)D.lancamentos=[];
+  var today=todayKey();
+  var pre='lanc-'+tipo;
+  var entry={id:uid(),date:v(pre+'-data')||today,hora:v(pre+'-hora')||'',tipo:tipo,substancia:v(pre+'-sub'),obs:v(pre+'-obs')||''};
+  if(!entry.substancia){toast('⚠️ Selecione a substância!','warning');return;}
+  if(tipo==='ergo'||tipo==='pept'){
+    entry.doseMg=parseFloat(v(pre+'-mg'))||null;
+    entry.doseMl=parseFloat(v(pre+'-ml'))||null;
+    entry.via=v(pre+'-via')||'';
+    entry.local=v(pre+'-local')||'';
+  }else{
+    entry.dose=v(pre+'-dose')||'';
+    entry.unidade=v(pre+'-un')||'mg';
+    entry.momento=tipo==='supl'?(v('lanc-supl-momento')||''):'';
+  }
+  D.lancamentos.push(entry);
+  saveData();
+  ['mg','ml','local','obs','dose'].forEach(function(f){var el=document.getElementById(pre+'-'+f);if(el)el.value='';});
+  renderLancHist(tipo);
+  renderDashboard();
+  toast('✅ Lançamento registrado!');
+}
+function deleteLanc(id){
+  if(!confirm('Remover este lançamento?'))return;
+  if(!D.lancamentos)return;
+  D.lancamentos=D.lancamentos.filter(function(l){return l.id!==id;});
+  saveData();renderLancamentos();toast('🗑️ Removido');
+}
+function renderLancHist(tipo){
+  var el=document.getElementById('lanc-hist-'+tipo);if(!el)return;
+  if(!D.lancamentos)D.lancamentos=[];
+  var today=todayKey();
+  var logs=D.lancamentos.filter(function(l){return l.tipo===tipo&&l.date===today;}).sort(function(a,b){return b.hora.localeCompare(a.hora);});
+  if(!logs.length){el.innerHTML='<div class="fs12 txt-muted" style="text-align:center;padding:10px">Nenhum registro hoje.</div>';return;}
+  var icons={ergo:'💉',pept:'🧬',supl:'💊',vita:'🌿'};
+  el.innerHTML='<div class="log-list">'+logs.map(function(l){
+    var sub='';
+    if(l.doseMg||l.doseMl){sub=(l.doseMg?l.doseMg+'mg':'')+(l.doseMg&&l.doseMl?' / ':'')+((l.doseMl||'')?(l.doseMl+'ml'):'');}
+    else if(l.dose){sub=l.dose+(l.unidade||'');}
+    if(l.via)sub+=(sub?' · ':'')+l.via;
+    if(l.local)sub+=(sub?' · ':'')+l.local;
+    if(l.momento)sub+=(sub?' · ':'')+l.momento;
+    if(l.obs)sub+=(sub?' — ':'')+l.obs;
+    return'<div class="log-item"><span class="log-ico">'+(icons[tipo]||'💉')+'</span><div class="log-info"><div class="log-ttl">'+l.substancia+(l.hora?' · '+l.hora:'')+'</div><div class="log-sub">'+(sub||'—')+'</div></div><button class="log-del" onclick="deleteLanc(\''+l.id+'\')">🗑</button></div>';
+  }).join('')+'</div>';
+}
 const CARDIO_TIPOS={
   cam_rua:{nome:'Caminhada Rua',ico:'🚶',cor:'var(--success)'},
   cam_est:{nome:'Caminhada Esteira',ico:'🚶‍♂️',cor:'var(--accent)'},

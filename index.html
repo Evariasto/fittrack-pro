@@ -311,7 +311,14 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
 .bot-nav{overflow-x:auto;scrollbar-width:none}
 .bot-nav::-webkit-scrollbar{display:none}
 .profile-top{text-align:center;padding:16px 0 8px}
-.profile-av{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 10px}
+.profile-av{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 0;overflow:hidden}
+.profile-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.profile-av-wrap{position:relative;width:68px;margin:0 auto 10px;cursor:pointer}
+.profile-av-change{position:absolute;bottom:-2px;right:-2px;width:24px;height:24px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;border:2px solid var(--surface);cursor:pointer;transition:background .2s}
+.profile-av-change:hover{background:#6d28d9}
+/* Hero photo circle */
+.hero-photo{width:72px;height:72px;border-radius:50%;border:3px solid rgba(167,139,250,.5);overflow:hidden;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;background:rgba(124,58,237,.2);font-size:30px;flex-shrink:0}
+.hero-photo img{width:100%;height:100%;object-fit:cover}
 .section-sep{font-size:11px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.6px;margin:16px 0 8px}
 /* ===== BANNER ===== */
 .hero-banner{position:relative;width:100%;height:340px;border-radius:var(--radius);overflow:hidden;margin-bottom:14px;display:flex;align-items:flex-end}
@@ -382,8 +389,9 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
     <div class="hcb-main">PRO ⭕</div>
   </div>
   <div class="hero-content">
+    <div class="hero-photo" id="hero-photo-el">💪</div>
     <div class="hero-badge">⚡ Athlete</div>
-    <div class="hero-name">Evaristo</div>
+    <div class="hero-name" id="hero-name-el">Evaristo</div>
     <div class="hero-title">Bodybuilding</div>
     <div class="hero-divider"></div>
     <div class="hero-stats" id="hero-stats-dynamic">
@@ -822,8 +830,14 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
   <div class="sec-ttl mb8">👤 Meu Perfil</div>
   <div class="card">
     <div class="profile-top">
-      <div class="profile-av">💪</div>
+      <div class="profile-av-wrap" onclick="document.getElementById('pf-foto-inp').click()" title="Alterar foto">
+        <div class="profile-av" id="profile-av-el">💪</div>
+        <div class="profile-av-change">📷</div>
+      </div>
       <div class="fw8" id="pf-nome-display">Usuário</div>
+      <div class="fs12 txt-muted mt8" style="cursor:pointer;opacity:.7" onclick="document.getElementById('pf-foto-inp').click()">Toque para alterar foto</div>
+      <input type="file" id="pf-foto-inp" accept="image/*" style="display:none" onchange="handleProfilePhoto(event)">
+      <button class="btn btn-out btn-sm mt8" id="pf-foto-del" style="display:none;margin:8px auto 0" onclick="removeProfilePhoto()">🗑️ Remover foto</button>
     </div>
     <div class="fg"><label>Nome</label><input type="text" id="pf-nome" placeholder="Seu nome"></div>
     <div class="g2">
@@ -1348,6 +1362,7 @@ function renderDashboard(){
   if(hsA)hsA.textContent=Math.round(todayWater()/1000*10)/10+'L';
   document.getElementById('topDate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
   document.getElementById('dash-subttl').textContent=todayKey();
+  applyProfilePhoto();
   const nut=dayNutrition();const burned=dayBurned();const mg=macroGoals();const water=todayWater();const wg=p.waterGoal||3000;
   const net=nut.calories;const goal=mg.calories||2000;const pct=Math.min(100,Math.round(net/goal*100));
   document.getElementById('ringCalNum').textContent=net;
@@ -2341,6 +2356,7 @@ function renderPerfil(){
   const p=D.profile;
   setV('pf-nome',p.name||'');setV('pf-sexo',p.gender||'m');setV('pf-idade',p.age||'');setV('pf-altura',p.height||'');setV('pf-peso',p.weight||'');setV('pf-objetivo',p.goal||'lose');setV('pf-atividade',p.activity||'moderate');setV('pf-agua',p.waterGoal||3000);
   document.getElementById('pf-nome-display').textContent=p.name||'Usuário';
+  applyProfilePhoto();
   const bmr=calcBMR(p);const tdee=calcTDEE(p);const mg=macroGoals();
   document.getElementById('pf-numeros').innerHTML= bmr?
     `<div class="pred-grid">`+
@@ -2660,6 +2676,56 @@ function generateFichaPDF(nomeAluno){
   doc.text('MFS TEAM · Matheus F Silva · Bodybuilding', pageW/2, fy+2, {align:'center'});
 
   return doc.output('blob');
+}
+
+// ===================== FOTO DE PERFIL =====================
+function handleProfilePhoto(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const img=new Image();
+    img.onload=function(){
+      const canvas=document.createElement('canvas');
+      const max=400;
+      let w=img.width,h=img.height;
+      if(w>h){if(w>max){h=Math.round(h*max/w);w=max;}}else{if(h>max){w=Math.round(w*max/h);h=max;}}
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      const b64=canvas.toDataURL('image/jpeg',0.78);
+      D.profile.photo=b64;
+      saveData();renderPerfil();renderDashboard();
+      toast('✅ Foto atualizada!');
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+  event.target.value='';
+}
+function removeProfilePhoto(){
+  if(!confirm('Remover foto do perfil?'))return;
+  delete D.profile.photo;
+  saveData();renderPerfil();renderDashboard();
+  toast('🗑️ Foto removida');
+}
+function applyProfilePhoto(){
+  const p=D.profile;
+  // Perfil avatar
+  const avEl=document.getElementById('profile-av-el');
+  const delBtn=document.getElementById('pf-foto-del');
+  if(avEl){
+    if(p.photo){avEl.innerHTML=`<img src="${p.photo}" alt="Foto">`;if(delBtn)delBtn.style.display='';}
+    else{avEl.innerHTML='💪';if(delBtn)delBtn.style.display='none';}
+  }
+  // Hero dashboard
+  const heroEl=document.getElementById('hero-photo-el');
+  if(heroEl){
+    heroEl.innerHTML=p.photo?`<img src="${p.photo}" alt="Foto">`:'💪';
+    heroEl.style.display=p.photo?'':'none';// hide circle if no photo for clean look
+  }
+  // Hero name
+  const heroName=document.getElementById('hero-name-el');
+  if(heroName&&p.name)heroName.textContent=p.name.split(' ')[0].toUpperCase()||'VOCÊ';
 }
 
 // ===================== EXPORT / IMPORT DATA =====================

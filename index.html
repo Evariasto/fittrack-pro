@@ -349,7 +349,7 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
 <nav class="top-nav">
   <div class="logo">⚡ FitTrack Pro</div>
   <div class="date-chip" id="topDate"></div>
-  <button class="btn btn-sm btn-out" onclick="showSection('perfil')" style="padding:6px 10px;font-size:18px;background:none;border:none;color:var(--text-muted)">👤</button>
+  <button class="btn btn-sm btn-out" onclick="showSection('perfil')" id="top-nav-avatar" style="padding:4px;font-size:18px;background:none;border:none;color:var(--text-muted);width:36px;height:36px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center">👤</button>
 </nav>
 
 <!-- SIDEBAR (desktop) -->
@@ -2710,20 +2710,29 @@ function removeProfilePhoto(){
 }
 function applyProfilePhoto(){
   const p=D.profile;
-  // Perfil avatar
+  // ---- Perfil avatar ----
   const avEl=document.getElementById('profile-av-el');
   const delBtn=document.getElementById('pf-foto-del');
   if(avEl){
     if(p.photo){avEl.innerHTML=`<img src="${p.photo}" alt="Foto">`;if(delBtn)delBtn.style.display='';}
     else{avEl.innerHTML='💪';if(delBtn)delBtn.style.display='none';}
   }
-  // Hero dashboard
+  // ---- Top nav icon (canto superior direito) ----
+  const topBtn=document.getElementById('top-nav-avatar');
+  if(topBtn){
+    if(p.photo){
+      topBtn.innerHTML=`<img src="${p.photo}" alt="Foto" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:2px solid var(--primary)">`;
+    }else{
+      topBtn.innerHTML='👤';
+    }
+  }
+  // ---- Hero dashboard ----
   const heroEl=document.getElementById('hero-photo-el');
   if(heroEl){
     heroEl.innerHTML=p.photo?`<img src="${p.photo}" alt="Foto">`:'💪';
-    heroEl.style.display=p.photo?'':'none';// hide circle if no photo for clean look
+    heroEl.style.display=p.photo?'':'none';
   }
-  // Hero name
+  // ---- Hero name ----
   const heroName=document.getElementById('hero-name-el');
   if(heroName&&p.name)heroName.textContent=p.name.split(' ')[0].toUpperCase()||'VOCÊ';
 }

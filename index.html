@@ -1004,8 +1004,9 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
     <div class="modal-hd"><span class="modal-ttl">📤 Enviar Ficha para Aluno</span><button class="modal-cls" onclick="closeModal('modalEnviar')">×</button></div>
     <div class="fg"><label>Nome do Aluno</label><input type="text" id="enviar-nome" placeholder="Ex: Evaristo Silva"></div>
     <div class="fg"><label>WhatsApp (com DDD, sem +55)</label><input type="tel" id="enviar-phone" placeholder="Ex: 11987654321"></div>
-    <div style="margin-top:4px;font-size:11px;color:#94a3b8">O PDF será baixado. Em seguida o WhatsApp abrirá com mensagem pré-preenchida.</div>
-    <button class="btn btn-block mt8" style="background:#25D366;color:#fff;font-weight:900;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px" onclick="generateAndSendFicha()">📲 GERAR PDF E ENVIAR VIA WHATSAPP</button>
+    <button class="btn btn-block mt8" style="background:#1c1c26;color:#fbbf24;border:1px solid #fbbf24;font-weight:900;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px" onclick="previewFichaPDF()">👁️ VISUALIZAR PDF ANTES DE ENVIAR</button>
+    <div style="margin:8px 0 4px;font-size:11px;color:#64748b;text-align:center">— revise o PDF e então envie —</div>
+    <button class="btn btn-block" style="background:#25D366;color:#fff;font-weight:900;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px" onclick="generateAndSendFicha()">📲 GERAR PDF E ENVIAR VIA WHATSAPP</button>
   </div>
 </div>
 
@@ -2322,10 +2323,26 @@ window.addEventListener('DOMContentLoaded',()=>{
 // ===================== PDF + WHATSAPP FICHA =====================
 function openEnviarModal(){
   saveFicha();
-  // Pre-fill name from profile if available
   var nameInp = document.getElementById('enviar-nome');
   if(nameInp && !nameInp.value && D.profile && D.profile.name) nameInp.value = D.profile.name;
   document.getElementById('modalEnviar').classList.add('open');
+}
+
+function getTrainerPhotoBase64(){
+  var el = document.querySelector('.trainer-bg-left');
+  if(!el) return null;
+  var style = el.getAttribute('style') || '';
+  var m = style.match(/url\(['"]?data:image\/jpeg;base64,([^'")\s]+)['"]?\)/);
+  return m ? m[1] : null;
+}
+
+function previewFichaPDF(){
+  var nome = (document.getElementById('enviar-nome').value || '').trim() || 'Aluno';
+  var blob = generateFichaPDF(nome);
+  var url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 120000);
+  toast('👁️ PDF aberto em nova aba!');
 }
 
 function generateAndSendFicha(){
@@ -2362,30 +2379,72 @@ function generateFichaPDF(nomeAluno){
   var pageH = doc.internal.pageSize.getHeight();
   var mg = 10;
 
-  function bg(){ doc.setFillColor(10,10,15); doc.rect(0,0,pageW,pageH,'F'); }
-  bg();
+  function fillPage(){ doc.setFillColor(10,10,15); doc.rect(0,0,pageW,pageH,'F'); }
+  fillPage();
 
-  // Header bar
-  doc.setFillColor(25,16,2); doc.rect(0,0,pageW,30,'F');
-  doc.setFillColor(251,191,36); doc.rect(0,30,pageW,1.2,'F');
+  // === BANNER HEADER ===
+  var hh = 40; // header height mm
+  // Dark gold bg
+  doc.setFillColor(20,12,2); doc.rect(0,0,pageW,hh,'F');
 
-  // MFS TEAM title
-  doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.setTextColor(251,191,36);
-  doc.text('MFS TEAM', mg, 13);
+  // Try to add trainer photo on the left
+  var b64 = getTrainerPhotoBase64();
+  var photoW = 0;
+  if(b64){
+    try{
+      doc.addImage('data:image/jpeg;base64,'+b64,'JPEG', 0, 0, 30, hh);
+      // Dark overlay on photo for readability
+      doc.setFillColor(10,6,0); doc.setGState(doc.GState({opacity:0.35}));
+      doc.rect(0,0,30,hh,'F');
+      doc.setGState(doc.GState({opacity:1}));
+      photoW = 32;
+    }catch(e){ photoW = 0; }
+  }
+
+  // Right photo
+  var b64r = null;
+  var elR = document.querySelector('.trainer-bg-right');
+  if(elR){
+    var styleR = elR.getAttribute('style')||'';
+    var mr = styleR.match(/url\(['"]?data:image\/jpeg;base64,([^'")\s]+)['"]?\)/);
+    if(mr) b64r = mr[1];
+  }
+  if(b64r){
+    try{
+      doc.addImage('data:image/jpeg;base64,'+b64r,'JPEG', pageW-30, 0, 30, hh);
+      doc.setFillColor(10,6,0); doc.setGState(doc.GState({opacity:0.35}));
+      doc.rect(pageW-30,0,30,hh,'F');
+      doc.setGState(doc.GState({opacity:1}));
+    }catch(e){}
+  }
+
+  // Gold vertical accent line
+  doc.setFillColor(251,191,36); doc.rect(photoW, 0, 1.5, hh, 'F');
+
+  // MFS TEAM
+  var tx = photoW + 4;
+  doc.setFont('helvetica','bold'); doc.setFontSize(19); doc.setTextColor(251,191,36);
+  doc.text('MFS TEAM', tx, 13);
   doc.setFontSize(7); doc.setTextColor(200,155,50);
-  doc.text('MATHEUS F SILVA · BODYBUILDING', mg, 19);
+  doc.text('MATHEUS F SILVA', tx, 20);
   doc.setFontSize(6.5); doc.setTextColor(160,120,30);
-  doc.text('HEAD TREINADOR', mg, 25);
+  doc.text('HEAD TREINADOR · BODYBUILDING', tx, 26);
 
-  // Right — athlete + week
-  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(251,191,36);
-  doc.text('ALUNO: ' + nomeAluno.toUpperCase(), pageW-mg, 11, {align:'right'});
-  doc.setFontSize(7.5); doc.setTextColor(200,155,50);
-  doc.text('SEMANA ' + nxt.week + ' / ' + nxt.year, pageW-mg, 18, {align:'right'});
-  var phase = plan.phase || ''; var sreps = plan.sreps || '';
-  if(phase){ doc.setFontSize(6.5); doc.setTextColor(160,120,30); doc.text('FASE: ' + phase + (sreps ? '  |  ' + sreps : ''), pageW-mg, 25, {align:'right'}); }
+  // Divider inside header
+  doc.setFillColor(80,55,10); doc.rect(tx, 29, 80, 0.5, 'F');
 
-  var y = 36;
+  // Aluno + semana
+  doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(255,220,100);
+  doc.text('ALUNO: '+nomeAluno.toUpperCase(), tx, 34.5);
+  doc.setFontSize(7); doc.setTextColor(180,140,50);
+  var phase = plan.phase||''; var sreps = plan.sreps||'';
+  var semStr = 'SEMANA '+nxt.week+' / '+nxt.year + (phase?' · '+phase:'') + (sreps?' · '+sreps:'');
+  doc.text(semStr, tx, 39.5);
+
+  // Bottom gold line
+  doc.setFillColor(251,191,36); doc.rect(0,hh,pageW,1,'F');
+
+  var y = hh + 6;
   var days = ['A','B','C','A2','E'];
   var dayClr = {A:[88,28,135], B:[6,95,70], C:[154,52,18], A2:[30,64,175], E:[120,53,15]};
 
@@ -2394,8 +2453,8 @@ function generateFichaPDF(nomeAluno){
       ? plan.days[day].exercises : (WORKOUT_DB[day] ? WORKOUT_DB[day].exercises : []);
     if(!exs || !exs.length) return;
     var dayLabel = WORKOUT_DB[day] ? WORKOUT_DB[day].name : 'Treino '+day;
-    var estH = 8 + 5.5 + exs.length*6.5 + 5;
-    if(y + estH > pageH - 12){ doc.addPage(); bg(); y = 12; }
+    var estH = 8 + 5.5 + exs.length * 6.5 + 5;
+    if(y + estH > pageH - 12){ doc.addPage(); fillPage(); y = 12; }
 
     // Day header bar
     var dc = dayClr[day] || [60,60,100];
@@ -2419,7 +2478,7 @@ function generateFichaPDF(nomeAluno){
 
     exs.forEach(function(ex,ei){
       var rh = 6.5;
-      if(y+rh > pageH-10){ doc.addPage(); bg(); y=12; }
+      if(y+rh > pageH-10){ doc.addPage(); fillPage(); y=12; }
       if(ei%2===0){ doc.setFillColor(16,16,26); doc.rect(mg,y,pageW-mg*2,rh,'F'); }
       doc.setFont('helvetica','normal'); doc.setFontSize(6); doc.setTextColor(235,235,235);
       doc.text(ex.name||'', c.ex, y+4.2, {maxWidth:59});

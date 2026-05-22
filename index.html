@@ -732,7 +732,7 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
           <option value="1.9">Muito Ativo (2x/dia)</option>
         </select>
       </div>
-      <button class="btn btn-pri btn-block" onclick="calcTDEE()">Calcular</button>
+      <button class="btn btn-pri btn-block" onclick="calcTDEEUI()">Calcular</button>
       <div id="tdee-result" class="mt12"></div>
     </div>
   </div>
@@ -2224,7 +2224,7 @@ function renderCalcs(){
   if(p.age)setV('calc-idade',p.age),setV('imc-idade',p.age);
   if(p.gender){setV('calc-sexo',p.gender);setV('imc-sexo',p.gender);}
 }
-function calcTDEE(){
+function calcTDEEUI(){
   const peso=parseFloat(v('calc-peso'));const alt=parseFloat(v('calc-altura'));const idade=parseFloat(v('calc-idade'));const sexo=v('calc-sexo');const ativ=parseFloat(v('calc-ativ'));
   if(!peso||!alt||!idade){toast('⚠️ Preencha todos os campos!','warning');return}
   const bmr=Math.round(10*peso+6.25*alt-5*idade+(sexo==='m'?5:-161));const tdee=Math.round(bmr*ativ);

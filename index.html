@@ -1108,12 +1108,14 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
     </div>
 
     <!-- Campos principais -->
+    <div class="fg"><label>Data</label><input type="date" id="cardio-data"></div>
     <div class="g2">
-      <div class="fg"><label>Data</label><input type="date" id="cardio-data"></div>
-      <div class="fg"><label>Horário</label><input type="time" id="cardio-hora"></div>
+      <div class="fg"><label>⏱ Início</label><input type="time" id="cardio-hora" oninput="calcCardioDur()"></div>
+      <div class="fg"><label>🏁 Fim</label><input type="time" id="cardio-fim" oninput="calcCardioDur()"></div>
     </div>
+    <div style="font-size:10px;color:var(--text-muted);margin:-6px 0 8px;text-align:center">Preencha início e fim — a duração é calculada automaticamente</div>
     <div class="g2">
-      <div class="fg"><label>Duração (min)</label><input type="number" id="cardio-dur" placeholder="30" min="1" max="360" oninput="calcCardioPreview()"></div>
+      <div class="fg"><label>Duração (min) <span class="txt-muted" style="font-size:9px">auto</span></label><input type="number" id="cardio-dur" placeholder="30" min="1" max="360" oninput="calcCardioPreview()"></div>
       <div class="fg"><label id="cardio-vel-label">Velocidade (km/h)</label><input type="number" id="cardio-vel" placeholder="6.0" step="0.5" oninput="calcCardioPreview()"></div>
     </div>
     <div class="g2">
@@ -2153,12 +2155,13 @@ function renderTreino(){
       });
       exHtml+='</div>';
     }
-    return`<div class="card mb8"><div class="flex-bc"><div><div class="fw7">${tipoEmoji(w.type)} ${w.name||tipoLabel(w.type)}${dayLabel}</div><div class="fs11 txt-muted mt4">${w.duration}min · ${w.caloriesBurned||0}kcal${w.obs?' · '+w.obs:''}</div></div><button class="log-del" onclick="deleteTreino('${w.id}')">🗑</button></div>${exHtml}</div>`;
+    return`<div class="card mb8"><div class="flex-bc"><div><div class="fw7">${tipoEmoji(w.type)} ${w.name||tipoLabel(w.type)}${dayLabel}</div><div class="fs11 txt-muted mt4">${w.duration}min · ${w.caloriesBurned||0}kcal${w.obs?' · '+w.obs:''}</div></div><div style="display:flex;gap:4px"><button class="log-edit" onclick="editTreino('${w.id}')" title="Editar">✏️</button><button class="log-del" onclick="deleteTreino('${w.id}')">🗑</button></div></div>${exHtml}</div>`;
   }).join('');
   document.getElementById('treino-list').innerHTML=html;
 }
 function tipoLabel(t){const m={musculacao:'Musculação',cardio_moderado:'Cardio Moderado',cardio_intenso:'Cardio Intenso',hiit:'HIIT',funcional:'Funcional',yoga:'Yoga/Pilates',caminhada:'Caminhada',corrida:'Corrida',ciclismo:'Ciclismo',natacao:'Natação',outros:'Outros'};return m[t]||t}
 function tipoEmoji(t){const m={musculacao:'🏋️',cardio_moderado:'🚴',cardio_intenso:'🏃',hiit:'⚡',funcional:'🤸',yoga:'🧘',caminhada:'🚶',corrida:'🏃',ciclismo:'🚴',natacao:'🏊',outros:'🎯'};return m[t]||'🏋️'}
+var _editingTreinoId=null;
 function saveTreino(){
   const dur=parseInt(v('tr-duracao'));const obs=v('tr-obs');const data=v('tr-data')||todayKey();
   if(!dur||dur<1){toast('⚠️ Informe a duração!','warning');return}
@@ -2167,10 +2170,25 @@ function saveTreino(){
   const nome=dayDb?dayDb.name:(currentTrainingDay?'Treino '+currentTrainingDay:'Musculação');
   const tipo='musculacao';
   const kcal=parseInt(v('tr-kcal'))||estKcalTreino(tipo,dur);
-  D.workouts.push({id:uid(),date:data,type:tipo,trainingDay:currentTrainingDay,name:nome,duration:dur,caloriesBurned:kcal,exercises,obs});
+  if(_editingTreinoId){
+    const idx=D.workouts.findIndex(w=>w.id===_editingTreinoId);
+    if(idx>=0)D.workouts[idx]={...D.workouts[idx],duration:dur,caloriesBurned:kcal,obs,date:data,exercises};
+    _editingTreinoId=null;
+    const ttl=document.querySelector('#modalTreino .modal-ttl');if(ttl)ttl.textContent='🏋️ Registrar Treino';
+  }else{
+    D.workouts.push({id:uid(),date:data,type:tipo,trainingDay:currentTrainingDay,name:nome,duration:dur,caloriesBurned:kcal,exercises,obs});
+  }
   saveData();closeModal('modalTreino');renderTreino();renderDashboard();toast('✅ Treino salvo!');
   currentTrainingDay='';
   ['tr-duracao','tr-obs','tr-kcal'].forEach(id=>setV(id,''));
+}
+function editTreino(id){
+  const w=D.workouts.find(x=>x.id===id);if(!w)return;
+  _editingTreinoId=id;
+  setV('tr-duracao',w.duration||'');setV('tr-kcal',w.caloriesBurned||'');
+  setV('tr-obs',w.obs||'');setV('tr-data',w.date||todayKey());
+  const ttl=document.querySelector('#modalTreino .modal-ttl');if(ttl)ttl.textContent='✏️ Editar Treino';
+  openModal('modalTreino');
 }
 function deleteTreino(id){if(!confirm('Remover este treino?'))return;D.workouts=D.workouts.filter(w=>w.id!==id);saveData();renderTreino();renderDashboard();toast('🗑️ Removido')}
 function autoCalcWorkoutKcal(){const t=v('tr-tipo');const d=parseInt(v('tr-duracao'))||0;if(!d){toast('⚠️ Informe a duração primeiro!','warning');return}setV('tr-kcal',estKcalTreino(t,d))}
@@ -2508,13 +2526,31 @@ const suplColor={manipulado:'pill-p',ergogenico:'pill-o',proteina:'pill-c',vitam
 function renderSupl(){
   const supls=todaySupplements();
   if(!supls.length){document.getElementById('supl-list').innerHTML=`<div class="empty"><div class="empty-ico">💊</div><div class="empty-txt">Nenhum suplemento registrado hoje.</div></div>`;return}
-  document.getElementById('supl-list').innerHTML='<div class="log-list">'+supls.map(s=>`<div class="log-item"><span class="log-ico">${suplEmoji[s.type]||'💊'}</span><div class="log-info"><div class="log-ttl">${s.name}</div><div class="log-sub"><span class="pill ${suplColor[s.type]||'pill-p'}">${s.type}</span> · ${s.dose}${s.time?' · '+s.time:''}</div>${s.obs?`<div class="log-meta">${s.obs}</div>`:''}</div><button class="log-del" onclick="deleteSupl('${s.id}')">🗑</button></div>`).join('')+'</div>';
+  document.getElementById('supl-list').innerHTML='<div class="log-list">'+supls.map(s=>`<div class="log-item"><span class="log-ico">${suplEmoji[s.type]||'💊'}</span><div class="log-info"><div class="log-ttl">${s.name}</div><div class="log-sub"><span class="pill ${suplColor[s.type]||'pill-p'}">${s.type}</span> · ${s.dose}${s.time?' · '+s.time:''}</div>${s.obs?`<div class="log-meta">${s.obs}</div>`:''}</div><div style="display:flex;flex-direction:column;gap:4px"><button class="log-edit" onclick="editSupl('${s.id}')" title="Editar">✏️</button><button class="log-del" onclick="deleteSupl('${s.id}')">🗑</button></div></div>`).join('')+'</div>';
 }
+var _editingSuplId=null;
 function saveSupl(){
   const nome=v('supl-nome');if(!nome){toast('⚠️ Informe o nome!','warning');return}
-  D.supplements.push({id:uid(),date:v('supl-data')||todayKey(),time:v('supl-hora'),type:v('supl-tipo'),name:nome,dose:v('supl-dose'),obs:v('supl-obs')});
+  const entry={id:_editingSuplId||uid(),date:v('supl-data')||todayKey(),time:v('supl-hora'),type:v('supl-tipo'),name:nome,dose:v('supl-dose'),obs:v('supl-obs')};
+  if(_editingSuplId){
+    const idx=D.supplements.findIndex(s=>s.id===_editingSuplId);
+    if(idx>=0)D.supplements[idx]=entry;
+    _editingSuplId=null;
+    const ttl=document.querySelector('#modalSupl .modal-ttl');if(ttl)ttl.textContent='💊 Adicionar Suplemento';
+  }else{
+    D.supplements.push(entry);
+  }
   saveData();closeModal('modalSupl');renderSupl();toast('✅ Suplemento salvo!');
   ['supl-nome','supl-dose','supl-hora','supl-obs'].forEach(id=>setV(id,''));
+}
+function editSupl(id){
+  const s=D.supplements.find(x=>x.id===id);if(!s)return;
+  _editingSuplId=id;
+  setV('supl-nome',s.name);setV('supl-tipo',s.type||'outros');
+  setV('supl-dose',s.dose||'');setV('supl-hora',s.time||'');
+  setV('supl-data',s.date||todayKey());setV('supl-obs',s.obs||'');
+  const ttl=document.querySelector('#modalSupl .modal-ttl');if(ttl)ttl.textContent='✏️ Editar Suplemento';
+  openModal('modalSupl');
 }
 function deleteSupl(id){if(!confirm('Remover?'))return;D.supplements=D.supplements.filter(s=>s.id!==id);saveData();renderSupl();toast('🗑️ Removido')}
 
@@ -3503,10 +3539,23 @@ function calcCardioPreview(){
   if(di2&&!di2.value&&r.dist!=='0.00') di2.placeholder=r.dist+'km';
 }
 
+function calcCardioDur(){
+  const ini=v('cardio-hora'),fim=v('cardio-fim');
+  if(!ini||!fim)return;
+  const [ih,im]=ini.split(':').map(Number);
+  const [fh,fm]=fim.split(':').map(Number);
+  let start=ih*60+im,end=fh*60+fm;
+  if(end<=start)end+=1440;// crosses midnight
+  const dur=end-start;
+  if(dur>0){setV('cardio-dur',dur);calcCardioPreview();}
+}
 function initModalCardio(){
   const now=new Date();
+  const hh=now.getHours().toString().padStart(2,'0');
+  const mm=now.getMinutes().toString().padStart(2,'0');
   setV('cardio-data',todayKey());
-  setV('cardio-hora',now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0'));
+  setV('cardio-hora',hh+':'+mm);
+  setV('cardio-fim','');
   const savedW=D.profile.weight||75;
   setV('cardio-peso',savedW);
   setV('cardio-dur','');setV('cardio-vel','');setV('cardio-dist','');setV('cardio-obs','');
@@ -3528,6 +3577,7 @@ function saveCardio(){
     tipo:_cardioTipo,
     data:v('cardio-data')||todayKey(),
     hora:v('cardio-hora')||'',
+    horaFim:v('cardio-fim')||'',
     duracao:dur,
     velocidade:vel,
     distancia:dist,
@@ -3556,7 +3606,7 @@ function editCardio(id){
   _editingCardioId=id;
   _cardioTipo=e.tipo;_cardioInt=e.intensidade;
   openModal('modalCardio');initModalCardio();
-  setV('cardio-data',e.data);setV('cardio-hora',e.hora);
+  setV('cardio-data',e.data);setV('cardio-hora',e.hora||'');setV('cardio-fim',e.horaFim||'');
   setV('cardio-dur',e.duracao);setV('cardio-vel',e.velocidade||'');
   setV('cardio-dist',e.distancia||'');setV('cardio-peso',e.peso);
   setV('cardio-obs',e.obs||'');
@@ -3601,11 +3651,12 @@ function buildCardioCard(e){
   const t=CARDIO_TIPOS[e.tipo]||{nome:e.tipo,ico:'🏃',cor:'var(--danger)'};
   const intBadge={leve:'<span style="color:var(--success);font-size:10px">🟢 Leve</span>',moderada:'<span style="color:var(--warning);font-size:10px">🟡 Moderada</span>',intensa:'<span style="color:var(--danger);font-size:10px">🔴 Intensa</span>'}[e.intensidade]||'';
   const distStr=e.distancia>0?` · 📍 ${e.distancia.toFixed(1)}km`:'';
+  const horaStr=e.hora?(e.horaFim?e.hora+'→'+e.horaFim:e.hora)+' · ':'';
   return`<div class="cardio-log-item" style="border-left-color:${t.cor}">
     <div class="cardio-log-ico">${t.ico}</div>
     <div class="cardio-log-body">
       <div class="cardio-log-name">${t.nome}</div>
-      <div class="cardio-log-sub">${e.hora?e.hora+' · ':''}⏱ ${e.duracao}min${e.velocidade>0?' · '+e.velocidade+'km/h':''}${distStr}<br>${intBadge} · MET ${e.met}${e.obs?' · <em>'+e.obs+'</em>':''}</div>
+      <div class="cardio-log-sub">${horaStr}⏱ ${e.duracao}min${e.velocidade>0?' · '+e.velocidade+'km/h':''}${distStr}<br>${intBadge} · MET ${e.met}${e.obs?' · <em>'+e.obs+'</em>':''}</div>
     </div>
     <div style="text-align:right;flex-shrink:0">
       <div class="cardio-log-kcal">${e.kcal}</div>

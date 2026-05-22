@@ -1042,6 +1042,31 @@ h3{font-size:14px;font-weight:800;margin-bottom:8px}
   </div>
 </div>
 
+<!-- MODAL CROP FOTO -->
+<div class="modal-overlay" id="modalCropFoto">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-hd">
+      <span class="modal-ttl">✂️ Ajustar Foto</span>
+      <button class="modal-cls" onclick="cancelCrop()">×</button>
+    </div>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;text-align:center">Arraste para reposicionar · Pinch ou slider para zoom</p>
+    <div style="display:flex;justify-content:center;margin-bottom:12px">
+      <canvas id="cropCanvas" width="280" height="280" style="border-radius:8px;cursor:move;touch-action:none;max-width:100%;display:block"></canvas>
+    </div>
+    <div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <label style="font-size:11px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px">🔍 Zoom</label>
+        <span style="font-size:11px;color:var(--primary-light)" id="crop-zoom-lbl">1.0×</span>
+      </div>
+      <input type="range" id="crop-zoom" min="1" max="4" step="0.02" value="1" oninput="onCropZoom()" style="width:100%;accent-color:var(--primary)">
+    </div>
+    <div class="g2" style="gap:8px">
+      <button class="btn btn-out btn-block" onclick="cancelCrop()">✕ Cancelar</button>
+      <button class="btn btn-pri btn-block" onclick="confirmCrop()">✅ Salvar Foto</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ===================== FOOD DATABASE =====================
 // Valores por 100g: {cat, name, kcal, p(proteína), c(carb), f(gordura), porcao(g padrão)}
@@ -2448,6 +2473,7 @@ function preloadTrainerImages(){
 }
 // Pre-load on DOM ready (images are data URIs, load instantly)
 document.addEventListener('DOMContentLoaded', preloadTrainerImages);
+document.addEventListener('DOMContentLoaded', initCropEvents);
 
 function openEnviarModal(){
   saveFicha();
@@ -2678,36 +2704,169 @@ function generateFichaPDF(nomeAluno){
   return doc.output('blob');
 }
 
-// ===================== FOTO DE PERFIL =====================
+// ===================== FOTO DE PERFIL — CROPPER =====================
+var _cropImg=null,_cropX=0,_cropY=0,_cropBaseScale=1;
+var _cropDragging=false,_cropDragSX=0,_cropDragSY=0,_cropImgSX=0,_cropImgSY=0;
+var _cropPinchDist=0,_cropPinchZoomStart=1;
+var CROP_SIZE=280; // display px
+
 function handleProfilePhoto(event){
-  const file=event.target.files[0];
-  if(!file)return;
+  const file=event.target.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=function(e){
     const img=new Image();
     img.onload=function(){
-      const canvas=document.createElement('canvas');
-      const max=400;
-      let w=img.width,h=img.height;
-      if(w>h){if(w>max){h=Math.round(h*max/w);w=max;}}else{if(h>max){w=Math.round(w*max/h);h=max;}}
-      canvas.width=w;canvas.height=h;
-      canvas.getContext('2d').drawImage(img,0,0,w,h);
-      const b64=canvas.toDataURL('image/jpeg',0.78);
-      D.profile.photo=b64;
-      saveData();renderPerfil();renderDashboard();
-      toast('✅ Foto atualizada!');
+      _cropImg=img;
+      // Base scale: image fills the circle (shorter side = CROP_SIZE)
+      _cropBaseScale=CROP_SIZE/Math.min(img.width,img.height);
+      _cropX=0;_cropY=0;
+      document.getElementById('crop-zoom').value=1;
+      document.getElementById('crop-zoom-lbl').textContent='1.0×';
+      document.getElementById('modalCropFoto').classList.add('open');
+      requestAnimationFrame(_drawCrop);
     };
     img.src=e.target.result;
   };
   reader.readAsDataURL(file);
   event.target.value='';
 }
+
+function _getCropZoom(){return parseFloat(document.getElementById('crop-zoom').value)||1;}
+
+function _clampCropOffset(zoom){
+  const scale=_cropBaseScale*zoom;
+  const imgW=_cropImg.width*scale,imgH=_cropImg.height*scale;
+  const R=CROP_SIZE/2;
+  const maxX=Math.max(0,imgW/2-R),maxY=Math.max(0,imgH/2-R);
+  _cropX=Math.min(maxX,Math.max(-maxX,_cropX));
+  _cropY=Math.min(maxY,Math.max(-maxY,_cropY));
+}
+
+function _drawCrop(){
+  const canvas=document.getElementById('cropCanvas');if(!canvas||!_cropImg)return;
+  const S=CROP_SIZE;canvas.width=S;canvas.height=S;
+  const ctx=canvas.getContext('2d');
+  const zoom=_getCropZoom();
+  const scale=_cropBaseScale*zoom;
+  const imgW=_cropImg.width*scale,imgH=_cropImg.height*scale;
+  const dx=S/2+_cropX-imgW/2,dy=S/2+_cropY-imgH/2;
+  // Draw image
+  ctx.clearRect(0,0,S,S);
+  ctx.drawImage(_cropImg,dx,dy,imgW,imgH);
+  // Dark overlay outside circle
+  ctx.save();
+  ctx.fillStyle='rgba(0,0,0,.65)';
+  ctx.fillRect(0,0,S,S);
+  ctx.globalCompositeOperation='destination-out';
+  ctx.beginPath();ctx.arc(S/2,S/2,S/2-1,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+  // Circle border
+  ctx.strokeStyle='rgba(167,139,250,.85)';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.arc(S/2,S/2,S/2-1,0,Math.PI*2);ctx.stroke();
+  // Grid lines (rule of thirds)
+  ctx.save();ctx.beginPath();ctx.arc(S/2,S/2,S/2-1,0,Math.PI*2);ctx.clip();
+  ctx.strokeStyle='rgba(255,255,255,.12)';ctx.lineWidth=1;
+  [S/3,S*2/3].forEach(p=>{
+    ctx.beginPath();ctx.moveTo(p,0);ctx.lineTo(p,S);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,p);ctx.lineTo(S,p);ctx.stroke();
+  });
+  ctx.restore();
+}
+
+function onCropZoom(){
+  const z=_getCropZoom();
+  document.getElementById('crop-zoom-lbl').textContent=z.toFixed(1)+'×';
+  _clampCropOffset(z);_drawCrop();
+}
+
+function cancelCrop(){
+  document.getElementById('modalCropFoto').classList.remove('open');
+  _cropImg=null;
+}
+
+function confirmCrop(){
+  if(!_cropImg)return;
+  const zoom=_getCropZoom();
+  const scale=_cropBaseScale*zoom;
+  const imgW=_cropImg.width*scale,imgH=_cropImg.height*scale;
+  const S=CROP_SIZE;
+  const dx=S/2+_cropX-imgW/2,dy=S/2+_cropY-imgH/2;
+  // Output at 2× for retina quality
+  const outSize=500;const sf=outSize/S;
+  const out=document.createElement('canvas');out.width=outSize;out.height=outSize;
+  const octx=out.getContext('2d');
+  octx.beginPath();octx.arc(outSize/2,outSize/2,outSize/2,0,Math.PI*2);octx.clip();
+  octx.drawImage(_cropImg,dx*sf,dy*sf,imgW*sf,imgH*sf);
+  const b64=out.toDataURL('image/jpeg',0.82);
+  D.profile.photo=b64;
+  saveData();renderPerfil();renderDashboard();
+  toast('✅ Foto salva!');
+  document.getElementById('modalCropFoto').classList.remove('open');
+  _cropImg=null;
+}
+
+function initCropEvents(){
+  const canvas=document.getElementById('cropCanvas');if(!canvas)return;
+  // Mouse drag
+  canvas.addEventListener('mousedown',function(e){
+    _cropDragging=true;_cropDragSX=e.clientX;_cropDragSY=e.clientY;
+    _cropImgSX=_cropX;_cropImgSY=_cropY;e.preventDefault();
+  });
+  document.addEventListener('mousemove',function(e){
+    if(!_cropDragging||!_cropImg)return;
+    _cropX=_cropImgSX+(e.clientX-_cropDragSX);
+    _cropY=_cropImgSY+(e.clientY-_cropDragSY);
+    _clampCropOffset(_getCropZoom());_drawCrop();
+  });
+  document.addEventListener('mouseup',function(){_cropDragging=false;});
+  // Scroll zoom
+  canvas.addEventListener('wheel',function(e){
+    e.preventDefault();
+    const inp=document.getElementById('crop-zoom');
+    let z=parseFloat(inp.value)-(e.deltaY*0.003);
+    z=Math.min(4,Math.max(1,z));inp.value=z;
+    document.getElementById('crop-zoom-lbl').textContent=z.toFixed(1)+'×';
+    _clampCropOffset(z);_drawCrop();
+  },{passive:false});
+  // Touch drag + pinch
+  canvas.addEventListener('touchstart',function(e){
+    e.preventDefault();
+    if(e.touches.length===1){
+      _cropDragging=true;
+      _cropDragSX=e.touches[0].clientX;_cropDragSY=e.touches[0].clientY;
+      _cropImgSX=_cropX;_cropImgSY=_cropY;
+    }else if(e.touches.length===2){
+      _cropDragging=false;
+      _cropPinchDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+      _cropPinchZoomStart=_getCropZoom();
+    }
+  },{passive:false});
+  canvas.addEventListener('touchmove',function(e){
+    e.preventDefault();
+    if(!_cropImg)return;
+    if(e.touches.length===1&&_cropDragging){
+      _cropX=_cropImgSX+(e.touches[0].clientX-_cropDragSX);
+      _cropY=_cropImgSY+(e.touches[0].clientY-_cropDragSY);
+      _clampCropOffset(_getCropZoom());_drawCrop();
+    }else if(e.touches.length===2){
+      const dist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+      let z=_cropPinchZoomStart*(dist/_cropPinchDist);
+      z=Math.min(4,Math.max(1,z));
+      const inp=document.getElementById('crop-zoom');inp.value=z;
+      document.getElementById('crop-zoom-lbl').textContent=z.toFixed(1)+'×';
+      _clampCropOffset(z);_drawCrop();
+    }
+  },{passive:false});
+  canvas.addEventListener('touchend',function(){_cropDragging=false;});
+}
+
 function removeProfilePhoto(){
   if(!confirm('Remover foto do perfil?'))return;
   delete D.profile.photo;
   saveData();renderPerfil();renderDashboard();
   toast('🗑️ Foto removida');
 }
+
 function applyProfilePhoto(){
   const p=D.profile;
   // ---- Perfil avatar ----
